@@ -7,7 +7,7 @@ import PageBuilder from './pages/page-builder'
 
 function App() {
   return (
-    <Router>
+    <Router basename='nocode'>
       <Main className="App">
         <Switch>
           <Route path="/page-builder">
