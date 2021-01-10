@@ -1,15 +1,17 @@
 version: '3'
 services:
-  nocode-app:
+  mxr-web:
     build: .
-    image: nocode-app
-    container_name: nocode-app
+    image: mxr-web
+    container_name: mxr-web
     ports:
       - 8082:8082
+      - 8083:8083
+      - 8084:8084
     volumes:
-      - ./nocode:/nocode
+      - ./mxr-web:/mxr-web
     environment:
-      - NODE_ENV=/nocode
-      - NODE_PATH=src
+      - NODE_ENV=/mxr-web
+      - NODE_PATH=/mxr-web
       - NODE_TLS_REJECT_UNAUTHORIZED=0
     command: /bin/sleep 216000

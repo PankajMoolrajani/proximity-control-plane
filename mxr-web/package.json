@@ -1,0 +1,18 @@
+{
+  "name": "monoxor-apps",
+  "version": "1.0.0",
+  "description": "Monoxor Workspaces",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "nocode": "cd ./apps/nocode && npm start",
+    "proximity": "cd ./apps/proximity && npm start",
+    "start": "concurrently \"npm run nocode\"  \"npm run proximity\""
+  },
+  "author": "monoxor",
+  "license": "ISC",
+  "workspaces": [
+    "./apps/nocode",
+    "./apps/proximity",
+    "./libs"
+  ]
+}
