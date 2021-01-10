@@ -1,5 +1,5 @@
 import Main from './layouts/main.react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 import Dashboard from './pages/dashboard'
 import DataSources from './pages/data-sources'
 import Models from './pages/models'
@@ -20,8 +20,9 @@ function App() {
             <DataSources />
           </Route>
           <Route path="/">
+            <Redirect to='/'/>
             <Dashboard />
-          </Route>
+          </Route> 
         </Switch>
       </Main>
     </Router>
