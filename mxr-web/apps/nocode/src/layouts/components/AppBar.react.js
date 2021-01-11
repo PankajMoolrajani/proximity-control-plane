@@ -7,6 +7,7 @@ import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import MenuIcon from '@material-ui/icons/Menu'
 import IconButton from '@material-ui/core/IconButton'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import { useAuth0 } from '@auth0/auth0-react'
 
 const drawerWidth = 240
@@ -71,19 +72,20 @@ const AppBarTop = ({ handleDrawerOpen, open }) => {
         >
           Data API
         </Typography>
-        <Button
-          variant='outline'
-          color='secondary'
+        <Avatar alt={user.name} src={user.picture} className={classes.avatar} />
+        <Typography>Hi, {user.name}</Typography>
+        <IconButton
           onClick={() =>
             logout({
               returnTo: window.location.origin
             })
           }
+          style={{
+            color: '#ffffff'
+          }}
         >
-          Logout
-        </Button>
-        <Avatar alt={user.name} src={user.picture} className={classes.avatar} />
-        <Typography>Hi, {user.name}</Typography>
+          <ExitToAppIcon />
+        </IconButton>
       </Toolbar>
     </AppBar>
   )
