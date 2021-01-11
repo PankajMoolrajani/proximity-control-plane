@@ -11,6 +11,7 @@ ReactDOM.render(
       domain='mxr.auth0.com'
       clientId='qCDYYqJ5Np70iy66VqweQSwoRO0ZVZjM'
       redirectUri={window.location.origin}
+      audience= 'http://pankaj.moolrajani.sb.intern.monoxor.com:8080/open'
       scope='openid email profile'
     >
       <App />
