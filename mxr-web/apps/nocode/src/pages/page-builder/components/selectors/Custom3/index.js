@@ -8,7 +8,7 @@ export const Custom3BtnDrop = ({ children }) => {
     connectors: { connect }
   } = useNode()
   return (
-    <div ref={connect} className="w-full h-full">
+    <div ref={connect} className='w-full h-full'>
       {children}
     </div>
   )
@@ -29,13 +29,13 @@ Custom3BtnDrop.craft = {
 }
 export const Custom3 = (props) => {
   return (
-    <Container {...props} className="overflow-hidden">
-      <div className="w-full mb-4">
-        <h2 className="text-center text-xs text-white">
+    <Container {...props} className='overflow-hidden'>
+      <div className='w-full mb-4'>
+        <h2 className='text-center text-xs text-white'>
           I must have at least 1 button
         </h2>
       </div>
-      <Element canvas is={Custom3BtnDrop} id="wow">
+      <Element canvas is={Custom3BtnDrop} id='wow'>
         <Button background={{ r: 184, g: 247, b: 247, a: 1 }} />
       </Element>
     </Container>

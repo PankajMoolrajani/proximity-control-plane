@@ -51,13 +51,13 @@ export const Viewport = ({ children, page }) => {
       <Dialog
         open={dialog}
         fullWidth={true}
-        maxWidth="sm"
+        maxWidth='sm'
         onClose={() => setDialog(false)}
         disableBackdropClick={true}
       >
         <DialogTitle>{'Keep the following in mind'}</DialogTitle>
         <DialogContent>
-          <ul className="px-5 list-disc" style={{ opacity: 0.85 }}>
+          <ul className='px-5 list-disc' style={{ opacity: 0.85 }}>
             <li>
               Craft.js is an abstraction, this demo is an implementation of it.
               If you don't like the UI for example, please know that it is the
@@ -73,7 +73,7 @@ export const Viewport = ({ children, page }) => {
         <DialogActions>
           <MaterialButton
             onClick={() => setDialog(false)}
-            color="primary"
+            color='primary'
             autoFocus
           >
             Okay!
@@ -91,7 +91,7 @@ export const Viewport = ({ children, page }) => {
         ])}
       >
         <Toolbox />
-        <div className="flex-1 h-screen">
+        <div className='flex-1 h-screen'>
           <div>
             <div
               className={cx([

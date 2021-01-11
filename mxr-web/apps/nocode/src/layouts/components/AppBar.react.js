@@ -3,9 +3,11 @@ import { makeStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
-import AccountCircleIcon from '@material-ui/icons/AccountCircle'
+import Avatar from '@material-ui/core/Avatar'
+import Button from '@material-ui/core/Button'
 import MenuIcon from '@material-ui/icons/Menu'
 import IconButton from '@material-ui/core/IconButton'
+import { useAuth0 } from '@auth0/auth0-react'
 
 const drawerWidth = 240
 const useStyles = makeStyles((theme) => ({
@@ -35,38 +37,45 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1
+  },
+  avatar: {
+    marginRight: 10
   }
 }))
 
 const AppBarTop = ({ handleDrawerOpen, open }) => {
   const classes = useStyles()
+  const { user, logout } = useAuth0()
+  console.log(user)
   return (
     <AppBar
-      position="absolute"
+      position='absolute'
       className={clsx(classes.appBar, open && classes.appBarShift)}
     >
       <Toolbar className={classes.toolbar}>
         <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="open drawer"
+          edge='start'
+          color='inherit'
+          aria-label='open drawer'
           onClick={handleDrawerOpen}
           className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
         >
           <MenuIcon />
         </IconButton>
         <Typography
-          component="h1"
-          variant="h6"
-          color="inherit"
+          component='h1'
+          variant='h6'
+          color='inherit'
           noWrap
           className={classes.title}
         >
           Data API
         </Typography>
-        <IconButton color="inherit">
-          <AccountCircleIcon />
-        </IconButton>
+        <Button variant='outline' color='secondary' onClick={logout}>
+          Logout
+        </Button>
+        <Avatar alt={user.name} src={user.picture} className={classes.avatar} />
+        <Typography>Hi, {user.name}</Typography>
       </Toolbar>
     </AppBar>
   )

@@ -58,13 +58,13 @@ const List = () => {
                   {d.type.icon}
                 </Avatar>
               }
-              title={<Typography variant="h6">{d.database}</Typography>}
+              title={<Typography variant='h6'>{d.database}</Typography>}
               action={
                 <Fragment>
                   <IconButton
-                    aria-label="settings"
+                    aria-label='settings'
                     onClick={handleClick}
-                    color="primary"
+                    color='primary'
                   >
                     <MoreVertIcon />
                   </IconButton>
@@ -72,10 +72,10 @@ const List = () => {
               }
             />
             <CardContent>
-              <Typography component="p" style={{ fontSize: 20 }}>
+              <Typography component='p' style={{ fontSize: 20 }}>
                 {d.type.name}
               </Typography>
-              <Typography component="span">
+              <Typography component='span'>
                 <b>Created At:</b> {d.createdAt.toGMTString()}
               </Typography>
             </CardContent>
@@ -83,7 +83,7 @@ const List = () => {
         </Grid>
       ))}
       <Menu
-        id="simple-menu"
+        id='simple-menu'
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}

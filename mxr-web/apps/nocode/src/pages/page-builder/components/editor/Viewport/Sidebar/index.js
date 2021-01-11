@@ -19,11 +19,11 @@ export const Sidebar = () => {
     enabled: state.options.enabled
   }))
   return (
-    <SidebarDiv enabled={enabled} className="sidebar transition bg-white w-2">
-      <div className="flex flex-col h-full">
+    <SidebarDiv enabled={enabled} className='sidebar transition bg-white w-2'>
+      <div className='flex flex-col h-full'>
         <SidebarItem
           icon={CustomizeIcon}
-          title="Customize"
+          title='Customize'
           height={!layersVisible ? 'full' : '55%'}
           visible={toolbarVisible}
           onChange={(val) => setToolbarVisible(val)}
@@ -32,12 +32,12 @@ export const Sidebar = () => {
         </SidebarItem>
         <SidebarItem
           icon={LayerIcon}
-          title="Layers"
+          title='Layers'
           height={!toolbarVisible ? 'full' : '45%'}
           visible={layersVisible}
           onChange={(val) => setLayerVisible(val)}
         >
-          <div className="">
+          <div className=''>
             <Layers expandRootOnLoad={true} />
           </div>
         </SidebarItem>

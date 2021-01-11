@@ -52,7 +52,7 @@ const Sidebar = ({ handleDrawerClose, open }) => {
   const { push } = useHistory()
   return (
     <Drawer
-      variant="permanent"
+      variant='permanent'
       classes={{
         paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose)
       }}
@@ -69,43 +69,43 @@ const Sidebar = ({ handleDrawerClose, open }) => {
           <ListItemIcon>
             <DashboardIcon />
           </ListItemIcon>
-          <ListItemText primary="Dashboard" />
+          <ListItemText primary='Dashboard' />
         </ListItem>
         <ListItem button onClick={() => push('/data-sources')}>
           <ListItemIcon>
             <Server />
           </ListItemIcon>
-          <ListItemText primary="Data Sources" />
+          <ListItemText primary='Data Sources' />
         </ListItem>
         <ListItem button onClick={() => push('/models')}>
           <ListItemIcon>
             <Database />
           </ListItemIcon>
-          <ListItemText primary="Models" />
+          <ListItemText primary='Models' />
         </ListItem>
         <ListItem button onClick={() => push('/')}>
           <ListItemIcon>
             <Shuffle />
           </ListItemIcon>
-          <ListItemText primary="Relations" />
+          <ListItemText primary='Relations' />
         </ListItem>
         <ListItem button onClick={() => push('/')}>
           <ListItemIcon>
             <AccountTreeIcon />
           </ListItemIcon>
-          <ListItemText primary="Explore" />
+          <ListItemText primary='Explore' />
         </ListItem>
         <ListItem button onClick={() => push('/page-builder')}>
           <ListItemIcon>
             <BuildIcon />
           </ListItemIcon>
-          <ListItemText primary="Integrations" />
+          <ListItemText primary='Integrations' />
         </ListItem>
         <ListItem button onClick={() => push('/')}>
           <ListItemIcon>
             <LayersIcon />
           </ListItemIcon>
-          <ListItemText primary="Integrations" />
+          <ListItemText primary='Integrations' />
         </ListItem>
       </List>
       <Divider />

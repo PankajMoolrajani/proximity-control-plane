@@ -66,7 +66,7 @@ export const ToolbarTextInput = ({
     >
       {(type == 'color' || type == 'bg') && active ? (
         <div
-          className="absolute"
+          className='absolute'
           style={{
             zIndex: 99999,
             top: 'calc(100% + 10px)',
@@ -74,7 +74,7 @@ export const ToolbarTextInput = ({
           }}
         >
           <div
-            className="fixed top-0 left-0 w-full h-full cursor-pointer"
+            className='fixed top-0 left-0 w-full h-full cursor-pointer'
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
@@ -101,14 +101,14 @@ export const ToolbarTextInput = ({
         onChange={(e) => {
           setInternalValue(e.target.value)
         }}
-        margin="dense"
-        variant="filled"
+        margin='dense'
+        variant='filled'
         InputProps={{
           classes,
           disableUnderline: true,
           startAdornment: ['color', 'bg'].includes(type) ? (
             <InputAdornment
-              position="start"
+              position='start'
               style={{
                 position: 'absolute',
                 marginTop: '2px',
@@ -116,7 +116,7 @@ export const ToolbarTextInput = ({
               }}
             >
               <div
-                className="w-2 h-2 inline-block rounded-full relative"
+                className='w-2 h-2 inline-block rounded-full relative'
                 style={{
                   left: '15px',
                   background: internalValue

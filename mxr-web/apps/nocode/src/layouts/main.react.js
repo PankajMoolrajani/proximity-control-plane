@@ -64,7 +64,7 @@ const Main = ({ children }) => {
         <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          <Container maxWidth="lg" className={classes.container}>
+          <Container maxWidth='lg' className={classes.container}>
             {children}
           </Container>
         </main>

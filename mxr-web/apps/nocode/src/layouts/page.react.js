@@ -10,13 +10,13 @@ const Page = ({ title, onCreate, onShowAll, children }) => {
   return (
     <Papar>
       <Box p={4}>
-        <Box py={1} display="flex" justifyContent="space-between">
-          <Typography variant="h5">{title}</Typography>
+        <Box py={1} display='flex' justifyContent='space-between'>
+          <Typography variant='h5'>{title}</Typography>
           <Box>
             {onCreate && (
               <Button
-                variant="outlined"
-                color="primary"
+                variant='outlined'
+                color='primary'
                 startIcon={<AddIcon />}
                 onClick={onCreate}
               >
@@ -25,8 +25,8 @@ const Page = ({ title, onCreate, onShowAll, children }) => {
             )}
             {onShowAll && (
               <Button
-                variant="outlined"
-                color="primary"
+                variant='outlined'
+                color='primary'
                 startIcon={<ListIcon />}
                 onClick={onShowAll}
                 style={{ marginLeft: 16 }}

@@ -47,17 +47,17 @@ export const Header = (props) => {
   return (
     <HeaderDiv
       enabled={enabled}
-      className="header bg-light-gray-1 text-white transition w-full"
+      className='header bg-light-gray-1 text-white transition w-full'
     >
       <div
-        className="items-center flex w-full px-4"
+        className='items-center flex w-full px-4'
         style={{ paddingTop: 14, paddingBottom: 14 }}
       >
-        <div className="flex-1">
-          <h2 className="mr-5 text-xl">{props.title}</h2>
+        <div className='flex-1'>
+          <h2 className='mr-5 text-xl'>{props.title}</h2>
         </div>
 
-        <div className="flex">
+        <div className='flex'>
           <Btn
             className={cx([
               'transition cursor-pointer',

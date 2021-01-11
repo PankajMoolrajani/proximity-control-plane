@@ -70,35 +70,35 @@ const Create = () => {
   })
   console.log(errors, touched, isValid)
   return (
-    <Container maxWidth="sm">
-      <Typography variant="h4">Create Data Source</Typography>
+    <Container maxWidth='sm'>
+      <Typography variant='h4'>Create Data Source</Typography>
       <Divider style={{ margin: '20px 0' }} />
-      <form onSubmit={handleSubmit} autoComplete="off">
+      <form onSubmit={handleSubmit} autoComplete='off'>
         <FormControl
           fullWidth
-          variant="outlined"
-          size="small"
+          variant='outlined'
+          size='small'
           error={errors.location && touched.location}
         >
           <InputLabel>Location</InputLabel>
           <Select
             labelId={`label-${dataValues.location}`}
-            id="location"
-            label="Location"
+            id='location'
+            label='Location'
             value={dataValues.location}
             onChange={handleChange('location')}
             onBlur={handleBlur('location')}
           >
-            <MenuItem value="INTERNAL">Internal</MenuItem>
-            <MenuItem value="EXTERNAL">External</MenuItem>
+            <MenuItem value='INTERNAL'>Internal</MenuItem>
+            <MenuItem value='EXTERNAL'>External</MenuItem>
           </Select>
         </FormControl>
         <TextField
           fullWidth
-          size="small"
-          variant="outlined"
-          id="database"
-          label="Database"
+          size='small'
+          variant='outlined'
+          id='database'
+          label='Database'
           value={dataValues.database}
           onChange={handleChange}
           onBlur={handleBlur}
@@ -113,10 +113,10 @@ const Create = () => {
           <Fragment>
             <TextField
               fullWidth
-              size="small"
-              variant="outlined"
-              id="host"
-              label="Host"
+              size='small'
+              variant='outlined'
+              id='host'
+              label='Host'
               value={dataValues.host}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -126,10 +126,10 @@ const Create = () => {
             />
             <TextField
               fullWidth
-              size="small"
-              variant="outlined"
-              id="port"
-              label="Port"
+              size='small'
+              variant='outlined'
+              id='port'
+              label='Port'
               value={dataValues.port}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -140,8 +140,8 @@ const Create = () => {
 
             <FormControl
               fullWidth
-              variant="outlined"
-              size="small"
+              variant='outlined'
+              size='small'
               style={{ marginTop: 20 }}
               error={errors.dialect && touched.dialect}
               helperText={
@@ -151,23 +151,23 @@ const Create = () => {
               <InputLabel>Dialect</InputLabel>
               <Select
                 labelId={`label-${dataValues.dialect}`}
-                id="dialect"
-                label="Dialect"
+                id='dialect'
+                label='Dialect'
                 value={dataValues.dialect}
                 onChange={handleChange('dialect')}
                 onBlur={handleBlur('dialect')}
               >
-                <MenuItem value="MYSQL">MySQL</MenuItem>
-                <MenuItem value="POSTGRES">Postgres</MenuItem>
-                <MenuItem value="MONGODB">MongoDB</MenuItem>
+                <MenuItem value='MYSQL'>MySQL</MenuItem>
+                <MenuItem value='POSTGRES'>Postgres</MenuItem>
+                <MenuItem value='MONGODB'>MongoDB</MenuItem>
               </Select>
             </FormControl>
             <TextField
               fullWidth
-              size="small"
-              variant="outlined"
-              id="username"
-              label="Username"
+              size='small'
+              variant='outlined'
+              id='username'
+              label='Username'
               value={dataValues.username}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -179,12 +179,12 @@ const Create = () => {
             />
             <TextField
               fullWidth
-              size="small"
-              variant="outlined"
-              id="password"
-              label="Password"
+              size='small'
+              variant='outlined'
+              id='password'
+              label='Password'
               value={dataValues.password}
-              type="password"
+              type='password'
               onChange={handleChange}
               onBlur={handleBlur}
               style={{ marginTop: 20 }}
@@ -196,18 +196,18 @@ const Create = () => {
           </Fragment>
         ) : null}
         <Divider style={{ margin: '20px 0' }} />
-        <Box textAlign="center">
+        <Box textAlign='center'>
           <Button
-            color="primary"
-            variant="contained"
+            color='primary'
+            variant='contained'
             style={{ marginRight: 8 }}
-            type="submit"
+            type='submit'
             disabled={!isValid}
           >
             Create
           </Button>
           {dataValues.location === 'EXTERNAL' ? (
-            <Button color="primary" variant="outlined">
+            <Button color='primary' variant='outlined'>
               Test Connection
             </Button>
           ) : null}

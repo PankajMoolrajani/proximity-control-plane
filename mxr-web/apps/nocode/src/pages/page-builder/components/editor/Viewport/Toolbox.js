@@ -52,9 +52,9 @@ export const Toolbox = () => {
   return (
     <ToolboxDiv
       enabled={enabled && enabled}
-      className="toolbox transition w-12 border-r h-full flex flex-col bg-white"
+      className='toolbox transition w-12 border-r h-full flex flex-col bg-white'
     >
-      <div className="flex flex-1 flex-col items-center pt-3">
+      <div className='flex flex-1 flex-col items-center pt-3'>
         <div
           ref={(ref) =>
             create(
@@ -64,49 +64,49 @@ export const Toolbox = () => {
                 is={Container}
                 background={{ r: 78, g: 78, b: 78, a: 1 }}
                 color={{ r: 0, g: 0, b: 0, a: 1 }}
-                height="300px"
-                width="300px"
+                height='300px'
+                width='300px'
               ></Element>
             )
           }
         >
-          <Tooltip title="Container" placement="right">
-            <Item className="m-2 pb-2 cursor-pointer block" move>
+          <Tooltip title='Container' placement='right'>
+            <Item className='m-2 pb-2 cursor-pointer block' move>
               <SquareSvg />
             </Item>
           </Tooltip>
         </div>
         <div
           ref={(ref) =>
-            create(ref, <Text fontSize="12" textAlign="left" text="Hi there" />)
+            create(ref, <Text fontSize='12' textAlign='left' text='Hi there' />)
           }
         >
-          <Tooltip title="Text" placement="right">
-            <Item className="m-2 pb-2 cursor-pointer block" move>
+          <Tooltip title='Text' placement='right'>
+            <Item className='m-2 pb-2 cursor-pointer block' move>
               <TypeSvg />
             </Item>
           </Tooltip>
         </div>
         <div ref={(ref) => create(ref, <Button />)}>
-          <Tooltip title="Button" placement="right">
-            <Item className="m-2 pb-2 cursor-pointer block" move>
+          <Tooltip title='Button' placement='right'>
+            <Item className='m-2 pb-2 cursor-pointer block' move>
               <ButtonSvg />
             </Item>
           </Tooltip>
         </div>
         <div ref={(ref) => create(ref, <Video />)}>
-          <Tooltip title="Video" placement="right">
-            <Item className="m-2 pb-2 cursor-pointer block" move>
+          <Tooltip title='Video' placement='right'>
+            <Item className='m-2 pb-2 cursor-pointer block' move>
               <YoutubeSvg />
             </Item>
           </Tooltip>
         </div>
       </div>
-      <div className="flex flex-col items-center pt-3">
+      <div className='flex flex-col items-center pt-3'>
         <div>
-          <Tooltip title="Undo" placement="right">
+          <Tooltip title='Undo' placement='right'>
             <Item
-              className="m-2 pb-2 cursor-pointer block"
+              className='m-2 pb-2 cursor-pointer block'
               disabled={!canUndo}
               onClick={() => actions.history.undo()}
             >
@@ -115,9 +115,9 @@ export const Toolbox = () => {
           </Tooltip>
         </div>
         <div>
-          <Tooltip title="Redo" placement="right">
+          <Tooltip title='Redo' placement='right'>
             <Item
-              className="m-2 pb-2 cursor-pointer block"
+              className='m-2 pb-2 cursor-pointer block'
               disabled={!canRedo}
               onClick={() => actions.history.redo()}
             >

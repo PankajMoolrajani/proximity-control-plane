@@ -75,7 +75,7 @@ export const ToolbarItem = ({
   const value = Array.isArray(propValue) ? propValue[index] : propValue
   return (
     <Grid item xs={full ? 12 : 6}>
-      <div className="mb-2">
+      <div className='mb-2'>
         {['text', 'color', 'bg', 'number'].includes(type) ? (
           <ToolbarTextInput
             {...props}
@@ -94,7 +94,7 @@ export const ToolbarItem = ({
         ) : type == 'slider' ? (
           <>
             {props.label ? (
-              <h4 className="text-sm text-light-gray-2">{props.label}</h4>
+              <h4 className='text-sm text-light-gray-2'>{props.label}</h4>
             ) : null}
             <SliderStyled
               value={parseInt(value) || 0}
@@ -112,7 +112,7 @@ export const ToolbarItem = ({
         ) : type == 'radio' ? (
           <>
             {props.label ? (
-              <h4 className="text-sm text-light-gray-2">{props.label}</h4>
+              <h4 className='text-sm text-light-gray-2'>{props.label}</h4>
             ) : null}
             <RadioGroup
               value={value || 0}

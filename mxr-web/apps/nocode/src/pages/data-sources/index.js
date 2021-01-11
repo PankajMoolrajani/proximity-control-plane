@@ -8,7 +8,7 @@ const DataSources = () => {
   const { push } = useHistory()
   return (
     <Page
-      title="Data Sources"
+      title='Data Sources'
       onCreate={() => push(`${path}/create`)}
       onShowAll={() => push(path)}
     >

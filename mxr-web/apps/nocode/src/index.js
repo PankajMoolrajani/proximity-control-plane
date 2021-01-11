@@ -1,16 +1,17 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
-import { Auth0Provider } from '@auth0/auth0-react';
+import { Auth0Provider } from '@auth0/auth0-react'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 
 ReactDOM.render(
   <React.StrictMode>
     <Auth0Provider
-      domain="mxr.auth0.com"
+      domain='mxr.auth0.com'
       clientId='qCDYYqJ5Np70iy66VqweQSwoRO0ZVZjM'
       redirectUri={window.location.origin}
+      scope='openid email profile'
     >
       <App />
     </Auth0Provider>

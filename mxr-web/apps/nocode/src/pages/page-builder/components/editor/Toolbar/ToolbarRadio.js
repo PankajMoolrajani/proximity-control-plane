@@ -32,7 +32,7 @@ function StyledRadio(props) {
   return (
     <Radio
       disableRipple
-      color="default"
+      color='default'
       checkedIcon={
         <span className={classnames(classes.icon, classes.checkedIcon)} />
       }

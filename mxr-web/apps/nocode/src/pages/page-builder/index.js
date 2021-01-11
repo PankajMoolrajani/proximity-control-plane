@@ -17,7 +17,7 @@ const PageBuilder = () => {
   const uint8array = lz.decodeBase64(base64)
   const json = lz.decompress(uint8array)
   return (
-    <div className="h-full h-screen">
+    <div className='h-full h-screen'>
       <Editor
         resolver={{
           Container,

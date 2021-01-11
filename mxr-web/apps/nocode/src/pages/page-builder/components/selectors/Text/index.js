@@ -27,7 +27,7 @@ export const Text = ({
       onChange={(e) => {
         setProp((prop) => (prop.text = e.target.value), 500)
       }} // use true to disable editing
-      tagName="h2" // Use a custom HTML tag (uses a div by default)
+      tagName='h2' // Use a custom HTML tag (uses a div by default)
       style={{
         width: '100%',
         margin: `${margin[0]}px ${margin[1]}px ${margin[2]}px ${margin[3]}px`,

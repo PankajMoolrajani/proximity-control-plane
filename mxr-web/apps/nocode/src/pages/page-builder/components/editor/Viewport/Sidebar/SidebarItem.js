@@ -28,7 +28,7 @@ export const SidebarItem = ({
   onChange
 }) => {
   return (
-    <SidebarItemDiv visible={visible} height={height} className="flex flex-col">
+    <SidebarItemDiv visible={visible} height={height} className='flex flex-col'>
       <HeaderDiv
         onClick={() => {
           if (onChange) onChange(!visible)
@@ -37,16 +37,16 @@ export const SidebarItem = ({
           visible ? 'shadow-sm' : ''
         }`}
       >
-        <div className="flex-1 flex items-center">
+        <div className='flex-1 flex items-center'>
           {React.createElement(icon, { className: 'w-4 h-4 mr-2' })}
-          <h2 className="text-xs uppercase">{title}</h2>
+          <h2 className='text-xs uppercase'>{title}</h2>
         </div>
         <Chevron visible={visible}>
           <Arrow />
         </Chevron>
       </HeaderDiv>
       {visible ? (
-        <div className="w-full flex-1 overflow-auto">{children}</div>
+        <div className='w-full flex-1 overflow-auto'>{children}</div>
       ) : null}
     </SidebarItemDiv>
   )
