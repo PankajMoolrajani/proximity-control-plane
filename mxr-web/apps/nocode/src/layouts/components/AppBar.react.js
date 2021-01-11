@@ -71,7 +71,15 @@ const AppBarTop = ({ handleDrawerOpen, open }) => {
         >
           Data API
         </Typography>
-        <Button variant='outline' color='secondary' onClick={logout}>
+        <Button
+          variant='outline'
+          color='secondary'
+          onClick={() =>
+            logout({
+              returnTo: window.location.origin
+            })
+          }
+        >
           Logout
         </Button>
         <Avatar alt={user.name} src={user.picture} className={classes.avatar} />

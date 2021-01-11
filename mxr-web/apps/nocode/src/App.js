@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import Main from './layouts/main.react'
 import {
   BrowserRouter as Router,
@@ -14,7 +14,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import userStore from './store/user.store'
 import { observer } from 'mobx-react-lite'
 
-const App = (props) => {
+const App = () => {
   const {
     isAuthenticated,
     loginWithRedirect,
