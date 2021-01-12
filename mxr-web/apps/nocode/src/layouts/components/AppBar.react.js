@@ -47,7 +47,6 @@ const useStyles = makeStyles((theme) => ({
 const AppBarTop = ({ handleDrawerOpen, open }) => {
   const classes = useStyles()
   const { user, logout } = useAuth0()
-  console.log(user)
   return (
     <AppBar
       position='absolute'

@@ -13,6 +13,7 @@
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.5.0",
+    "axios": "^0.21.1",
     "chokidar": "^3.4.3",
     "classnames": "^2.2.6",
     "cssnano": "^4.1.10",
