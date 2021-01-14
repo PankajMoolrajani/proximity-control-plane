@@ -10,6 +10,7 @@ import Dashboard from './pages/dashboard'
 import DataSources from './pages/data-sources'
 import Models from './pages/models'
 import PageBuilder from './pages/page-builder'
+import CreateOrg from './pages/createOrg'
 import { useAuth0 } from '@auth0/auth0-react'
 import userStore from './store/user.store'
 import { observer } from 'mobx-react-lite'
@@ -38,7 +39,7 @@ const App = () => {
             user: user
           })
           .then((data) => {
-            axiosSecureInstance.post('/protected')
+            console.log(data)
           })
       })
     }
@@ -60,6 +61,9 @@ const App = () => {
           </Route>
           <Route path='/data-sources'>
             <DataSources />
+          </Route>
+          <Route path='/create-org'>
+            <CreateOrg />
           </Route>
           <Route path='/'>
             <Redirect to='/' />

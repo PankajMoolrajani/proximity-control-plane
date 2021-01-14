@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 class UserStore {
   accessToken = null
+  curOrg = null
 
   constructor() {
     makeAutoObservable(this)
@@ -13,6 +14,15 @@ class UserStore {
 
   getAccessToken() {
     return this.accessToken
+  }
+
+  setCurOrg(curOrg) {
+    this.curOrg = curOrg
+    return this.curOrg
+  }
+
+  getCurOrg() {
+    return this.curOrg
   }
 }
 

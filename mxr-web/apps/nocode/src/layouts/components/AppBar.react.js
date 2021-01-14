@@ -4,11 +4,12 @@ import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
-import Button from '@material-ui/core/Button'
+import Box from '@material-ui/core/Box'
 import MenuIcon from '@material-ui/icons/Menu'
 import IconButton from '@material-ui/core/IconButton'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import { useAuth0 } from '@auth0/auth0-react'
+import userStore from '../../store/user.store'
 
 const drawerWidth = 240
 const useStyles = makeStyles((theme) => ({
@@ -47,6 +48,7 @@ const useStyles = makeStyles((theme) => ({
 const AppBarTop = ({ handleDrawerOpen, open }) => {
   const classes = useStyles()
   const { user, logout } = useAuth0()
+  const org = userStore.getCurOrg()
   return (
     <AppBar
       position='absolute'
@@ -71,6 +73,16 @@ const AppBarTop = ({ handleDrawerOpen, open }) => {
         >
           Data API
         </Typography>
+        {org ? (
+          <Box
+            style={{
+              padding: 10,
+              background: '#fffff'
+            }}
+          >
+            {org.name}
+          </Box>
+        ) : null}
         <Avatar alt={user.name} src={user.picture} className={classes.avatar} />
         <Typography>Hi, {user.name}</Typography>
         <IconButton
