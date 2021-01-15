@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import Main from './layouts/main.react'
 import {
   BrowserRouter as Router,
@@ -11,44 +10,12 @@ import DataSources from './pages/data-sources'
 import Models from './pages/models'
 import PageBuilder from './pages/page-builder'
 import CreateOrg from './pages/createOrg'
-import { useAuth0 } from '@auth0/auth0-react'
-import userStore from './store/user.store'
 import { observer } from 'mobx-react-lite'
-import axiosSecureInstance from './libs/axios/axios'
+
+import { toJS } from 'mobx'
 
 const App = () => {
-  const {
-    isAuthenticated,
-    loginWithRedirect,
-    isLoading,
-    error,
-    getAccessTokenSilently,
-    user
-  } = useAuth0()
-  useEffect(() => {
-    if (!isAuthenticated && !isLoading) {
-      loginWithRedirect()
-    }
-
-    if (isAuthenticated && !isLoading) {
-      getAccessTokenSilently().then((token) => {
-        userStore.setAccessToken(token)
-        console.log(token)
-        axiosSecureInstance
-          .post('/auth/login', {
-            user: user
-          })
-          .then((data) => {
-            console.log(data)
-          })
-      })
-    }
-  }, [isAuthenticated, isLoading])
-
-  if (isLoading || !isAuthenticated) {
-    return <div>Loading..</div>
-  }
-
+ 
   return (
     <Router basename='nocode'>
       <Main className='App'>
@@ -68,7 +35,7 @@ const App = () => {
           <Route path='/'>
             <Redirect to='/' />
             <Dashboard />
-          </Route>
+          </Route> 
         </Switch>
       </Main>
     </Router>

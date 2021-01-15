@@ -10,6 +10,7 @@ import IconButton from '@material-ui/core/IconButton'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import { useAuth0 } from '@auth0/auth0-react'
 import userStore from '../../store/user.store'
+import { observer } from 'mobx-react-lite'
 
 const drawerWidth = 240
 const useStyles = makeStyles((theme) => ({
@@ -76,11 +77,13 @@ const AppBarTop = ({ handleDrawerOpen, open }) => {
         {org ? (
           <Box
             style={{
-              padding: 10,
-              background: '#fffff'
+              padding: 5,
+              background: '#ffffff',
+              marginRight: 10,
+              borderRadius:5
             }}
           >
-            {org.name}
+            <Typography color='primary'>{org.name}</Typography>
           </Box>
         ) : null}
         <Avatar alt={user.name} src={user.picture} className={classes.avatar} />
@@ -102,4 +105,4 @@ const AppBarTop = ({ handleDrawerOpen, open }) => {
   )
 }
 
-export default AppBarTop
+export default observer(AppBarTop)
