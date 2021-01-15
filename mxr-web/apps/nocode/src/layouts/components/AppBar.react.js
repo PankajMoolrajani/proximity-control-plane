@@ -80,7 +80,7 @@ const AppBarTop = ({ handleDrawerOpen, open }) => {
               padding: 5,
               background: '#ffffff',
               marginRight: 10,
-              borderRadius:5
+              borderRadius: 5
             }}
           >
             <Typography color='primary'>{org.name}</Typography>

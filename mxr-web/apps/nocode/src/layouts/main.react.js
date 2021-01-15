@@ -63,7 +63,7 @@ const Main = ({ children }) => {
   } = useAuth0()
 
   const [isAppLoading, setIsAppLoading] = useState(false)
-  const {push} = useHistory()
+  const { push } = useHistory()
   useEffect(() => {
     if (!isAuthenticated && !isLoading) {
       loginWithRedirect()
@@ -78,26 +78,25 @@ const Main = ({ children }) => {
           .post('/auth/login', {
             user: user
           })
-          .then(({data}) => {
+          .then(({ data }) => {
             const user = data
             console.log(user)
-             if(user.Orgs && user.Orgs.length > 0) {
-                user.Orgs.forEach(org => {
-                  if(org.OrgUsers.isDefault) {
-                    userStore.setCurOrg(org)
-                  }
-                }) 
-             } else {
-               console.log('No org found!')
-               push('/create-org')
-             }
+            if (user.Orgs && user.Orgs.length > 0) {
+              user.Orgs.forEach((org) => {
+                if (org.OrgUsers.isDefault) {
+                  userStore.setCurOrg(org)
+                }
+              })
+            } else {
+              push('/create-org')
+            }
 
-             setIsAppLoading(false)
+            setIsAppLoading(false)
           })
       })
     }
   }, [isAuthenticated, isLoading])
-  
+
   if (isLoading || !isAuthenticated || isAppLoading) {
     return <div>Loading..</div>
   }

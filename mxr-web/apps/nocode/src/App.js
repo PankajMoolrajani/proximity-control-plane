@@ -15,7 +15,6 @@ import { observer } from 'mobx-react-lite'
 import { toJS } from 'mobx'
 
 const App = () => {
- 
   return (
     <Router basename='nocode'>
       <Main className='App'>
@@ -35,7 +34,7 @@ const App = () => {
           <Route path='/'>
             <Redirect to='/' />
             <Dashboard />
-          </Route> 
+          </Route>
         </Switch>
       </Main>
     </Router>
