@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import axiosSecureInstance from '../../libs/axios/axios'
+import { axiosSecureInstance } from '../../libs/axios/axios'
 import Page from '../../layouts/page.react'
 import { useHistory } from 'react-router-dom'
 import Container from '@material-ui/core/Container'

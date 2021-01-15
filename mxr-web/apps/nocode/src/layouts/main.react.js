@@ -5,10 +5,11 @@ import Container from '@material-ui/core/Container'
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import AppBarTop from './components/AppBar.react'
 import Sidebar from './components/Sidebar.react'
-import axiosSecureInstance from '../libs/axios/axios'
+import { axiosSecureInstance } from '../libs/axios/axios'
 import { useHistory } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import userStore from '../store/user.store'
+import { observer } from 'mobx-react-lite'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,7 +81,6 @@ const Main = ({ children }) => {
           })
           .then(({ data }) => {
             const user = data
-            console.log(user)
             if (user.Orgs && user.Orgs.length > 0) {
               user.Orgs.forEach((org) => {
                 if (org.OrgUsers.isDefault) {
@@ -100,7 +100,6 @@ const Main = ({ children }) => {
   if (isLoading || !isAuthenticated || isAppLoading) {
     return <div>Loading..</div>
   }
-  const userCurOrg = userStore.getCurOrg()
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -126,4 +125,4 @@ const Main = ({ children }) => {
   )
 }
 
-export default Main
+export default observer(Main)

@@ -8,19 +8,17 @@ import {
 import Dashboard from './pages/dashboard'
 import DataSources from './pages/data-sources'
 import Models from './pages/models'
-import PageBuilder from './pages/page-builder'
+import Pages from './pages/page-builder'
 import CreateOrg from './pages/createOrg'
 import { observer } from 'mobx-react-lite'
-
-import { toJS } from 'mobx'
 
 const App = () => {
   return (
     <Router basename='nocode'>
       <Main className='App'>
         <Switch>
-          <Route path='/page-builder'>
-            <PageBuilder />
+          <Route path='/pages'>
+            <Pages />
           </Route>
           <Route path='/models'>
             <Models />

@@ -1,14 +1,17 @@
 import axios from 'axios'
 import UserStore from '../../store/user.store'
 
+const BASE_URL = 'https://kushal.parikh.sb.intern.monoxor.com:8080'
+
 const axiosSecureInstance = axios.create()
-
-axiosSecureInstance.defaults.baseURL =
-  'https://kushal.parikh.sb.intern.monoxor.com:8080'
-
+axiosSecureInstance.defaults.baseURL = BASE_URL
 axiosSecureInstance.interceptors.request.use((config) => {
   const token = UserStore.getAccessToken()
   config.headers.Authorization = token ? `Bearer ${token}` : ''
   return config
 })
-export default axiosSecureInstance
+
+const axiosUnsecureInstance = axios.create()
+axiosUnsecureInstance.defaults.baseURL = BASE_URL
+
+export { axiosSecureInstance, axiosUnsecureInstance }

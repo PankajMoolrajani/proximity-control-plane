@@ -11,7 +11,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import LayersIcon from '@material-ui/icons/Layers'
 import AccountTreeIcon from '@material-ui/icons/AccountTree'
 import DashboardIcon from '@material-ui/icons/Dashboard'
-import BuildIcon from '@material-ui/icons/Build'
+import Pages from '@material-ui/icons/Pages'
 import { Server, Database, Shuffle } from 'react-feather'
 import { useHistory } from 'react-router-dom'
 
@@ -95,11 +95,11 @@ const Sidebar = ({ handleDrawerClose, open }) => {
           </ListItemIcon>
           <ListItemText primary='Explore' />
         </ListItem>
-        <ListItem button onClick={() => push('/page-builder')}>
+        <ListItem button onClick={() => push('/pages')}>
           <ListItemIcon>
-            <BuildIcon />
+            <Pages />
           </ListItemIcon>
-          <ListItemText primary='Integrations' />
+          <ListItemText primary='Pages' />
         </ListItem>
         <ListItem button onClick={() => push('/')}>
           <ListItemIcon>
