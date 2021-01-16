@@ -8,15 +8,19 @@ import {
 import Dashboard from './pages/dashboard'
 import DataSources from './pages/data-sources'
 import Models from './pages/models'
-import Pages from './pages/page-builder'
+import Pages from './pages/pages'
+import View from './pages/pages/view'
 import CreateOrg from './pages/createOrg'
 import { observer } from 'mobx-react-lite'
 
 const App = () => {
   return (
     <Router basename='nocode'>
-      <Main className='App'>
-        <Switch>
+      <Switch>
+        <Route path='/view/:dbName/:id'>
+          <View />
+        </Route>
+        <Main className='App'>
           <Route path='/pages'>
             <Pages />
           </Route>
@@ -29,12 +33,12 @@ const App = () => {
           <Route path='/create-org'>
             <CreateOrg />
           </Route>
-          <Route path='/'>
+          <Route exact path='/'>
             <Redirect to='/' />
             <Dashboard />
           </Route>
-        </Switch>
-      </Main>
+        </Main>
+      </Switch>
     </Router>
   )
 }

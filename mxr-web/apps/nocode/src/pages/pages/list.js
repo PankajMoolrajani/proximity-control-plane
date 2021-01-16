@@ -11,6 +11,7 @@ import Paper from '@material-ui/core/Paper'
 import userStore from '../../store/user.store'
 import EditIcon from '@material-ui/icons/Edit'
 import Delete from '@material-ui/icons/Delete'
+import VisibilityIcon from '@material-ui/icons/Visibility'
 import { observer } from 'mobx-react-lite'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 
@@ -44,6 +45,8 @@ const List = () => {
     getAllPages()
   }, [])
 
+  const curOrg = userStore.getCurOrg()
+  const defaultDb = curOrg ? `${curOrg.name}_default` : ''
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -72,6 +75,13 @@ const List = () => {
                     }
                   >
                     <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={() =>
+                      window.open(`/view/${defaultDb}/${page.id}`, '_blank')
+                    }
+                  >
+                    <VisibilityIcon />
                   </IconButton>
                   <IconButton onClick={() => deletePage(page.id)}>
                     <Delete />

@@ -32,6 +32,20 @@ const PageBuilder = () => {
         <MaterialButton
           color='primary'
           variant='outlined'
+          onClick={() => {
+            const curOrg = userStore.getCurOrg()
+            const defaultDb = `${curOrg.name}_default`
+            window.open(`/view/${defaultDb}/${pagedata.id}`, '_blank')
+          }}
+          style={{
+            marginRight: 20
+          }}
+        >
+          Preview
+        </MaterialButton>
+        <MaterialButton
+          color='primary'
+          variant='contained'
           onClick={async () => {
             const curOrg = userStore.getCurOrg()
             const defaultDb = `${curOrg.name}_default`
@@ -71,7 +85,7 @@ const PageBuilder = () => {
           setJson(newjson)
         }}
       >
-        <Viewport>
+        <Viewport editMode>
           <Frame
             data={lz.decompress(lz.decodeBase64(pagedata.base64Json))}
           ></Frame>
