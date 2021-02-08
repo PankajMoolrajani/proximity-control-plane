@@ -2,14 +2,13 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { withStyles } from '@material-ui/styles'
 import { Pie } from 'react-chartjs-2'
-import { MaterialBox, MaterialButton } from 'libs/material'
-import PlatformLoaderCard from 'apps/platform/components/PlatformLoaderCard.react'
-import PolicyImpactAnalysisLogCard from './PolicyImpactAnalysisLogCard.react'
-import {
-  virtualServiceStore,
-  policyStore
-} from 'apps/proximity/stores/proximity.store'
-import { logStore } from 'apps/platform/stores/platform.store'
+import Box from '@material-ui/core/Box'
+import Button from '@material-ui/core/Button'
+import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
+import PolicyImpactAnalysisLogCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyImpactAnalysisLogCard.react'
+import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
+import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
+import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
 
 const classes = {
   dashTitle: {
@@ -32,7 +31,7 @@ export class PolicyImpactAnalysisCard extends Component {
 
 
   componentWillUnmount() {
-    logStore.resetAllFields()
+    LogStore.resetAllFields()
   }
 
 
@@ -59,9 +58,9 @@ export class PolicyImpactAnalysisCard extends Component {
       denied: 0,
       decisionChanged: 0
     })
-    const policy = policyStore.getSelectedObject()
-    const virtualService = virtualServiceStore.getSelectedObject()
-    logStore.setShowProcessCard(true)
+    const policy = PolicyStore.getSelectedObject()
+    const virtualService = VirtualServiceStore.getSelectedObject()
+    LogStore.setShowProcessCard(true)
     const searchQuery = {}
     if (virtualService) {
       searchQuery['data.virtualServiceId'] = virtualService.id
@@ -69,22 +68,22 @@ export class PolicyImpactAnalysisCard extends Component {
     if (policy) {
       searchQuery['data.policyId'] = policy.id
     }
-    logStore.setSearchQuery(searchQuery)
-    logStore.setSearchPageObjectCount(100)
-    logStore.setSortQuery({ _id: -1 })
+    LogStore.setSearchQuery(searchQuery)
+    LogStore.setSearchPageObjectCount(100)
+    LogStore.setSortQuery({ _id: -1 })
     try {
-      const logs = await logStore.objectQuery()
-      logStore.setSearchResultsObjectCount(logs.count)
-      logStore.setObjects(logs.data)
+      const logs = await LogStore.objectQuery()
+      LogStore.setSearchResultsObjectCount(logs.count)
+      LogStore.setObjects(logs.data)
     } catch (error) {
       console.log(`Error: Getting logs`)
     }
-    logStore.setShowProcessCard(false)
+    LogStore.setShowProcessCard(false)
   }
 
 
   _renderLogs() {
-    const logs = logStore.getObjects()
+    const logs = LogStore.getObjects()
     const count = logs ? logs.length : 0
     const percentageChanged = (100 * this.state.decisionChanged) / count
 
@@ -181,7 +180,7 @@ export class PolicyImpactAnalysisCard extends Component {
 
 
   render() {
-    const showLoader = logStore.getShowProcessCard()
+    const showLoader = LogStore.getShowProcessCard()
     if (showLoader) {
       return (
         <MaterialBox style={{ margin: 50 }}>

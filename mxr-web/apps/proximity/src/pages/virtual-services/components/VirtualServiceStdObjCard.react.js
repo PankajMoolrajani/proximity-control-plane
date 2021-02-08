@@ -1,252 +1,251 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import { MaterialBox, MaterialButton, MaterialDivider } from 'libs/material'
+import Box from '@material-ui/core/Box'
+import Button from '@material-ui/core/Button'
+import Divider from '@material-ui/core/Divider'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
-import PlatformSuccessCard from 'apps/platform/components/PlatformSuccessCard.react'
-import PlatformLoaderCard from 'apps/platform/components/PlatformLoaderCard.react'
-import NavTabsCard from 'apps/proximity/components/PageLayout/NavTabsCard'
-import VirtualServiceDetailsCard from 'apps/proximity/virtual-services/components/VirtualServiceDetailsCard.react'
-import VirtualServiceDeploymentCard from 'apps/proximity/virtual-services/components/VirtualServiceDeploymentCard.react'
-import VirtualServiceRevisionsCard from 'apps/proximity/virtual-services/components/VirtualServiceRevisionsCard.react'
-import VirtualServicePoliciesCard from 'apps/proximity/virtual-services/components/VirtualServicePoliciesCard.react'
-import VirtualServiceDecisionLogs from 'apps/proximity/virtual-services/components/VirtualServiceDecisionLogs.react'
-import VirtualServiceMonitor from 'apps/proximity/virtual-services/components/VirtualServiceMonitor.react'
-import VirtualServicePolicyRecommendationCard from 'apps/proximity/virtual-services/components/VirtualServicePolicyRecommendationCard.react'
-import { VirtualServiceAccessLogs } from './VirtualServiceAccessLogs.react'
-import {
-  virtualServiceStore,
-  policyStore,
-  policyRecommendationStore
-} from 'apps/proximity/stores/proximity.store'
-import { logStore } from 'apps/platform/stores/platform.store'
-
+import PlatformSuccessCard from '/mxr-web/apps/proximity/src/components/platform/PlatformSuccessCard.react'
+import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
+import NavTabsCard from '/mxr-web/apps/proximity/src/components/PageLayout/NavTabsCard'
+import VirtualServiceDetailsCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceDetailsCard.react'
+import VirtualServiceDeploymentCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceDeploymentCard.react'
+import VirtualServiceRevisionsCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceRevisionsCard.react'
+import VirtualServicePoliciesCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServicePoliciesCard.react'
+import VirtualServiceDecisionLogs from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceDecisionLogs.react'
+import VirtualServiceMonitor from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceMonitor.react'
+import VirtualServicePolicyRecommendationCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServicePolicyRecommendationCard.react'
+import { VirtualServiceAccessLogs } from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceAccessLogs.react'
+import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
+import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
+import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
+import PolicyRecommendation from '/mxr-web/apps/proximity/src/stores/PolicyRecommendation.store'
 
 export class VirtualServiceStdObjCard extends Component {
   componentDidMount() {
-    virtualServiceStore.setShowObjectViewModeSecondary('DETAILS')
+    VirtualServiceStore.setShowObjectViewModeSecondary('DETAILS')
   }
 
 
   async handleRevisionsFetch() {
-    virtualServiceStore.setShowObjectViewModeSecondary('REVISIONS')
-    virtualServiceStore.setShowProcessCard(true)
+    VirtualServiceStore.setShowObjectViewModeSecondary('REVISIONS')
+    VirtualServiceStore.setShowProcessCard(true)
     try {
-      const selectedVirtualService = virtualServiceStore.getSelectedObject()
-      const virtualService = await virtualServiceStore.objectQueryById(
+      const selectedVirtualService = VirtualServiceStore.getSelectedObject()
+      const virtualService = await VirtualServiceStore.objectQueryById(
         selectedVirtualService.id,
         true
       )
-      virtualServiceStore.setSelectedObject(virtualService)
-      virtualServiceStore.setShowProcessCard(false)
+      VirtualServiceStore.setSelectedObject(virtualService)
+      VirtualServiceStore.setShowProcessCard(false)
     } catch (error) {
       console.log('Error: getting virtual service', error)
     }
-    virtualServiceStore.setShowProcessCard(false)
+    VirtualServiceStore.setShowProcessCard(false)
   }
 
 
   async handlePoliciesFetch() {
-    virtualServiceStore.setShowObjectViewModeSecondary('POLICIES')
-    const selectedVirtualService = virtualServiceStore.getSelectedObject()
+    VirtualServiceStore.setShowObjectViewModeSecondary('POLICIES')
+    const selectedVirtualService = VirtualServiceStore.getSelectedObject()
 
     const policiesMetaData =
       selectedVirtualService.currentRevision.virtualService.policiesMetadata
     if (!policiesMetaData || policiesMetaData.length === 0) {
       return
     }
-    virtualServiceStore.setShowProcessCard(true)
+    VirtualServiceStore.setShowProcessCard(true)
     const policies = []
     try {
       await Promise.all(
         policiesMetaData.map(async (policyMetaData) => {
-          const policy = await policyStore.objectQueryById(
+          const policy = await PolicyStore.objectQueryById(
             policyMetaData.id,
             true
           )
           policies.push(policy)
         })
       )
-      virtualServiceStore.setRelatedObjects(policies)
+      VirtualServiceStore.setRelatedObjects(policies)
     } catch (error) {
       console.log('Error: Getting Policies')
     }
-    virtualServiceStore.setShowProcessCard(false)
+    VirtualServiceStore.setShowProcessCard(false)
   }
 
 
   async handleDecisionLogsFetch() {
-    virtualServiceStore.setShowObjectViewModeSecondary('DECISION_LOGS')
-    const virtualService = virtualServiceStore.getSelectedObject()
-    virtualServiceStore.setShowProcessCard(true)
-    logStore.setSearchQuery(
+    VirtualServiceStore.setShowObjectViewModeSecondary('DECISION_LOGS')
+    const virtualService = VirtualServiceStore.getSelectedObject()
+    VirtualServiceStore.setShowProcessCard(true)
+    LogStore.setSearchQuery(
       { 
         'type': 'PROXIMITY_DECISION_LOG',
         'data.virtualServiceId': virtualService.id 
       })
     try {
-      const virtualServices = await logStore.objectQuery()
-      logStore.setSearchResultsObjectCount(virtualServices.count)
-      logStore.setObjects(virtualServices.data)
+      const virtualServices = await LogStore.objectQuery()
+      LogStore.setSearchResultsObjectCount(virtualServices.count)
+      LogStore.setObjects(virtualServices.data)
     } catch (error) {
       console.log(`Error: Getting logs`)
     }
-    virtualServiceStore.setShowProcessCard(false)
+    VirtualServiceStore.setShowProcessCard(false)
   }
 
 
   async handleAccessLogsFetch() {
-    virtualServiceStore.setShowObjectViewModeSecondary('ACCESS_LOGS')
-    const virtualService = virtualServiceStore.getSelectedObject()
-    virtualServiceStore.setShowProcessCard(true)
-    logStore.setSearchQuery(
+    VirtualServiceStore.setShowObjectViewModeSecondary('ACCESS_LOGS')
+    const virtualService = VirtualServiceStore.getSelectedObject()
+    VirtualServiceStore.setShowProcessCard(true)
+    LogStore.setSearchQuery(
       { 
         'type': 'PROXIMITY_ACCESS_LOG',
         'data.virtualServiceId': virtualService.id 
       })
     try {
-      const virtualServices = await logStore.objectQuery()
-      logStore.setSearchResultsObjectCount(virtualServices.count)
-      logStore.setObjects(virtualServices.data)
+      const virtualServices = await LogStore.objectQuery()
+      LogStore.setSearchResultsObjectCount(virtualServices.count)
+      LogStore.setObjects(virtualServices.data)
     } catch (error) {
       console.log(`Error: Getting logs`)
     }
-    virtualServiceStore.setShowProcessCard(false)
+    VirtualServiceStore.setShowProcessCard(false)
   }
 
 
   async handlePolicyRecommendationsFetch() {
-    virtualServiceStore.setShowObjectViewModeSecondary('RECOMMENDATIONS')
-    virtualServiceStore.setShowProcessCard(true) 
+    VirtualServiceStore.setShowObjectViewModeSecondary('RECOMMENDATIONS')
+    VirtualServiceStore.setShowProcessCard(true) 
     try {
-      const poilcyRecommendations = await policyRecommendationStore.objectQuery()
-      policyRecommendationStore.setSearchResultsObjectCount(poilcyRecommendations.count)
-      policyRecommendationStore.setObjects(poilcyRecommendations.data)
+      const poilcyRecommendations = await PolicyRecommendation.objectQuery()
+      PolicyRecommendation.setSearchResultsObjectCount(poilcyRecommendations.count)
+      PolicyRecommendation.setObjects(poilcyRecommendations.data)
     } catch (error) {
       console.log(`Error: Getting poilcy recommendations`)
     }
-    virtualServiceStore.setShowProcessCard(false)
+    VirtualServiceStore.setShowProcessCard(false)
   }
 
 
   async handleMonitorLogsFetch() {
-    virtualServiceStore.setShowObjectViewModeSecondary('MONITOR')
-    // virtualServiceStore.setShowProcessCard(true)
-    logStore.setSearchPageObjectCount(10000)
-    logStore.setSortQuery({tsCreate: -1})
+    VirtualServiceStore.setShowObjectViewModeSecondary('MONITOR')
+    // VirtualServiceStore.setShowProcessCard(true)
+    LogStore.setSearchPageObjectCount(10000)
+    LogStore.setSortQuery({tsCreate: -1})
     try {
-      const virtualServices = await logStore.objectQuery()
-      logStore.setSearchResultsObjectCount(virtualServices.count)
-      logStore.setObjects(virtualServices.data)
+      const virtualServices = await LogStore.objectQuery()
+      LogStore.setSearchResultsObjectCount(virtualServices.count)
+      LogStore.setObjects(virtualServices.data)
     } catch (error) {
       console.log(`Error: Getting logs`)
     }
-    // virtualServiceStore.setShowProcessCard(false)
+    // VirtualServiceStore.setShowProcessCard(false)
   }
 
 
   _renderTitleDetailsCard() {
-    const virtualService = virtualServiceStore.getSelectedObject()
+    const virtualService = VirtualServiceStore.getSelectedObject()
     return (
-      <MaterialBox
+      <Box
         style={{
           padding: '20px 40px',
           display: 'flex',
           alignItems: 'top'
         }}
       >
-        <MaterialBox
+        <Box
           style={{
             color: 'green',
             marginRight: 20
           }}
         >
           <CheckCircleIcon color='inherit' />
-        </MaterialBox>
-        <MaterialBox>
-          <MaterialBox>{virtualService.name}</MaterialBox>
-          <MaterialBox style={{ marginTop: 10 }}>
+        </Box>
+        <Box>
+          <Box>{virtualService.name}</Box>
+          <Box style={{ marginTop: 10 }}>
             <b>URL:</b> https://proximity.monoxor.com/{virtualService.slug}
-          </MaterialBox>
-        </MaterialBox>
-      </MaterialBox>
+          </Box>
+        </Box>
+      </Box>
     )
   }
 
 
   _renderCreateButton() {
     return (
-      <MaterialButton
+      <Button
         variant='contained'
         color='primary'
         style={{
           marginRight: 20
         }}
         onClick={async () => {
-          virtualServiceStore.setShowProcessCard(true)
+          VirtualServiceStore.setShowProcessCard(true)
           try {
-            await virtualServiceStore.objectCreate()
-            virtualServiceStore.setShowProcessCard(false)
-            virtualServiceStore.setShowSuccessCard(true)
+            await VirtualServiceStore.objectCreate()
+            VirtualServiceStore.setShowProcessCard(false)
+            VirtualServiceStore.setShowSuccessCard(true)
             await new Promise((res) => setTimeout(res, 2000))
-            virtualServiceStore.setShowSuccessCard(false)
-            virtualServiceStore.resetAllFields()
+            VirtualServiceStore.setShowSuccessCard(false)
+            VirtualServiceStore.resetAllFields()
           } catch (error) {
             console.log('Error: Creating Virtual Service', error)
           }
-          virtualServiceStore.setShowProcessCard(false)
+          VirtualServiceStore.setShowProcessCard(false)
         }}
       >
         Create
-      </MaterialButton>
+      </Button>
     )
   }
 
 
   _renderUpdateButton() {
     return (
-      <MaterialButton
+      <Button
         variant='contained'
         color='primary'
         style={{
           marginRight: 20
         }}
         onClick={async () => {
-          virtualServiceStore.setShowProcessCard(true)
+          VirtualServiceStore.setShowProcessCard(true)
           try {
-            const updatedVirtualService = await virtualServiceStore.objectUpdate()
-            virtualServiceStore.setSelectedObject(updatedVirtualService)
-            virtualServiceStore.setShowProcessCard(false)
-            virtualServiceStore.setShowSuccessCard(true)
+            const updatedVirtualService = await VirtualServiceStore.objectUpdate()
+            VirtualServiceStore.setSelectedObject(updatedVirtualService)
+            VirtualServiceStore.setShowProcessCard(false)
+            VirtualServiceStore.setShowSuccessCard(true)
             await new Promise((res) => setTimeout(res, 2000))
-            virtualServiceStore.setShowSuccessCard(false)
+            VirtualServiceStore.setShowSuccessCard(false)
           } catch (error) {
             console.log('Error: Updating Virtual Service', error)
           }
-          virtualServiceStore.setShowProcessCard(false)
+          VirtualServiceStore.setShowProcessCard(false)
         }}
       >
         Update
-      </MaterialButton>
+      </Button>
     )
   }
 
 
   _renderOpButtons() {
-    const viewMode = virtualServiceStore.getShowObjectViewMode()
+    const viewMode = VirtualServiceStore.getShowObjectViewMode()
     return (
-      <MaterialBox style={{ marginTop: 20 }}>
+      <Box style={{ marginTop: 20 }}>
         {viewMode === 'CREATE' ? this._renderCreateButton() : null}
         {viewMode === 'UPDATE' ? this._renderUpdateButton() : null}
-        <MaterialButton color='primary' onClick={() => this.props.onClose()}>
+        <Button color='primary' onClick={() => this.props.onClose()}>
           Back
-        </MaterialButton>
-      </MaterialBox>
+        </Button>
+      </Box>
     )
   }
 
 
   _renderStdObjCard() {
-    const selectedTab = virtualServiceStore.getShowObjectViewModeSecondary()
+    const selectedTab = VirtualServiceStore.getShowObjectViewModeSecondary()
     switch (selectedTab) {
       case 'DETAILS':
         return (
@@ -295,36 +294,36 @@ export class VirtualServiceStdObjCard extends Component {
   
 
   render() {
-    const showSuccess = virtualServiceStore.getShowSuccessCard()
-    const showLoader = virtualServiceStore.getShowProcessCard()
-    const viewMode = virtualServiceStore.getShowObjectViewMode()
-    const selectedTab = virtualServiceStore.getShowObjectViewModeSecondary()
+    const showSuccess = VirtualServiceStore.getShowSuccessCard()
+    const showLoader = VirtualServiceStore.getShowProcessCard()
+    const viewMode = VirtualServiceStore.getShowObjectViewMode()
+    const selectedTab = VirtualServiceStore.getShowObjectViewModeSecondary()
     if (showSuccess) {
       return (
-        <MaterialBox style={{ margin: 50 }}>
+        <Box style={{ margin: 50 }}>
           <PlatformSuccessCard iconColor='green' msg='Success !' />
-        </MaterialBox>
+        </Box>
       )
     }
     if (showLoader) {
       return (
-        <MaterialBox style={{ margin: 50 }}>
+        <Box style={{ margin: 50 }}>
           <PlatformLoaderCard />
-        </MaterialBox>
+        </Box>
       )
     }
     const buttons = [
       {
         title: 'DETAILS',
         click: () => {
-          virtualServiceStore.setShowObjectViewModeSecondary('DETAILS')
+          VirtualServiceStore.setShowObjectViewModeSecondary('DETAILS')
         },
         isActive: selectedTab === 'DETAILS'
       },
       {
         title: 'DEPLOY',
         click: () => {
-          virtualServiceStore.setShowObjectViewModeSecondary('DEPLOY')
+          VirtualServiceStore.setShowObjectViewModeSecondary('DEPLOY')
         },
         isActive: selectedTab === 'DEPLOY'
       },
@@ -345,8 +344,8 @@ export class VirtualServiceStdObjCard extends Component {
       {
         title: 'ACCESS LOGS',
         click: async () => {
-          logStore.setSearchPageObjectCount(10)
-          logStore.setSearchPageNum(0)
+          LogStore.setSearchPageObjectCount(10)
+          LogStore.setSearchPageNum(0)
           await this.handleAccessLogsFetch()
         },
         isActive: selectedTab === 'ACCESS_LOGS'
@@ -354,8 +353,8 @@ export class VirtualServiceStdObjCard extends Component {
       {
         title: 'DECISION LOGS',
         click: async () => {
-          logStore.setSearchPageObjectCount(10)
-          logStore.setSearchPageNum(0)
+          LogStore.setSearchPageObjectCount(10)
+          LogStore.setSearchPageNum(0)
           await this.handleDecisionLogsFetch()
         },
         isActive: selectedTab === 'DECISION_LOGS'
@@ -363,10 +362,10 @@ export class VirtualServiceStdObjCard extends Component {
       {
         title: 'MONITOR',
         click: async () => {
-          const virtualService = virtualServiceStore.getSelectedObject()
-          logStore.setSearchPageObjectCount(10)
-          logStore.setSearchPageNum(0)
-          logStore.setSearchQuery(
+          const virtualService = VirtualServiceStore.getSelectedObject()
+          LogStore.setSearchPageObjectCount(10)
+          LogStore.setSearchPageNum(0)
+          LogStore.setSearchQuery(
             { 
               'type': 'PROXIMITY_DP_HEALTH_LOG',
               'data.virtualServiceId': virtualService.id,
@@ -382,23 +381,23 @@ export class VirtualServiceStdObjCard extends Component {
       {
         title: 'RECOMMENDATIONS',
         click: async () => {
-          policyRecommendationStore.setSearchPageObjectCount(10)
-          policyRecommendationStore.setSearchPageNum(0)
+          PolicyRecommendation.setSearchPageObjectCount(10)
+          PolicyRecommendation.setSearchPageNum(0)
           await this.handlePolicyRecommendationsFetch()
         },
         isActive: selectedTab === 'RECOMMENDATIONS'
       }
     ]
     return (
-      <MaterialBox>
+      <Box>
         {viewMode === 'UPDATE' ? (
           <React.Fragment>
             <NavTabsCard buttons={buttons}/>
-            <MaterialDivider />
+            <Divider />
           </React.Fragment>
         ) : null}
         {this._renderStdObjCard()}
-      </MaterialBox>
+      </Box>
     )
   }
 }

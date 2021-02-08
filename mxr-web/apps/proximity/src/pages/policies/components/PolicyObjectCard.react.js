@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import { MaterialBox } from 'libs/material'
+import Box from '@material-ui/core/Box'
 import PolicyListCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyListCard.react'
 import PolicyStdObjCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyStdObjCard.react'
 
@@ -36,7 +36,7 @@ export class PolicyObjectCard extends Component {
 
 
   render() {
-    return <MaterialBox>{this._renderObjectCard()}</MaterialBox>
+    return <Box>{this._renderObjectCard()}</Box>
   }
 }
 

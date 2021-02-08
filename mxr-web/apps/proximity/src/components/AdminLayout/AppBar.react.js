@@ -10,7 +10,7 @@ import IconButton from '@material-ui/core/IconButton'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import { useAuth0 } from '@auth0/auth0-react'
 import { observer } from 'mobx-react-lite'
-import userStore from '/mxr-web/apps/proximit/src/store/user.store'
+import UserStore from '/mxr-web/apps/proximity/src/stores/User.store'
 
 
 
@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
 const AppBarTop = ({ handleDrawerOpen, open }) => {
   const classes = useStyles()
   const { user, logout } = useAuth0()
-  const org = userStore.getCurOrg()
+  const org = UserStore.getCurOrg()
   return (
     <AppBar
       position='absolute'

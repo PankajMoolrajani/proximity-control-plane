@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { Box, Button } from 'libs/material'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 

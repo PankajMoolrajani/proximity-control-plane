@@ -1,16 +1,14 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import axios from 'libs/axios/axios'
+import { axiosInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
 import JSONPretty from 'react-json-pretty'
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt'
-import {
-  MaterialBox,
-  MaterialAccordion,
-  MaterialAccordionSummary,
-  MaterialAccordionDetails
-} from 'libs/material'
+import Box from '@material-ui/core/Box'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { policyStore } from 'apps/proximity/stores/proximity.store'
+import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
 import 'react-json-pretty/themes/monikai.css'
 
 
@@ -23,11 +21,11 @@ export class PolicyImpactAnalysisLogCard extends Component {
 
 
   handleEvaluate = async () => {
-    const policy = policyStore.getFormFields()
+    const policy = PolicyStore.getFormFields()
     if (!policy.rules.trim()) {
       return
     }
-    const response = await axios.post(
+    const response = await axiosInstance.post(
       'opa/eval',
       {
         rules: policy.rules,
@@ -68,13 +66,13 @@ export class PolicyImpactAnalysisLogCard extends Component {
   render() {
     const log = this.props.log
     return (
-      <MaterialAccordion
+      <Accordion
         expanded={this.state.expanded}
         onChange={() =>
           this.setState((prevState) => ({ expanded: !prevState.expanded }))
         }
       >
-        <MaterialAccordionSummary
+        <AccordionSummary
           style={{
             display: 'flex',
             padding: '0 5px',
@@ -85,20 +83,20 @@ export class PolicyImpactAnalysisLogCard extends Component {
             size: 'small'
           }}
         >
-          <MaterialBox style={{ flex: 6, alignSelf: 'center', marginLeft: 10 }}>
+          <Box style={{ flex: 6, alignSelf: 'center', marginLeft: 10 }}>
             Request-{this.props.count}
-          </MaterialBox>
-          <MaterialBox style={{ flex: 2, alignSelf: 'center' }}>
+          </Box>
+          <Box style={{ flex: 2, alignSelf: 'center' }}>
             {log.data.decision.allow ? (
               <span style={{ color: '#6FCF97' }}>ALLOW</span>
             ) : (
               <span style={{ color: '#E57372' }}>DENY</span>
             )}
-          </MaterialBox>
-          <MaterialBox style={{ flex: 1, alignSelf: 'center' }}>
+          </Box>
+          <Box style={{ flex: 1, alignSelf: 'center' }}>
             <ArrowRightAltIcon />
-          </MaterialBox>
-          <MaterialBox style={{ flex: 2, alignSelf: 'center' }}>
+          </Box>
+          <Box style={{ flex: 2, alignSelf: 'center' }}>
             {this.state.isLoading ? (
               <span style={{ color: 'var(--primaryColor)' }}>Checking...</span>
             ) : this.state.decision ? (
@@ -106,14 +104,14 @@ export class PolicyImpactAnalysisLogCard extends Component {
             ) : (
               <span style={{ color: '#E57372' }}>DENY</span>
             )}
-          </MaterialBox>
-        </MaterialAccordionSummary>
-        <MaterialAccordionDetails>
-          <MaterialBox style={{ width: '100%', overflow: 'auto' }}>
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Box style={{ width: '100%', overflow: 'auto' }}>
             <JSONPretty data={log.data}></JSONPretty>
-          </MaterialBox>
-        </MaterialAccordionDetails>
-      </MaterialAccordion>
+          </Box>
+        </AccordionDetails>
+      </Accordion>
     )
   }
 }

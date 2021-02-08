@@ -3,12 +3,11 @@ import { observer } from 'mobx-react'
 import moment from 'moment'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import { policyStore } from 'apps/proximity/stores/proximity.store'
-
+import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
 
 export class PolicyRevisionsCard extends Component {
   render() {
-    const policy = policyStore.getSelectedObject()
+    const policy = PolicyStore.getSelectedObject()
     return (
       <DataTable
         className='p-datatable-striped p-datatable-hovered'
@@ -20,14 +19,14 @@ export class PolicyRevisionsCard extends Component {
         onSelectionChange={(e) => {
           console.log(JSON.parse(JSON.stringify(e.value)))
           // const policy = e.value
-          // policyStore.setSelectedObject(policy)
-          // policyStore.setFormFields({
+          // PolicyStore.setSelectedObject(policy)
+          // PolicyStore.setFormFields({
           //   id: policy.id,
           //   name: policy.currentRevision.policy.name,
           //   type: policy.currentRevision.policy.type,
           //   rules: policy.currentRevision.policy.rules
           // })
-          // policyStore.setShowObjectViewMode('UPDATE')
+          // PolicyStore.setShowObjectViewMode('UPDATE')
         }}
         removableSort
         paginator

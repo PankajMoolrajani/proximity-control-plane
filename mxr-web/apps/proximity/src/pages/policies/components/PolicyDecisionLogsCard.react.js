@@ -4,8 +4,8 @@ import moment from 'moment'
 import JSONPretty from 'react-json-pretty'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import { MaterialBox, MaterialGrid } from 'libs/material'
-import { logStore } from 'apps/platform/stores/platform.store'
+import Box from '@material-ui/core/Box'
+import Grid from '@material-ui/core/Grid' 
 
 
 export class PolicyDecisionLogsCard extends Component {
@@ -16,30 +16,30 @@ export class PolicyDecisionLogsCard extends Component {
 
   _renderLogTemplate = (log) => {
     return (
-      <MaterialBox>
-        <MaterialGrid container spacing={1}>
-          <MaterialGrid item sm={6}>
+      <Box>
+        <Grid container spacing={1}>
+          <Grid item sm={6}>
             <JSONPretty
               className='hideScroll'
               style={{ maxHeight: 200, overflowY: 'auto' }}
               data={log.data}
             ></JSONPretty>
-          </MaterialGrid>
-          <MaterialGrid item sm={6}>
+          </Grid>
+          <Grid item sm={6}>
             <JSONPretty data={log.data.decision}></JSONPretty>
-          </MaterialGrid>
-        </MaterialGrid>
-      </MaterialBox>
+          </Grid>
+        </Grid>
+      </Box>
     )
   }
   
 
   render() {
     const searchQuery = logStore.getSortQuery()
-    const logs = logStore.getObjects()
+    const logs = ''
     if (!logs || logs.length === 0) {
       return (
-        <MaterialBox style={{ textAlign: 'center' }}>No Content</MaterialBox>
+        <Box style={{ textAlign: 'center' }}>No Content</Box>
       )
     }
     let searchQueryArray = []
@@ -54,9 +54,7 @@ export class PolicyDecisionLogsCard extends Component {
         className='p-datatable-striped p-datatable-hovered'
         value={logs}
         selectionMode='single'
-        dataKey={
-          logStore.getSelectedObject() ? logStore.getSelectedObject().id : ''
-        }
+        dataKey={{test: "1"}}
         expandedRows={this.state.expandedRows}
         onRowToggle={(e) => this.setState({ expandedRows: e.data })}
         rowExpansionTemplate={this._renderLogTemplate}

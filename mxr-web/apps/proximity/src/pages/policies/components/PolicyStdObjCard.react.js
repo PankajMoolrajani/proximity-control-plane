@@ -3,12 +3,12 @@ import { observer } from 'mobx-react'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 import Divider from '@material-ui/core/Divider'
-import PlatformSuccessCard from '/mxr-web/apps/platform/components/PlatformSuccessCard.react'
-import PlatformLoaderCard from '/mxr-web/apps/platform/components/PlatformLoaderCard.react'
-import NavTabsCard from '/mxr-web/apps/proximity/components/PageLayout/NavTabsCard'
-import PolicyDetailsCard from '/mxr-web/apps/proximity/policies/components/PolicyDetailsCard.react'
-import PolicyRevisionsCard from '/mxr-web/apps/proximity/policies/components/PolicyRevisionsCard.react'
-import PolicyDecisionLogsCard from '/mxr-web/apps/proximity/policies/components/PolicyDecisionLogsCard.react'
+import PlatformSuccessCard from '/mxr-web/apps/proximity/src/components/platform/PlatformSuccessCard.react'
+import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
+import NavTabsCard from '/mxr-web/apps/proximity/src/components/PageLayout/NavTabsCard'
+import PolicyDetailsCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyDetailsCard.react'
+import PolicyRevisionsCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyRevisionsCard.react'
+import PolicyDecisionLogsCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyDecisionLogsCard.react'
 
 export class PolicyStdObjCard extends Component {
   async handleDecisionLogsFetch() {
@@ -127,6 +127,7 @@ export class PolicyStdObjCard extends Component {
     if (showSuccess) {
       return (
         <Box style={{ margin: 50 }}>
+          Success
           <PlatformSuccessCard iconColor='green' msg='Success !' />
         </Box>
       )
@@ -134,7 +135,7 @@ export class PolicyStdObjCard extends Component {
     if (showLoader) {
       return (
         <Box style={{ margin: 50 }}>
-          <PlatformLoaderCard />
+          Loading...
         </Box>
       )
     }

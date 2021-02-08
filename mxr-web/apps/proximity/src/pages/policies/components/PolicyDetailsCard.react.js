@@ -1,31 +1,29 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { withStyles } from '@material-ui/styles'
-import axios from 'libs/axios/axios'
+import { axiosInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
 import JSONPretty from 'react-json-pretty'
-import {
-  MaterialBox,
-  MaterialTextField,
-  MaterialFormControl,
-  MaterialInputLabel,
-  MaterialSelect,
-  MaterialMenuItem,
-  MaterialButton,
-  MaterialGrid,
-  MaterialDivider,
-  MaterialButtonGroup,
-  MaterialSwitch,
-  MaterialInputAdornment,
-  MaterialIconButton
-} from 'libs/material'
+import Box from '@material-ui/core/Box'
+import TextField from '@material-ui/core/TextField'
+import FormControl from '@material-ui/core/FormControl'
+import InputLabel from '@material-ui/core/InputLabel'
+import Select from '@material-ui/core/Select'
+import MenuItem from '@material-ui/core/MenuItem'
+import Button from '@material-ui/core/Button'
+import Grid from '@material-ui/core/Grid'
+import Divider from '@material-ui/core/Divider'
+import ButtonGroup from '@material-ui/core/ButtonGroup'
+import Switch from '@material-ui/core/Switch'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import IconButton from '@material-ui/core/IconButton'
 import VpnKeyIcon from '@material-ui/icons/VpnKey'
 import { Controlled as CodeMirror } from 'react-codemirror2'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
-import PolicyImpactAnalysisCard from 'apps/proximity/policies/components/PolicyImpactAnalysisCard.react'
-import {
-  policyStore,
-  virtualServiceStore
-} from 'apps/proximity/stores/proximity.store'
+import PolicyImpactAnalysisCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyImpactAnalysisCard.react'
+// import {
+//   policyStore,
+//   virtualServiceStore
+// } from 'apps/proximity/stores/proximity.store'
 import 'codemirror-rego/mode'
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/addon/comment/comment'
@@ -69,7 +67,7 @@ export class PolicyDetailsCard extends Component {
 
   handleEvaluate = async () => {
     const policy = policyStore.getFormFields()
-    const response = await axios.post(
+    const response = await axiosinstance.post(
       'opa/eval',
       {
         rules: policy.rules,
@@ -100,18 +98,18 @@ export class PolicyDetailsCard extends Component {
   _renderIOCard() {
     return (
       <React.Fragment>
-        <MaterialBox>
-          <MaterialBox
+        <Box>
+          <Box
             style={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center'
             }}
           >
-            <MaterialBox className={this.props.classes.codeMirrorTitle}>
+            <Box className={this.props.classes.codeMirrorTitle}>
               Input
-            </MaterialBox>
-            <MaterialButton
+            </Box>
+            <Button
               variant='contained'
               color='primary'
               startIcon={<PlayArrowIcon />}
@@ -119,8 +117,8 @@ export class PolicyDetailsCard extends Component {
               onClick={this.handleEvaluate}
             >
               Evaluate
-            </MaterialButton>
-          </MaterialBox>
+            </Button>
+          </Box>
           <CodeMirror
             className={this.props.classes.codeMirrorHalf}
             value={this.state.opaInput}
@@ -135,17 +133,17 @@ export class PolicyDetailsCard extends Component {
             }}
             onChange={(editor, value) => {}}
           />
-        </MaterialBox>
-        <MaterialBox>
-          <MaterialBox className={this.props.classes.codeMirrorTitle}>
+        </Box>
+        <Box>
+          <Box className={this.props.classes.codeMirrorTitle}>
             Output
-          </MaterialBox>
+          </Box>
           <JSONPretty
             className='hideScroll'
             style={{ maxHeight: 200, overflowY: 'auto' }}
             data={this.state.opaOutput}
           ></JSONPretty>
-        </MaterialBox>
+        </Box>
       </React.Fragment>
     )
   }
@@ -153,9 +151,9 @@ export class PolicyDetailsCard extends Component {
 
   _renderTabs() {
     return (
-      <MaterialBox>
-        <MaterialButtonGroup size='medium' variant='text'>
-          <MaterialButton
+      <Box>
+        <ButtonGroup size='medium' variant='text'>
+          <Button
             style={{
               fontWeight: this.state.showEvaluateCard ? 700 : 400,
               padding: '6px 15px'
@@ -168,8 +166,8 @@ export class PolicyDetailsCard extends Component {
             }}
           >
             Evaluate
-          </MaterialButton>
-          <MaterialButton
+          </Button>
+          <Button
             style={{
               fontWeight: this.state.showImpactAnalysisCard ? 700 : 400,
               padding: '6px 15px'
@@ -186,9 +184,9 @@ export class PolicyDetailsCard extends Component {
             }}
           >
             Impact Analytsis
-          </MaterialButton>
-        </MaterialButtonGroup>
-      </MaterialBox>
+          </Button>
+        </ButtonGroup>
+      </Box>
     )
   }
   
@@ -196,13 +194,13 @@ export class PolicyDetailsCard extends Component {
   _renderPlayGround = () => {
     const formFields = policyStore.getFormFields()
     if (formFields.type !== 'AUTHZ') {
-      return <MaterialBox></MaterialBox>
+      return <Box></Box>
     }
     return (
-      <MaterialBox>
-        <MaterialGrid container>
-          <MaterialGrid item xs={6}>
-            <MaterialBox>
+      <Box>
+        <Grid container>
+          <Grid item xs={6}>
+            <Box>
               <CodeMirror
                 className={this.props.classes.codeMirrorFull}
                 value={formFields.rules}
@@ -222,9 +220,9 @@ export class PolicyDetailsCard extends Component {
                 onChange={(editor, value) => {}}
                 style={{ height: 600 }}
               />
-            </MaterialBox>
-          </MaterialGrid>
-          <MaterialGrid
+            </Box>
+          </Grid>
+          <Grid
             style={{
               borderLeft: '1px solid gray'
             }}
@@ -232,15 +230,15 @@ export class PolicyDetailsCard extends Component {
             xs={6}
           >
             {this._renderTabs()}
-            <MaterialDivider />
+            <Divider />
             {this.state.showEvaluateCard ? this._renderIOCard() : null}
             {this.state.showImpactAnalysisCard ? (
               <PolicyImpactAnalysisCard />
             ) : null}
-          </MaterialGrid>
-        </MaterialGrid>
-        <MaterialDivider />
-      </MaterialBox>
+          </Grid>
+        </Grid>
+        <Divider />
+      </Box>
     )
   }
 
@@ -248,20 +246,20 @@ export class PolicyDetailsCard extends Component {
   _renderWAFOps = () => {
     const formFields = policyStore.getFormFields()
     if (formFields.type !== 'WAF') {
-      return <MaterialBox></MaterialBox>
+      return <Box></Box>
     }
 
     return (
-      <MaterialBox>
-        <MaterialBox
+      <Box>
+        <Box
           style={{
             fontSize: 24,
             marginTop: 20
           }}
         >
           Protections
-        </MaterialBox>
-        <MaterialBox
+        </Box>
+        <Box
           style={{
             fontSize: 15,
             marginTop: 5,
@@ -269,15 +267,15 @@ export class PolicyDetailsCard extends Component {
           }}
         >
           All protections enabled by default.
-        </MaterialBox>
-        <MaterialBox
+        </Box>
+        <Box
           style={{
             display: 'flex',
             justifyContent: 'left',
             alignItems: 'center'
           }}
         >
-          <MaterialSwitch
+          <Switch
             color='primary'
             checked={
               formFields.rules &&
@@ -296,16 +294,16 @@ export class PolicyDetailsCard extends Component {
               })
             }}
           />
-          <MaterialBox>SQL Injection</MaterialBox>
-        </MaterialBox>
-        <MaterialBox
+          <Box>SQL Injection</Box>
+        </Box>
+        <Box
           style={{
             display: 'flex',
             justifyContent: 'left',
             alignItems: 'center'
           }}
         >
-          <MaterialSwitch
+          <Switch
             color='primary'
             checked={
               formFields.rules &&
@@ -324,16 +322,16 @@ export class PolicyDetailsCard extends Component {
               })
             }}
           />
-          <MaterialBox>Local file inclusion</MaterialBox>
-        </MaterialBox>
-        <MaterialBox
+          <Box>Local file inclusion</Box>
+        </Box>
+        <Box
           style={{
             display: 'flex',
             justifyContent: 'left',
             alignItems: 'center'
           }}
         >
-          <MaterialSwitch
+          <Switch
             color='primary'
             checked={
               formFields.rules &&
@@ -352,16 +350,16 @@ export class PolicyDetailsCard extends Component {
               })
             }}
           />
-          <MaterialBox>Shell Injection</MaterialBox>
-        </MaterialBox>
-        <MaterialBox
+          <Box>Shell Injection</Box>
+        </Box>
+        <Box
           style={{
             display: 'flex',
             justifyContent: 'left',
             alignItems: 'center'
           }}
         >
-          <MaterialSwitch
+          <Switch
             color='primary'
             checked={
               formFields.rules &&
@@ -380,9 +378,9 @@ export class PolicyDetailsCard extends Component {
               })
             }}
           />
-          <MaterialBox>Shell Shock</MaterialBox>
-        </MaterialBox>
-      </MaterialBox>
+          <Box>Shell Shock</Box>
+        </Box>
+      </Box>
     )
   }
 
@@ -390,19 +388,19 @@ export class PolicyDetailsCard extends Component {
   _renderDynamicDefence = () => {
     const formFields = policyStore.getFormFields()
     if (formFields.type !== 'DYNAMIC') {
-      return <MaterialBox></MaterialBox>
+      return <Box></Box>
     }
 
     return (
-      <MaterialBox>
-        <MaterialBox
+      <Box>
+        <Box
           style={{
             display: 'flex',
             justifyContent: 'left',
             alignItems: 'center'
           }}
         >
-          <MaterialSwitch
+          <Switch
             color='primary'
             checked={
               formFields.rules &&
@@ -421,16 +419,16 @@ export class PolicyDetailsCard extends Component {
               })
             }}
           />
-          <MaterialBox>Dynamic Defence</MaterialBox>
-        </MaterialBox>
-      </MaterialBox>
+          <Box>Dynamic Defence</Box>
+        </Box>
+      </Box>
     )
   }
 
 
   generateKey = async () => {
     const formFields = policyStore.getFormFields()
-    const response = await axios.get('/crypto/apikey')
+    const response = await axiosinstance.get('/crypto/apikey')
     policyStore.setFormFields({
       ...formFields,
       rules: JSON.stringify({
@@ -448,15 +446,15 @@ export class PolicyDetailsCard extends Component {
     const formFields = policyStore.getFormFields()
     const type = JSON.parse(formFields.rules).type
     if (!type) {
-      return <MaterialBox></MaterialBox>
+      return <Box></Box>
     }
 
     switch (type) {
       case 'BASIC':
         return (
-          <MaterialBox>
-            <MaterialBox>
-              <MaterialTextField
+          <Box>
+            <Box>
+              <TextField
                 fullWidth
                 label='User Name'
                 variant='outlined'
@@ -482,13 +480,13 @@ export class PolicyDetailsCard extends Component {
                   })
                 }}
               />
-            </MaterialBox>
-            <MaterialBox
+            </Box>
+            <Box
               style={{
                 marginTop: 20
               }}
             >
-              <MaterialTextField
+              <TextField
                 fullWidth
                 label='Password'
                 variant='outlined'
@@ -515,15 +513,15 @@ export class PolicyDetailsCard extends Component {
                   })
                 }}
               />
-            </MaterialBox>
-          </MaterialBox>
+            </Box>
+          </Box>
         )
         break
       case 'API_KEY':
         return (
-          <MaterialBox>
-            <MaterialBox>
-              <MaterialTextField
+          <Box>
+            <Box>
+              <TextField
                 fullWidth
                 label='Api Key'
                 variant='outlined'
@@ -539,25 +537,25 @@ export class PolicyDetailsCard extends Component {
                 onChange={(event) => {}}
                 InputProps={{
                   endAdornment: (
-                    <MaterialIconButton
+                    <IconButton
                       aria-label='generate api key'
                       onClick={this.generateKey}
                       onMouseDown={this.generateKey}
                     >
                       <VpnKeyIcon />
-                    </MaterialIconButton>
+                    </IconButton>
                   )
                 }}
               />
-            </MaterialBox>
-          </MaterialBox>
+            </Box>
+          </Box>
         )
         break
       case 'OAUTH2':
-        return <MaterialBox> </MaterialBox>
+        return <Box> </Box>
         break
       default:
-        return <MaterialBox>Please select Auth type</MaterialBox>
+        return <Box>Please select Auth type</Box>
     }
   }
 
@@ -565,23 +563,23 @@ export class PolicyDetailsCard extends Component {
   _renderAuthN = () => {
     const formFields = policyStore.getFormFields()
     if (formFields.type !== 'AUTHN') {
-      return <MaterialBox></MaterialBox>
+      return <Box></Box>
     }
     return (
-      <MaterialBox>
-        <MaterialBox
+      <Box>
+        <Box
           style={{
             width: '100%',
             marginTop: 30,
             textAlign: 'left'
           }}
         >
-          <MaterialBox style={{ maxWidth: 700, marginTop: 20 }}>
-            <MaterialFormControl fullWidth variant='outlined' size='small'>
-              <MaterialInputLabel id='auth-lable-id'>
+          <Box style={{ maxWidth: 700, marginTop: 20 }}>
+            <FormControl fullWidth variant='outlined' size='small'>
+              <InputLabel id='auth-lable-id'>
                 Auth Type
-              </MaterialInputLabel>
-              <MaterialSelect
+              </InputLabel>
+              <Select
                 ref={null}
                 labelId='auth-lable-id'
                 label='Auth Type'
@@ -628,17 +626,17 @@ export class PolicyDetailsCard extends Component {
                   })
                 }}
               >
-                <MaterialMenuItem value='BASIC'>BASIC</MaterialMenuItem>
-                <MaterialMenuItem value='API_KEY'>API KEY</MaterialMenuItem>
-                <MaterialMenuItem value='OAUTH2'>OAUTH2</MaterialMenuItem>
-              </MaterialSelect>
-            </MaterialFormControl>
-          </MaterialBox>
-          <MaterialBox style={{ maxWidth: 700, marginTop: 20 }}>
+                <MenuItem value='BASIC'>BASIC</MenuItem>
+                <MenuItem value='API_KEY'>API KEY</MenuItem>
+                <MenuItem value='OAUTH2'>OAUTH2</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+          <Box style={{ maxWidth: 700, marginTop: 20 }}>
             {this._renderAuthNConfig()}
-          </MaterialBox>
-        </MaterialBox>
-      </MaterialBox>
+          </Box>
+        </Box>
+      </Box>
     )
   }
 
@@ -657,14 +655,14 @@ export class PolicyDetailsCard extends Component {
     }
 
     return (
-      <MaterialBox
+      <Box
         style={{
           padding: 24,
           marginBottom: 40
         }}
       >
-        <MaterialBox style={{ maxWidth: 700 }}>
-          <MaterialTextField
+        <Box style={{ maxWidth: 700 }}>
+          <TextField
             fullWidth
             label='Name'
             variant='outlined'
@@ -680,9 +678,9 @@ export class PolicyDetailsCard extends Component {
               })
             }}
           />
-        </MaterialBox>
-        <MaterialBox style={{ maxWidth: 700, marginTop: 20 }}>
-          <MaterialTextField
+        </Box>
+        <Box style={{ maxWidth: 700, marginTop: 20 }}>
+          <TextField
             fullWidth
             label='Display name'
             variant='outlined'
@@ -695,11 +693,11 @@ export class PolicyDetailsCard extends Component {
               })
             }}
           />
-        </MaterialBox>
-        <MaterialBox style={{ maxWidth: 700, marginTop: 20 }}>
-          <MaterialFormControl fullWidth variant='outlined' size='small'>
-            <MaterialInputLabel id='policy-lable-id'>Type</MaterialInputLabel>
-            <MaterialSelect
+        </Box>
+        <Box style={{ maxWidth: 700, marginTop: 20 }}>
+          <FormControl fullWidth variant='outlined' size='small'>
+            <InputLabel id='policy-lable-id'>Type</InputLabel>
+            <Select
               ref={null}
               labelId='policy-lable-id'
               label='Type'
@@ -741,20 +739,20 @@ export class PolicyDetailsCard extends Component {
                 })
               }}
             >
-              <MaterialMenuItem value='AUTHN'>AUTHN</MaterialMenuItem>
-              <MaterialMenuItem value='AUTHZ'>AUTHZ</MaterialMenuItem>
-              <MaterialMenuItem value='WAF'>WAF</MaterialMenuItem>
-              <MaterialMenuItem value='DYNAMIC'>DYNAMIC</MaterialMenuItem>
-            </MaterialSelect>
-          </MaterialFormControl>
-        </MaterialBox>
+              <MenuItem value='AUTHN'>AUTHN</MenuItem>
+              <MenuItem value='AUTHZ'>AUTHZ</MenuItem>
+              <MenuItem value='WAF'>WAF</MenuItem>
+              <MenuItem value='DYNAMIC'>DYNAMIC</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
         {this.props.actionButtons}
-        <MaterialDivider style={{ marginTop: 20 }} />
+        <Divider style={{ marginTop: 20 }} />
         {this._renderAuthN()}
         {this._renderPlayGround()}
         {this._renderWAFOps()}
         {this._renderDynamicDefence()}
-      </MaterialBox>
+      </Box>
     )
   }
 }

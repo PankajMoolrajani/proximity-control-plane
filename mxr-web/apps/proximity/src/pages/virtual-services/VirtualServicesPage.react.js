@@ -1,40 +1,42 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import { MaterialBox, MaterialButton, MaterialTypography } from 'libs/material'
+import Box from '@material-ui/core/Box'
+import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography' 
 import AddIcon from '@material-ui/icons/Add'
 import CodeIcon from '@material-ui/icons/Code'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import ListIcon from '@material-ui/icons/List'
-import PageLayout from 'apps/proximity/components/PageLayout'
-import VirtualServiceObjectCard from 'apps/proximity/virtual-services/components/VirtualServiceObjectCard.react'
-import {
-  virtualServiceStore,
-  policyStore
-} from 'apps/proximity/stores/proximity.store'
-import { logStore } from 'apps/platform/stores/platform.store'
+import PageLayout from '/mxr-web/apps/proximity/src/components/PageLayout'
+import VirtualServiceObjectCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceObjectCard.react'
+// import {
+//   virtualServiceStore,
+//   policyStore
+// } from 'apps/proximity/stores/proximity.store'
+// import { logStore } from 'apps/platform/stores/platform.store'
 
 
 class VirtualServicePage extends Component {
   componentWillUnmount() {
-    virtualServiceStore.resetAllFields()
-    policyStore.resetAllFields()
-    logStore.resetAllFields()
+    // virtualServiceStore.resetAllFields()
+    // policyStore.resetAllFields()
+    // logStore.resetAllFields()
   }
 
 
   _renderTitle() {
     return (
-      <MaterialBox
+      <Box
         style={{
           display: 'flex',
           alignItems: 'center'
         }}
       >
-        <MaterialBox style={{ marginRight: 25 }}>
+        <Box style={{ marginRight: 25 }}>
           <CodeIcon />
-        </MaterialBox>
-        <MaterialTypography variant='h5'>Virtual Services</MaterialTypography>
-      </MaterialBox>
+        </Box>
+        <Typography variant='h5'>Virtual Services</Typography>
+      </Box>
     )
   }
 
@@ -42,29 +44,29 @@ class VirtualServicePage extends Component {
   _renderSelectedObjectTitle() {
     const selectedObject = virtualServiceStore.getSelectedObject()
     return (
-      <MaterialBox
+      <Box
         style={{
           display: 'flex',
           alignItems: 'top'
         }}
       >
-        <MaterialBox
+        <Box
           style={{
             color: 'green',
             marginRight: 20
           }}
         >
           <CheckCircleIcon color='inherit' />
-        </MaterialBox>
-        <MaterialBox>
-          <MaterialBox style={{ fontSize:20 }}>
+        </Box>
+        <Box>
+          <Box style={{ fontSize:20 }}>
             {selectedObject.currentRevision.virtualService.name}
-          </MaterialBox>
-          <MaterialBox style={{ marginTop: 5, fontSize:14 }}>
+          </Box>
+          <Box style={{ marginTop: 5, fontSize:14 }}>
             <b>REVISION:</b> {selectedObject.currentRevision.name}
-          </MaterialBox>
-        </MaterialBox>
-      </MaterialBox>
+          </Box>
+        </Box>
+      </Box>
     )
   }
 
@@ -72,11 +74,11 @@ class VirtualServicePage extends Component {
   _renderObjectHeader() {
     const viewMode = virtualServiceStore.getShowObjectViewMode()
     return (
-      <MaterialBox>
+      <Box>
         {viewMode === 'UPDATE'
           ? this._renderSelectedObjectTitle()
           : this._renderTitle()}
-      </MaterialBox>
+      </Box>
     )
   }
 
@@ -84,9 +86,9 @@ class VirtualServicePage extends Component {
   _renderButtons() {
     const viewMode = virtualServiceStore.getShowObjectViewMode()
     return (
-      <MaterialBox>
+      <Box>
         {viewMode !== 'CREATE' ? (
-          <MaterialButton
+          <Button
             color='primary'
             size='small'
             startIcon={<AddIcon />}
@@ -104,11 +106,11 @@ class VirtualServicePage extends Component {
             }}
           >
             Create
-          </MaterialButton>
+          </Button>
         ) : null}
 
         {viewMode !== 'LIST' ? (
-          <MaterialButton
+          <Button
             color='primary'
             size='small'
             startIcon={<ListIcon />}
@@ -119,9 +121,9 @@ class VirtualServicePage extends Component {
             }}
           >
             Show All
-          </MaterialButton>
+          </Button>
         ) : null}
-      </MaterialBox>
+      </Box>
     )
   }
 

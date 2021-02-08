@@ -3,28 +3,22 @@ import { observer } from 'mobx-react'
 import moment from 'moment'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import {
-  MaterialBox,
-  MaterialButton,
-  MaterialDivider,
-  MaterialTypography,
-  MaterialTextField,
-  MaterialFormControl,
-  MaterialInputLabel,
-  MaterialSelect,
-  MaterialMenuItem
-} from 'libs/material'
+import Box from '@material-ui/core/Box'
+import Button from '@material-ui/core/Button'
+import Divider from '@material-ui/core/Divider'
+import Typography from '@material-ui/core/Typography'
+import TextField from '@material-ui/core/TextField'
+import FormControl from '@material-ui/core/FormControl'
+import InputLabel from '@material-ui/core/InputLabel'
+import Select from '@material-ui/core/Select'
+import MenuItem from '@material-ui/core/MenuItem'
 import { Autocomplete } from '@material-ui/lab'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import AddIcon from '@material-ui/icons/Add'
-import policyIcon from 'assets/icons/policyIcon.png'
-import PlatfromPopUpCard from 'apps/platform/components/PlatfromPopUpCard.react'
-import VirtualServiceAddPolicyDialog from 'apps/proximity/virtual-services/components/VirtualServiceAddPolicyDialog.react'
-import {
-  virtualServiceStore,
-  policyStore
-} from 'apps/proximity/stores/proximity.store'
-
+import PlatfromPopUpCard from '/mxr-web/apps/proximity/src/components/platform/PlatfromPopUpCard.react'
+import VirtualServiceAddPolicyDialog from '/mxr-web/apps/proximity/virtual-services/components/VirtualServiceAddPolicyDialog.react'
+import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
+import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
 
 export class VirtualServicePoliciesCard extends Component {
   state = {
@@ -40,7 +34,7 @@ export class VirtualServicePoliciesCard extends Component {
 
 
   _renderAddExistingPolicyDialogCard() {
-    const policyDraftObject = policyStore.getDraftObject()
+    const policyDraftObject = PolicyStore.getDraftObject()
 
     return (
       <PlatfromPopUpCard
@@ -48,20 +42,20 @@ export class VirtualServicePoliciesCard extends Component {
         onClose={() => this.handleShowAddPolicyPopup(false)}
         title='Add Existing Policy'
       >
-        <MaterialBox
+        <Box
           style={{
             display: 'flex',
             justifyContent: 'center',
             width: '100%'
           }}
         >
-          <MaterialBox
+          <Box
             style={{
               width: screen.width > 600 ? 600 : '100%',
               marginTop: 20
             }}
           >
-            <MaterialBox>
+            <Box>
               <Autocomplete
                 fullWidth
                 size='small'
@@ -70,31 +64,31 @@ export class VirtualServicePoliciesCard extends Component {
                 }
                 getOptionLabel={(option) => option.name}
                 options={
-                  policyStore.getObjects() ? policyStore.getObjects() : []
+                  PolicyStore.getObjects() ? PolicyStore.getObjects() : []
                 }
                 inputValue={
-                  policyStore.getSearchText()
-                    ? policyStore.getSearchText()
-                    : policyStore.getDraftObject()
-                    ? policyStore.getDraftObject()['name']
+                  PolicyStore.getSearchText()
+                    ? PolicyStore.getSearchText()
+                    : PolicyStore.getDraftObject()
+                    ? PolicyStore.getDraftObject()['name']
                     : ''
                 }
-                loading={policyStore.getShowProcessCard()}
+                loading={PolicyStore.getShowProcessCard()}
                 onChange={async (event, option) => {
                   if (!option) {
                     return
                   }
-                  let formFields = policyStore.getFormFields()
+                  let formFields = PolicyStore.getFormFields()
                   if (!formFields) {
                     formFields = {}
                   }
-                  policyStore.setShowProcessCard(true)
-                  const policy = await policyStore.objectQueryById(
+                  PolicyStore.setShowProcessCard(true)
+                  const policy = await PolicyStore.objectQueryById(
                     option.id,
                     true
                   )
-                  policyStore.setShowProcessCard(false)
-                  policyStore.setDraftObject({
+                  PolicyStore.setShowProcessCard(false)
+                  PolicyStore.setDraftObject({
                     ...policyDraftObject,
                     id: policy.id,
                     name: policy.name,
@@ -103,17 +97,17 @@ export class VirtualServicePoliciesCard extends Component {
                 }}
                 onInputChange={async (e) => {
                   if (!e.target.value) {
-                    policyStore.resetAllFields()
+                    PolicyStore.resetAllFields()
                     return
                   }
-                  policyStore.setSearchText(e.target.value)
-                  policyStore.setShowProcessCard(true)
-                  const policies = await policyStore.objectQuery()
-                  policyStore.setObjects(policies.data)
-                  policyStore.setShowProcessCard(false)
+                  PolicyStore.setSearchText(e.target.value)
+                  PolicyStore.setShowProcessCard(true)
+                  const policies = await PolicyStore.objectQuery()
+                  PolicyStore.setObjects(policies.data)
+                  PolicyStore.setShowProcessCard(false)
                 }}
                 renderInput={(params) => (
-                  <MaterialTextField
+                  <TextField
                     {...params}
                     variant='outlined'
                     label='Seach Policy'
@@ -121,7 +115,7 @@ export class VirtualServicePoliciesCard extends Component {
                       ...params.InputProps,
                       endAdornment: (
                         <React.Fragment>
-                          {policyStore.getShowProcessCard() ? (
+                          {PolicyStore.getShowProcessCard() ? (
                             <CircularProgress color='inherit' size={20} />
                           ) : null}
                           {params.InputProps.endAdornment}
@@ -131,19 +125,19 @@ export class VirtualServicePoliciesCard extends Component {
                   />
                 )}
               />
-            </MaterialBox>
+            </Box>
             {policyDraftObject ? (
               <React.Fragment>
-                <MaterialBox style={{ marginTop: 20 }}>
-                  <MaterialFormControl
+                <Box style={{ marginTop: 20 }}>
+                  <FormControl
                     fullWidth
                     variant='outlined'
                     size='small'
                   >
-                    <MaterialInputLabel id='policy-revision-lable-id'>
+                    <InputLabel id='policy-revision-lable-id'>
                       Revision Name
-                    </MaterialInputLabel>
-                    <MaterialSelect
+                    </InputLabel>
+                    <Select
                       ref={null}
                       labelId='policy-revision-lable-id'
                       label='Revision Name'
@@ -154,7 +148,7 @@ export class VirtualServicePoliciesCard extends Component {
                       }
                       renderValue={(value) => (value ? value : '')}
                       onChange={(event) => {
-                        policyStore.setDraftObject({
+                        PolicyStore.setDraftObject({
                           ...policyDraftObject,
                           selectedRevisionId: event.target.value.id,
                           selectedRevisionName: event.target.value.name
@@ -162,23 +156,23 @@ export class VirtualServicePoliciesCard extends Component {
                       }}
                     >
                       {policyDraftObject.revisions.map((revision) => (
-                        <MaterialMenuItem key={revision.id} value={revision}>
+                        <MenuItem key={revision.id} value={revision}>
                           {revision.name}
-                        </MaterialMenuItem>
+                        </MenuItem>
                       ))}
-                    </MaterialSelect>
-                  </MaterialFormControl>
-                </MaterialBox>
-                <MaterialBox style={{ marginTop: 20 }}>
-                  <MaterialFormControl
+                    </Select>
+                  </FormControl>
+                </Box>
+                <Box style={{ marginTop: 20 }}>
+                  <FormControl
                     fullWidth
                     variant='outlined'
                     size='small'
                   >
-                    <MaterialInputLabel id='enforcement-lable-id'>
+                    <InputLabel id='enforcement-lable-id'>
                       Enforcement Mode
-                    </MaterialInputLabel>
-                    <MaterialSelect
+                    </InputLabel>
+                    <Select
                       ref={null}
                       labelId='enforcement-lable-id'
                       label='Enforcement Mode'
@@ -188,30 +182,30 @@ export class VirtualServicePoliciesCard extends Component {
                           : ''
                       }
                       onChange={(event) => {
-                        policyStore.setDraftObject({
+                        PolicyStore.setDraftObject({
                           ...policyDraftObject,
                           enforcementMode: event.target.value
                         })
                       }}
                     >
-                      <MaterialMenuItem value='ACTIVE'>Active</MaterialMenuItem>
-                      <MaterialMenuItem value='PASSIVE'>
+                      <MenuItem value='ACTIVE'>Active</MenuItem>
+                      <MenuItem value='PASSIVE'>
                         Passive
-                      </MaterialMenuItem>
-                      <MaterialMenuItem value='LEARNING'>
+                      </MenuItem>
+                      <MenuItem value='LEARNING'>
                         Learning
-                      </MaterialMenuItem>
-                    </MaterialSelect>
-                  </MaterialFormControl>
-                </MaterialBox>
-                <MaterialBox style={{ marginTop: 20, textAlign: 'center' }}>
-                  <MaterialButton
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+                <Box style={{ marginTop: 20, textAlign: 'center' }}>
+                  <Button
                     variant='contained'
                     color='primary'
                     onClick={async () => {
-                      const virtualService = virtualServiceStore.getSelectedObject()
-                      const draftPolicy = policyStore.getDraftObject()
-                      virtualServiceStore.setFormFields({
+                      const virtualService = VirtualServiceStore.getSelectedObject()
+                      const draftPolicy = PolicyStore.getDraftObject()
+                      VirtualServiceStore.setFormFields({
                         id: virtualService.id,
                         displayName: virtualService.displayName,
                         proximityUrl:
@@ -230,44 +224,44 @@ export class VirtualServicePoliciesCard extends Component {
                           }
                         ]
                       })
-                      virtualServiceStore.setShowProcessCard(true)
+                      VirtualServiceStore.setShowProcessCard(true)
                       try {
-                        const updatedVirtualService = await virtualServiceStore.objectUpdate()
-                        virtualServiceStore.setSelectedObject(
+                        const updatedVirtualService = await VirtualServiceStore.objectUpdate()
+                        VirtualServiceStore.setSelectedObject(
                           updatedVirtualService
                         )
-                        virtualServiceStore.setShowProcessCard(false)
-                        virtualServiceStore.setShowSuccessCard(true)
+                        VirtualServiceStore.setShowProcessCard(false)
+                        VirtualServiceStore.setShowSuccessCard(true)
                         await new Promise((res) => setTimeout(res, 2000))
-                        virtualServiceStore.setShowSuccessCard(false)
+                        VirtualServiceStore.setShowSuccessCard(false)
                       } catch (error) {
                         console.log('Error: Updating Virtual Service', error)
                       }
-                      virtualServiceStore.setShowProcessCard(false)
-                      policyStore.resetAllFields()
+                      VirtualServiceStore.setShowProcessCard(false)
+                      PolicyStore.resetAllFields()
                       await this.props.fetchPolicies()
                     }}
                   >
                     Add
-                  </MaterialButton>
-                </MaterialBox>
+                  </Button>
+                </Box>
               </React.Fragment>
             ) : null}
-          </MaterialBox>
-        </MaterialBox>
+          </Box>
+        </Box>
       </PlatfromPopUpCard>
     )
   }
 
 
   _renderPoliciesListCard() {
-    const virtualService = virtualServiceStore.getSelectedObject()
-    const policiesAll = virtualServiceStore.getRelatedObjects()
+    const virtualService = VirtualServiceStore.getSelectedObject()
+    const policiesAll = VirtualServiceStore.getRelatedObjects()
     const policiesMetadata =
       virtualService.currentRevision.virtualService.policiesMetadata
     if (!policiesAll || !policiesMetadata || policiesMetadata.length === 0) {
       return (
-        <MaterialBox style={{ textAlign: 'center' }}>No Content</MaterialBox>
+        <Box style={{ textAlign: 'center' }}>No Content</Box>
       )
     }
     const filtredPolicies = []
@@ -311,12 +305,12 @@ export class VirtualServicePoliciesCard extends Component {
             type: e.value.type,
             rules: e.value.rules
           }
-          policyStore.setSelectedObject(policy)
+          PolicyStore.setSelectedObject(policy)
           delete policy.name
-          policyStore.setFormFields(policy)
+          PolicyStore.setFormFields(policy)
 
-          policyStore.setShowObjectViewMode('UPDATE')
-          virtualServiceStore.setShowAddObjectDialog(true)
+          PolicyStore.setShowObjectViewMode('UPDATE')
+          VirtualServiceStore.setShowAddObjectDialog(true)
         }}
         removableSort
         paginator
@@ -361,10 +355,10 @@ export class VirtualServicePoliciesCard extends Component {
 
 
   render() {
-    const showAddPolicyDialog = virtualServiceStore.getShowAddObjectDialog()
+    const showAddPolicyDialog = VirtualServiceStore.getShowAddObjectDialog()
     return (
-      <MaterialBox>
-        <MaterialBox
+      <Box>
+        <Box
           style={{
             display: 'flex',
             padding: '10px 24px',
@@ -372,56 +366,56 @@ export class VirtualServicePoliciesCard extends Component {
             alignItems: 'center'
           }}
         >
-          <MaterialBox
+          <Box
             style={{
               display: 'flex',
               alignItems: 'center'
             }}
           >
-            <MaterialBox style={{ marginRight: 20 }}>
-              <img src={policyIcon} width='40' />
-            </MaterialBox>
-            <MaterialTypography variant='h5'>Policies</MaterialTypography>
-          </MaterialBox>
-          <MaterialBox
+            <Box style={{ marginRight: 20 }}>
+              Policy Icon
+            </Box>
+            <Typography variant='h5'>Policies</Typography>
+          </Box>
+          <Box
             style={{
               display: 'flex',
               alignItems: 'center'
             }}
           >
-            <MaterialButton
+            <Button
               color='primary'
               size='small'
               startIcon={<AddIcon />}
               style={{ marginRight: 10, fontWeight: 700 }}
               onClick={() => {
-                policyStore.resetAllFields()
+                PolicyStore.resetAllFields()
                 this.handleShowAddPolicyPopup(true)
               }}
             >
               Add existing policy
-            </MaterialButton>
-            <MaterialButton
+            </Button>
+            <Button
               color='primary'
               size='small'
               startIcon={<AddIcon />}
               style={{ fontWeight: 700 }}
               onClick={() => {
-                policyStore.setFormFields({
+                PolicyStore.setFormFields({
                   name: '',
                   displayName: '',
                   type: '',
                   rules: ''
                 })
-                policyStore.setShowObjectViewMode('CREATE')
-                virtualServiceStore.setShowAddObjectDialog(true)
+                PolicyStore.setShowObjectViewMode('CREATE')
+                VirtualServiceStore.setShowAddObjectDialog(true)
               }}
             >
               Create new policy
-            </MaterialButton>
-          </MaterialBox>
-        </MaterialBox>
-        <MaterialDivider />
+            </Button>
+          </Box>
+        </Box>
+        <Divider />
         {this._renderPoliciesListCard()}
         {this._renderAddExistingPolicyDialogCard()}
         {showAddPolicyDialog ? (
@@ -430,7 +424,7 @@ export class VirtualServicePoliciesCard extends Component {
             fetchPolicies={this.props.fetchPolicies}
           />
         ) : null}
-      </MaterialBox>
+      </Box>
     )
   }
 }

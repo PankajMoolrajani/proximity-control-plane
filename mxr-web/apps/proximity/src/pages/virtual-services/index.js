@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Route, BrowserRouter as Router, Switch } from 'react-router-dom'
 import { observer } from 'mobx-react'
-import VirtualServicesPage from 'apps/proximity/virtual-services/VirtualServicesPage.react'
+import VirtualServicesPage from '/mxr-web/apps/proximity/src/pages/virtual-services/VirtualServicesPage.react'
 
 
 export class VirtualServices extends Component {

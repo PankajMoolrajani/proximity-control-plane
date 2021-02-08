@@ -4,12 +4,12 @@ import DashboardIcon from '@material-ui/icons/Dashboard'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
-import PageLayout from '/mxr-web/apps/proximity/srs/components/PageLayout'
-import ViolationsCard from '/mxr-web/apps/proximity/srs/pages/Home/components/ViolationsCard.react'
-import VirtualServices from '/mxr-web/apps/proximity/srs/pages/Home/components/VirtualServices.react'
-import PoliciesCard from '/mxr-web/apps/proximity/srs/pages/Home/components/PoliciesCard.react'
-import RecommedationsCard from '/mxr-web/apps/proximity/srs/pages/Home/components/RecommedationsCard.react'
-import FeedsCard from '/mxr-web/apps/proximity/srs/pages/Home/components/FeedsCard.react'
+import PageLayout from '/mxr-web/apps/proximity/src/components/PageLayout'
+import ViolationsCard from '/mxr-web/apps/proximity/src/pages/Home/components/ViolationsCard.react'
+import VirtualServices from '/mxr-web/apps/proximity/src/pages/Home/components/VirtualServices.react'
+import PoliciesCard from '/mxr-web/apps/proximity/src/pages/Home/components/PoliciesCard.react'
+import RecommedationsCard from '/mxr-web/apps/proximity/src/pages/Home/components/RecommedationsCard.react'
+import FeedsCard from '/mxr-web/apps/proximity/src/pages/Home/components/FeedsCard.react'
 
 
 class Home extends Component {

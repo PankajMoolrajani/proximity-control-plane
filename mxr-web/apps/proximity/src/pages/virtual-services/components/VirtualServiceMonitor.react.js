@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import moment from 'moment'
-import { MaterialBox, MaterialButtonGroup, MaterialButton } from 'libs/material'
-import { logStore } from 'apps/platform/stores/platform.store'
+import Box from '@material-ui/core/Box'
+import Button from '@material-ui/core/Button'
+import ButtonGroup from '@material-ui/core/ButtonGroup'
 import { Line } from 'react-chartjs-2'
-import { toJS } from 'mobx'
-import { virtualServiceStore } from 'apps/proximity/stores/proximity.store'
-
+import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
+import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
 
 class VirtualServiceMonitor extends Component {
   state = {
@@ -15,8 +15,8 @@ class VirtualServiceMonitor extends Component {
 
 
   handleLogsForTime = async (hour) => {
-    const virtualService = virtualServiceStore.getSelectedObject()
-    logStore.setSearchQuery({
+    const virtualService = VirtualServiceStore.getSelectedObject()
+    LogStore.setSearchQuery({
       type: 'PROXIMITY_DP_HEALTH_LOG',
       'data.virtualServiceId': virtualService.id,
       tsCreate: {
@@ -44,10 +44,10 @@ class VirtualServiceMonitor extends Component {
 
 
   render() {
-    const logs = logStore.getObjects()
+    const logs = LogStore.getObjects()
     if (!logs || logs.length === 0) {
       return (
-        <MaterialBox style={{ textAlign: 'center' }}>No Content</MaterialBox>
+        <Box style={{ textAlign: 'center' }}>No Content</Box>
       )
     }
     const timeFormat = 'DD/MM HH:mm'
@@ -149,12 +149,12 @@ class VirtualServiceMonitor extends Component {
     }
 
     return (
-      <MaterialBox
+      <Box
         style={{
           padding: 40
         }}
       >
-        <MaterialBox
+        <Box
           color='primary'
           style={{
             display: 'flex',
@@ -162,28 +162,28 @@ class VirtualServiceMonitor extends Component {
             marginBottom: 20
           }}
         >
-          <MaterialButtonGroup color='primary'>
-            <MaterialButton 
+          <ButtonGroup color='primary'>
+            <Button 
               variant={this.state.timeSteps === 5 ? 'contained' : ''}
               onClick={() => this.handleLogsForTime(1)}
             >
               Last Hour
-            </MaterialButton>
-            <MaterialButton 
+            </Button>
+            <Button 
               variant={this.state.timeSteps === 15 ? 'contained' : ''}
               onClick={() => this.handleLogsForTime(12)}
             >
               Last 12 Hour
-            </MaterialButton>
-            <MaterialButton 
+            </Button>
+            <Button 
               variant={this.state.timeSteps === 30 ? 'contained' : ''}
               onClick={() => this.handleLogsForTime(24)}
             >
               Last 24 Hour
-            </MaterialButton>
-          </MaterialButtonGroup>
-        </MaterialBox>
-        <MaterialBox>
+            </Button>
+          </ButtonGroup>
+        </Box>
+        <Box>
           <Line
             height={150}
             width={800}
@@ -214,8 +214,8 @@ class VirtualServiceMonitor extends Component {
               }
             }}
           />
-        </MaterialBox>
-      </MaterialBox>
+        </Box>
+      </Box>
     )
   }
 }

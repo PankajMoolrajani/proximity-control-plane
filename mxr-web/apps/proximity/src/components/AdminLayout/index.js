@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import { MaterialBox } from 'libs/material'
+import Box from '@material-ui/core/Box'
 import AppBar from './AppBar.react'
 import SideBar from './SideBar.react'
 
@@ -27,14 +27,14 @@ class AdminLayout extends Component {
       <ThemeProvider theme={theme}>
         <AppBar/>
         <SideBar/>
-        <MaterialBox component='main'
+        <Box component='main'
            style={{
               paddingTop: 48, color:theme.palette.text.primary,
               backgroundColor: '#fafafa'
             }}
           >
           {this.props.children}
-        </MaterialBox> 
+        </Box> 
       </ThemeProvider>
     )
   }

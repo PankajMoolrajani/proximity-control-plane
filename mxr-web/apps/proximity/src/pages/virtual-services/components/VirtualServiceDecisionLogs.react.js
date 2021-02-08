@@ -4,9 +4,9 @@ import moment from 'moment'
 import JSONPretty from 'react-json-pretty'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import { MaterialBox, MaterialGrid } from 'libs/material'
-import { logStore } from 'apps/platform/stores/platform.store'
-
+import Box from '@material-ui/core/Box'
+import Grid from '@material-ui/core/Grid'
+import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
 
 export class VirtualServiceDecisionLogs extends Component {
   state = {
@@ -16,30 +16,30 @@ export class VirtualServiceDecisionLogs extends Component {
 
   _renderLogTemplate = (log) => {
     return (
-      <MaterialBox>
-        <MaterialGrid container spacing={1}>
-          <MaterialGrid item sm={6}>
+      <Box>
+        <Grid container spacing={1}>
+          <Grid item sm={6}>
             <JSONPretty
               className='hideScroll'
               style={{ maxHeight: 200, overflowY: 'auto' }}
               data={log.data}
             ></JSONPretty>
-          </MaterialGrid>
-          <MaterialGrid item sm={6}>
+          </Grid>
+          <Grid item sm={6}>
             <JSONPretty data={log.data.decision}></JSONPretty>
-          </MaterialGrid>
-        </MaterialGrid>
-      </MaterialBox>
+          </Grid>
+        </Grid>
+      </Box>
     )
   }
 
 
   render() {
-    const searchQuery = logStore.getSortQuery()
-    const logs = logStore.getObjects()
+    const searchQuery = LogStore.getSortQuery()
+    const logs = LogStore.getObjects()
     if (!logs || logs.length === 0) {
       return (
-        <MaterialBox style={{ textAlign: 'center' }}>No Content</MaterialBox>
+        <Box style={{ textAlign: 'center' }}>No Content</Box>
       )
     }
     let searchQueryArray = []
@@ -55,28 +55,28 @@ export class VirtualServiceDecisionLogs extends Component {
         value={logs}
         selectionMode='single'
         dataKey={
-          logStore.getSelectedObject() ? logStore.getSelectedObject().id : ''
+          LogStore.getSelectedObject() ? LogStore.getSelectedObject().id : ''
         }
         expandedRows={this.state.expandedRows}
         onRowToggle={(e) => this.setState({ expandedRows: e.data })}
         rowExpansionTemplate={this._renderLogTemplate}
-        totalRecords={logStore.getSearchResultsObjectCount()}
-        loading={logStore.getShowProcessCard()}
-        rows={logStore.getSearchPageObjectCount()}
+        totalRecords={LogStore.getSearchResultsObjectCount()}
+        loading={LogStore.getShowProcessCard()}
+        rows={LogStore.getSearchPageObjectCount()}
         first={
-          logStore.getSearchPageNum() * logStore.getSearchPageObjectCount()
+          LogStore.getSearchPageNum() * LogStore.getSearchPageObjectCount()
         }
         sortMode='multiple'
         rowsPerPageOptions={[10, 20, 50, 1000]}
         onSelectionChange={(e) => {}}
         onPage={async (e) => {
-          logStore.setSearchPageNum(e.page)
-          logStore.setSearchPageObjectCount(e.rows)
+          LogStore.setSearchPageNum(e.page)
+          LogStore.setSearchPageObjectCount(e.rows)
           await this.props.fetchDecisionLogs()
         }}
         multiSortMeta={searchQueryArray}
         onSort={async (e) => {
-          let sortQuery = logStore.getSortQuery()
+          let sortQuery = LogStore.getSortQuery()
           if (!sortQuery) {
             sortQuery = {}
           }
@@ -94,7 +94,7 @@ export class VirtualServiceDecisionLogs extends Component {
               delete sortQuery[field]
             }
           }
-          logStore.setSortQuery(sortQuery)
+          LogStore.setSortQuery(sortQuery)
           await this.props.fetchDecisionLogs()
         }}
         removableSort

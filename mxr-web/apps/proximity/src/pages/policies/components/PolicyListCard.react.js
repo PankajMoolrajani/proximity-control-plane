@@ -5,7 +5,6 @@ import moment from 'moment'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column' 
 import Box from '@material-ui/core/Box'
-import PlatformLoaderCard from 'apps/platform/components/PlatformLoaderCard.react'
  
 
 
@@ -49,7 +48,7 @@ class PolicyListCard extends Component {
     if (showLoader && !policies) {
       return (
         <Box style={{ margin: 50 }}>
-          <PlatformLoaderCard />
+          Loading...
         </Box>
       )
     }

@@ -3,12 +3,11 @@ import { observer } from 'mobx-react'
 import moment from 'moment'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import { virtualServiceStore } from 'apps/proximity/stores/proximity.store'
-
+import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
 
 export class VirtualServiceRevisionsCard extends Component {
   render() {
-    const virtualService = virtualServiceStore.getSelectedObject()
+    const virtualService = VirtualServiceStore.getSelectedObject()
     return (
       <DataTable
         className='p-datatable-striped p-datatable-hovered'

@@ -1,14 +1,12 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import {
-  MaterialBox,
-  MaterialTextField,
-  MaterialInputAdornment,
-  MaterialIconButton
-} from 'libs/material'
+import Box from '@material-ui/core/Box'
+import TextField from '@material-ui/core/TextField'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import IconButton from '@material-ui/core/IconButton'
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
-import { virtualServiceStore } from 'apps/proximity/stores/proximity.store'
+import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
 
 
 export class VirtualServiceDetailsCard extends Component {
@@ -18,9 +16,9 @@ export class VirtualServiceDetailsCard extends Component {
 
 
   render() {
-    const formFields = virtualServiceStore.getFormFields()
-    const virtualService = virtualServiceStore.getSelectedObject()
-    const viewMode = virtualServiceStore.getShowObjectViewMode()
+    const formFields = VirtualServiceStore.getFormFields()
+    const virtualService = VirtualServiceStore.getSelectedObject()
+    const viewMode = VirtualServiceStore.getShowObjectViewMode()
     let virtualServiceName
     if (viewMode === 'CREATE') {
       virtualServiceName = formFields.name ? formFields.name : ''
@@ -30,9 +28,9 @@ export class VirtualServiceDetailsCard extends Component {
       virtualServiceName = virtualService.name ? virtualService.name : ''
     }
     return (
-      <MaterialBox style={{ maxWidth: 700, padding: 24 }}>
-        <MaterialBox>
-          <MaterialTextField
+      <Box style={{ maxWidth: 700, padding: 24 }}>
+        <Box>
+          <TextField
             fullWidth
             label='Name'
             variant='outlined'
@@ -42,71 +40,71 @@ export class VirtualServiceDetailsCard extends Component {
               if (viewMode !== 'CREATE') {
                 return
               }
-              virtualServiceStore.setFormFields({
+              VirtualServiceStore.setFormFields({
                 ...formFields,
                 name: event.target.value
               })
             }}
           />
-        </MaterialBox>
-        <MaterialBox style={{ marginTop: 20 }}>
-          <MaterialTextField
+        </Box>
+        <Box style={{ marginTop: 20 }}>
+          <TextField
             fullWidth
             label='Display Name'
             variant='outlined'
             size='small'
             value={formFields.displayName ? formFields.displayName : ''}
             onChange={(event) => {
-              virtualServiceStore.setFormFields({
+              VirtualServiceStore.setFormFields({
                 ...formFields,
                 displayName: event.target.value
               })
             }}
           />
-        </MaterialBox>
-        <MaterialBox style={{ marginTop: 20 }}>
-          <MaterialTextField
+        </Box>
+        <Box style={{ marginTop: 20 }}>
+          <TextField
             fullWidth
             label='Proximity Url'
             variant='outlined'
             size='small'
             value={formFields.proximityUrl ? formFields.proximityUrl : ''}
             onChange={(event) => {
-              virtualServiceStore.setFormFields({
+              VirtualServiceStore.setFormFields({
                 ...formFields,
                 proximityUrl: event.target.value
               })
             }}
           />
-        </MaterialBox>
-        <MaterialBox style={{ marginTop: 20 }}>
-          <MaterialTextField
+        </Box>
+        <Box style={{ marginTop: 20 }}>
+          <TextField
             fullWidth
             label='Target Url'
             variant='outlined'
             size='small'
             value={formFields.targetUrl ? formFields.targetUrl : ''}
             onChange={(event) => {
-              virtualServiceStore.setFormFields({
+              VirtualServiceStore.setFormFields({
                 ...formFields,
                 targetUrl: event.target.value
               })
             }}
           />
-        </MaterialBox>
+        </Box>
         {viewMode === 'UPDATE' ? (
           <React.Fragment>
-            <MaterialBox style={{ marginTop: 20 }}>
-              <MaterialTextField
+            <Box style={{ marginTop: 20 }}>
+              <TextField
                 fullWidth
                 label='Service Id'
                 variant='outlined'
                 size='small'
                 value={formFields.id ? formFields.id : ''}
               />
-            </MaterialBox>
-            <MaterialBox style={{ marginTop: 20 }}>
-              <MaterialTextField
+            </Box>
+            <Box style={{ marginTop: 20 }}>
+              <TextField
                 fullWidth
                 type={this.state.showSecret ? 'text' : 'password'}
                 label='Auth Key'
@@ -115,8 +113,8 @@ export class VirtualServiceDetailsCard extends Component {
                 value={virtualService.authKey ? virtualService.authKey : ''}
                 InputProps={{
                   endAdornment: (
-                    <MaterialInputAdornment>
-                      <MaterialIconButton
+                    <InputAdornment>
+                      <IconButton
                         onClick={() =>
                           this.setState((prevState) => ({
                             showSecret: !prevState.showSecret
@@ -128,16 +126,16 @@ export class VirtualServiceDetailsCard extends Component {
                         ) : (
                           <Visibility />
                         )}
-                      </MaterialIconButton>
-                    </MaterialInputAdornment>
+                      </IconButton>
+                    </InputAdornment>
                   )
                 }}
               />
-            </MaterialBox>
+            </Box>
           </React.Fragment>
         ) : null}
         {this.props.actionButtons}
-      </MaterialBox>
+      </Box>
     )
   }
 }

@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import moment from 'moment'
-import { MaterialBox, MaterialList } from 'libs/material'
+import Box from '@material-ui/core/Box'
+import List from '@material-ui/core/List'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord'
-import { logStore } from 'apps/platform/stores/platform.store'
+import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
 
 
 export class FeedsCard extends Component {
@@ -23,7 +24,7 @@ export class FeedsCard extends Component {
 
   render() {
     return (
-      <MaterialBox
+      <Box
         style={{
           background: 'white',
           padding: '10px 20px',
@@ -31,11 +32,11 @@ export class FeedsCard extends Component {
           textAlign: 'left'
         }}
       >
-        <MaterialBox style={{ fontSize: 22, margin: '20px 0' }}>
+        <Box style={{ fontSize: 22, margin: '20px 0' }}>
           Feeds
-        </MaterialBox>
+        </Box>
         {this.state.feeds.map((feed) => (
-          <MaterialList
+          <List
             style={{
               color: 'grey',
               fontSize: 18,
@@ -50,9 +51,9 @@ export class FeedsCard extends Component {
               style={{ color: '#56CCF2', fontSize: 18, marginRight: 10 }}
             />
             {moment(feed.tsCreate).format('MMM DD, YYYY hh:mm A')} {feed.data}
-          </MaterialList>
+          </List>
         ))}
-      </MaterialBox>
+      </Box>
     )
   }
 }
