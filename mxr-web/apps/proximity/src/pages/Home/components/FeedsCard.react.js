@@ -6,21 +6,18 @@ import List from '@material-ui/core/List'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord'
 import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
 
-
 export class FeedsCard extends Component {
   state = {
     feeds: []
   }
 
-
   async componentDidMount() {
-    logStore.setSearchPageObjectCount(1000000)
-    logStore.setSearchQuery({ type: 'PROXIMITY_CRUD_LOG' })
-    logStore.setSortQuery({ tsCreate: -1 })
-    const logs = await logStore.objectQuery()
+    LogStore.setSearchPageObjectCount(1000000)
+    LogStore.setSearchQuery({ type: 'PROXIMITY_CRUD_LOG' })
+    LogStore.setSortQuery({ tsCreate: -1 })
+    const logs = await LogStore.objectQuery()
     this.setState({ feeds: logs.data })
   }
-
 
   render() {
     return (
@@ -32,9 +29,7 @@ export class FeedsCard extends Component {
           textAlign: 'left'
         }}
       >
-        <Box style={{ fontSize: 22, margin: '20px 0' }}>
-          Feeds
-        </Box>
+        <Box style={{ fontSize: 22, margin: '20px 0' }}>Feeds</Box>
         {this.state.feeds.map((feed) => (
           <List
             style={{
@@ -57,6 +52,5 @@ export class FeedsCard extends Component {
     )
   }
 }
-
 
 export default observer(FeedsCard)

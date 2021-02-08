@@ -2,27 +2,23 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography' 
+import Typography from '@material-ui/core/Typography'
 import AddIcon from '@material-ui/icons/Add'
 import CodeIcon from '@material-ui/icons/Code'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import ListIcon from '@material-ui/icons/List'
 import PageLayout from '/mxr-web/apps/proximity/src/components/PageLayout'
 import VirtualServiceObjectCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceObjectCard.react'
-// import {
-//   virtualServiceStore,
-//   policyStore
-// } from 'apps/proximity/stores/proximity.store'
-// import { logStore } from 'apps/platform/stores/platform.store'
-
+import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
+import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
+import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
 
 class VirtualServicePage extends Component {
   componentWillUnmount() {
-    // virtualServiceStore.resetAllFields()
-    // policyStore.resetAllFields()
-    // logStore.resetAllFields()
+    VirtualServiceStore.resetAllFields()
+    PolicyStore.resetAllFields()
+    LogStore.resetAllFields()
   }
-
 
   _renderTitle() {
     return (
@@ -40,9 +36,8 @@ class VirtualServicePage extends Component {
     )
   }
 
-
   _renderSelectedObjectTitle() {
-    const selectedObject = virtualServiceStore.getSelectedObject()
+    const selectedObject = VirtualServiceStore.getSelectedObject()
     return (
       <Box
         style={{
@@ -59,10 +54,10 @@ class VirtualServicePage extends Component {
           <CheckCircleIcon color='inherit' />
         </Box>
         <Box>
-          <Box style={{ fontSize:20 }}>
+          <Box style={{ fontSize: 20 }}>
             {selectedObject.currentRevision.virtualService.name}
           </Box>
-          <Box style={{ marginTop: 5, fontSize:14 }}>
+          <Box style={{ marginTop: 5, fontSize: 14 }}>
             <b>REVISION:</b> {selectedObject.currentRevision.name}
           </Box>
         </Box>
@@ -70,9 +65,8 @@ class VirtualServicePage extends Component {
     )
   }
 
-
   _renderObjectHeader() {
-    const viewMode = virtualServiceStore.getShowObjectViewMode()
+    const viewMode = VirtualServiceStore.getShowObjectViewMode()
     return (
       <Box>
         {viewMode === 'UPDATE'
@@ -82,9 +76,8 @@ class VirtualServicePage extends Component {
     )
   }
 
-
   _renderButtons() {
-    const viewMode = virtualServiceStore.getShowObjectViewMode()
+    const viewMode = VirtualServiceStore.getShowObjectViewMode()
     return (
       <Box>
         {viewMode !== 'CREATE' ? (
@@ -94,15 +87,15 @@ class VirtualServicePage extends Component {
             startIcon={<AddIcon />}
             style={{ fontWeight: 700 }}
             onClick={() => {
-              virtualServiceStore.setFormFields({
+              VirtualServiceStore.setFormFields({
                 name: '',
                 displayName: '',
                 proximityUrl: '',
                 targetUrl: '',
                 policiesMetadata: []
               })
-              virtualServiceStore.setShowObjectViewMode('CREATE')
-              virtualServiceStore.setShowObjectViewModeSecondary('DETAILS')
+              VirtualServiceStore.setShowObjectViewMode('CREATE')
+              VirtualServiceStore.setShowObjectViewModeSecondary('DETAILS')
             }}
           >
             Create
@@ -116,8 +109,8 @@ class VirtualServicePage extends Component {
             startIcon={<ListIcon />}
             style={{ fontWeight: 700 }}
             onClick={() => {
-              virtualServiceStore.resetAllFields()
-              virtualServiceStore.setShowObjectViewMode('LIST')
+              VirtualServiceStore.resetAllFields()
+              VirtualServiceStore.setShowObjectViewMode('LIST')
             }}
           >
             Show All
@@ -126,7 +119,6 @@ class VirtualServicePage extends Component {
       </Box>
     )
   }
-
 
   render() {
     return (
@@ -139,6 +131,5 @@ class VirtualServicePage extends Component {
     )
   }
 }
-
 
 export default observer(VirtualServicePage)

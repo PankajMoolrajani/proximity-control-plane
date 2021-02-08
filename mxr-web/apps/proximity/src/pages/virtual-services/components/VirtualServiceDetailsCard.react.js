@@ -8,12 +8,10 @@ import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
 
-
 export class VirtualServiceDetailsCard extends Component {
   state = {
     showSecret: false
   }
-
 
   render() {
     const formFields = VirtualServiceStore.getFormFields()
@@ -139,6 +137,5 @@ export class VirtualServiceDetailsCard extends Component {
     )
   }
 }
-
 
 export default observer(VirtualServiceDetailsCard)

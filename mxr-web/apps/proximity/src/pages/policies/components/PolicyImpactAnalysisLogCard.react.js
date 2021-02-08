@@ -11,14 +11,12 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
 import 'react-json-pretty/themes/monikai.css'
 
-
 export class PolicyImpactAnalysisLogCard extends Component {
   state = {
     isLoading: false,
     decision: null,
     expanded: false
   }
-
 
   handleEvaluate = async () => {
     const policy = PolicyStore.getFormFields()
@@ -29,7 +27,9 @@ export class PolicyImpactAnalysisLogCard extends Component {
       'opa/eval',
       {
         rules: policy.rules,
-        input: policy.displayName.includes('EGRESS') ? { req: this.props.log.data.req, res: this.props.log.data.res } : {req: this.props.log.data.req}
+        input: policy.displayName.includes('EGRESS')
+          ? { req: this.props.log.data.req, res: this.props.log.data.res }
+          : { req: this.props.log.data.req }
       },
       {
         headers: {
@@ -50,7 +50,6 @@ export class PolicyImpactAnalysisLogCard extends Component {
     }
   }
 
-
   async componentDidMount() {
     this.setState({ isLoading: true })
     try {
@@ -61,7 +60,6 @@ export class PolicyImpactAnalysisLogCard extends Component {
 
     this.setState({ isLoading: false })
   }
-  
 
   render() {
     const log = this.props.log
@@ -115,6 +113,5 @@ export class PolicyImpactAnalysisLogCard extends Component {
     )
   }
 }
-
 
 export default observer(PolicyImpactAnalysisLogCard)

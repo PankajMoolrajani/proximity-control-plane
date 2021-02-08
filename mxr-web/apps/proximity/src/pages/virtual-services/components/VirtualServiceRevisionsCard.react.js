@@ -45,5 +45,4 @@ export class VirtualServiceRevisionsCard extends Component {
   }
 }
 
-
 export default observer(VirtualServiceRevisionsCard)

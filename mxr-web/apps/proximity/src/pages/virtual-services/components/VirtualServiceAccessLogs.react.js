@@ -6,13 +6,12 @@ import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
-import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store' 
+import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
 
 export class VirtualServiceAccessLogs extends Component {
   state = {
     expandedRows: null
   }
-
 
   _renderLogTemplate = (log) => {
     return (
@@ -33,14 +32,11 @@ export class VirtualServiceAccessLogs extends Component {
     )
   }
 
-
   render() {
     const searchQuery = LogStore.getSortQuery()
     const logs = LogStore.getObjects()
     if (!logs || logs.length === 0) {
-      return (
-        <Box style={{ textAlign: 'center' }}>No Content</Box>
-      )
+      return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }
     let searchQueryArray = []
     for (const field in searchQuery) {
@@ -102,12 +98,8 @@ export class VirtualServiceAccessLogs extends Component {
         paginator
       >
         <Column expander style={{ width: '3em' }} />
-        <Column
-          field='log'
-          header='Log'
-          body={(log) => 'Access Log'}
-        ></Column>
-   
+        <Column field='log' header='Log' body={(log) => 'Access Log'}></Column>
+
         <Column
           field='tsCreate'
           header='Time Stamp'
@@ -118,6 +110,5 @@ export class VirtualServiceAccessLogs extends Component {
     )
   }
 }
-
 
 export default observer(VirtualServiceAccessLogs)

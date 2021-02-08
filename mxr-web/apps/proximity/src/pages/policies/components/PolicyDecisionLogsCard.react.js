@@ -5,14 +5,13 @@ import JSONPretty from 'react-json-pretty'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import Box from '@material-ui/core/Box'
-import Grid from '@material-ui/core/Grid' 
-
+import Grid from '@material-ui/core/Grid'
+import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
 
 export class PolicyDecisionLogsCard extends Component {
   state = {
     expandedRows: null
   }
-
 
   _renderLogTemplate = (log) => {
     return (
@@ -32,15 +31,12 @@ export class PolicyDecisionLogsCard extends Component {
       </Box>
     )
   }
-  
 
   render() {
-    const searchQuery = logStore.getSortQuery()
+    const searchQuery = LogStore.getSortQuery()
     const logs = ''
     if (!logs || logs.length === 0) {
-      return (
-        <Box style={{ textAlign: 'center' }}>No Content</Box>
-      )
+      return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }
     let searchQueryArray = []
     for (const field in searchQuery) {
@@ -54,27 +50,27 @@ export class PolicyDecisionLogsCard extends Component {
         className='p-datatable-striped p-datatable-hovered'
         value={logs}
         selectionMode='single'
-        dataKey={{test: "1"}}
+        dataKey={{ test: '1' }}
         expandedRows={this.state.expandedRows}
         onRowToggle={(e) => this.setState({ expandedRows: e.data })}
         rowExpansionTemplate={this._renderLogTemplate}
-        totalRecords={logStore.getSearchResultsObjectCount()}
-        loading={logStore.getShowProcessCard()}
-        rows={logStore.getSearchPageObjectCount()}
+        totalRecords={LogStore.getSearchResultsObjectCount()}
+        loading={LogStore.getShowProcessCard()}
+        rows={LogStore.getSearchPageObjectCount()}
         first={
-          logStore.getSearchPageNum() * logStore.getSearchPageObjectCount()
+          LogStore.getSearchPageNum() * LogStore.getSearchPageObjectCount()
         }
         sortMode='multiple'
         rowsPerPageOptions={[10, 20, 50, 1000]}
         onSelectionChange={(e) => {}}
         onPage={async (e) => {
-          logStore.setSearchPageNum(e.page)
-          logStore.setSearchPageObjectCount(e.rows)
+          LogStore.setSearchPageNum(e.page)
+          LogStore.setSearchPageObjectCount(e.rows)
           await this.props.fetchDecisionLogs()
         }}
         multiSortMeta={searchQueryArray}
         onSort={async (e) => {
-          let sortQuery = logStore.getSortQuery()
+          let sortQuery = LogStore.getSortQuery()
           if (!sortQuery) {
             sortQuery = {}
           }
@@ -92,7 +88,7 @@ export class PolicyDecisionLogsCard extends Component {
               delete sortQuery[field]
             }
           }
-          logStore.setSortQuery(sortQuery)
+          LogStore.setSortQuery(sortQuery)
           await this.props.fetchDecisionLogs()
         }}
         removableSort
@@ -130,6 +126,5 @@ export class PolicyDecisionLogsCard extends Component {
     )
   }
 }
-
 
 export default observer(PolicyDecisionLogsCard)

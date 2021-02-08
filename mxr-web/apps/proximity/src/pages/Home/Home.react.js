@@ -11,7 +11,6 @@ import PoliciesCard from '/mxr-web/apps/proximity/src/pages/Home/components/Poli
 import RecommedationsCard from '/mxr-web/apps/proximity/src/pages/Home/components/RecommedationsCard.react'
 import FeedsCard from '/mxr-web/apps/proximity/src/pages/Home/components/FeedsCard.react'
 
-
 class Home extends Component {
   _renderTitle() {
     return (
@@ -29,9 +28,7 @@ class Home extends Component {
     )
   }
 
- 
   render() {
-   
     return (
       <PageLayout title={this._renderTitle()}>
         <Box
@@ -56,12 +53,12 @@ class Home extends Component {
                   <RecommedationsCard />
                 </Grid>
               </Grid>
-              <Grid container spacing={2} style={{marginTop:10}}>
+              <Grid container spacing={2} style={{ marginTop: 10 }}>
                 <Grid item sm={12}>
                   <FeedsCard />
                 </Grid>
               </Grid>
-            </Grid> 
+            </Grid>
           </Grid>
         </Box>
       </PageLayout>

@@ -5,18 +5,19 @@ import Box from '@material-ui/core/Box'
 class PlatformSuccessCard extends Component {
   render() {
     return (
-      <MaterialBox style={{flex: 1, flexDirection: 'column', textAlign: 'center'}}>
-        <MaterialBox>
-          <DoneIcon style={{fontSize: 100, color: this.props.iconColor}}/>
-        </MaterialBox>
-        <MaterialBox style={{marginTop: 20, fontWeight: 200, color: this.props.msgColor}}>
+      <Box style={{ flex: 1, flexDirection: 'column', textAlign: 'center' }}>
+        <Box>
+          <DoneIcon style={{ fontSize: 100, color: this.props.iconColor }} />
+        </Box>
+        <Box
+          style={{ marginTop: 20, fontWeight: 200, color: this.props.msgColor }}
+        >
           {this.props.msg}
-        </MaterialBox>
-      </MaterialBox>
+        </Box>
+      </Box>
     )
   }
 }
 
-
-PlatformSuccessCard.displayName='PlatformSuccessCard';
-export default PlatformSuccessCard;
+PlatformSuccessCard.displayName = 'PlatformSuccessCard'
+export default PlatformSuccessCard

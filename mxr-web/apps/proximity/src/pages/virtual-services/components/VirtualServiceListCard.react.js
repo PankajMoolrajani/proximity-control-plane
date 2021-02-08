@@ -5,9 +5,8 @@ import moment from 'moment'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import Box from '@material-ui/core/Box'
-import PlatformLoaderCard from '/mxr-web/apps/proxmity/src/components/platform/PlatformLoaderCard.react'
+import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
 import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
-
 
 class VirtualServiceListCard extends Component {
   handleFetch = async () => {
@@ -22,13 +21,11 @@ class VirtualServiceListCard extends Component {
     VirtualServiceStore.setShowProcessCard(false)
   }
 
-
   async componentDidMount() {
     VirtualServiceStore.setSearchPageObjectCount(10)
     VirtualServiceStore.setSearchPageNum(0)
     await this.handleFetch()
   }
-
 
   render() {
     const showLoader = VirtualServiceStore.getShowProcessCard()
@@ -147,6 +144,5 @@ class VirtualServiceListCard extends Component {
     )
   }
 }
-
 
 export default observer(VirtualServiceListCard)

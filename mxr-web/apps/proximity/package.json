@@ -32,15 +32,16 @@
     "react-dom": "^17.0.1",
     "react-hot-loader": "^4.13.0",
     "react-json-pretty": "^2.2.0",
-    "react-scripts": "4.0.2",
     "react-reveal": "^1.2.2",
+    "react-scripts": "4.0.2",
     "web-vitals": "^1.1.0"
   },
   "scripts": {
     "start": "HTTPS=true SSL_CRT_FILE=./certs/certificate.pem SSL_KEY_FILE=./certs/key.pem PORT=8083 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "format": "npx prettier ./src --write"
   },
   "eslintConfig": {
     "extends": [
@@ -59,5 +60,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "prettier": "^2.2.1"
   }
 }

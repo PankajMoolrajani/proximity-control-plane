@@ -16,7 +16,7 @@ import { Autocomplete } from '@material-ui/lab'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import AddIcon from '@material-ui/icons/Add'
 import PlatfromPopUpCard from '/mxr-web/apps/proximity/src/components/platform/PlatfromPopUpCard.react'
-import VirtualServiceAddPolicyDialog from '/mxr-web/apps/proximity/virtual-services/components/VirtualServiceAddPolicyDialog.react'
+import VirtualServiceAddPolicyDialog from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceAddPolicyDialog.react'
 import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
 import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
 
@@ -25,13 +25,11 @@ export class VirtualServicePoliciesCard extends Component {
     showAddPolicyPopUp: false
   }
 
-
   handleShowAddPolicyPopup = (showAddPolicyPopUp) => {
     this.setState({
       showAddPolicyPopUp: showAddPolicyPopUp
     })
   }
-
 
   _renderAddExistingPolicyDialogCard() {
     const policyDraftObject = PolicyStore.getDraftObject()
@@ -51,7 +49,7 @@ export class VirtualServicePoliciesCard extends Component {
         >
           <Box
             style={{
-              width: screen.width > 600 ? 600 : '100%',
+              width: window.screen.width > 600 ? 600 : '100%',
               marginTop: 20
             }}
           >
@@ -129,11 +127,7 @@ export class VirtualServicePoliciesCard extends Component {
             {policyDraftObject ? (
               <React.Fragment>
                 <Box style={{ marginTop: 20 }}>
-                  <FormControl
-                    fullWidth
-                    variant='outlined'
-                    size='small'
-                  >
+                  <FormControl fullWidth variant='outlined' size='small'>
                     <InputLabel id='policy-revision-lable-id'>
                       Revision Name
                     </InputLabel>
@@ -164,11 +158,7 @@ export class VirtualServicePoliciesCard extends Component {
                   </FormControl>
                 </Box>
                 <Box style={{ marginTop: 20 }}>
-                  <FormControl
-                    fullWidth
-                    variant='outlined'
-                    size='small'
-                  >
+                  <FormControl fullWidth variant='outlined' size='small'>
                     <InputLabel id='enforcement-lable-id'>
                       Enforcement Mode
                     </InputLabel>
@@ -189,12 +179,8 @@ export class VirtualServicePoliciesCard extends Component {
                       }}
                     >
                       <MenuItem value='ACTIVE'>Active</MenuItem>
-                      <MenuItem value='PASSIVE'>
-                        Passive
-                      </MenuItem>
-                      <MenuItem value='LEARNING'>
-                        Learning
-                      </MenuItem>
+                      <MenuItem value='PASSIVE'>Passive</MenuItem>
+                      <MenuItem value='LEARNING'>Learning</MenuItem>
                     </Select>
                   </FormControl>
                 </Box>
@@ -253,16 +239,13 @@ export class VirtualServicePoliciesCard extends Component {
     )
   }
 
-
   _renderPoliciesListCard() {
     const virtualService = VirtualServiceStore.getSelectedObject()
     const policiesAll = VirtualServiceStore.getRelatedObjects()
     const policiesMetadata =
       virtualService.currentRevision.virtualService.policiesMetadata
     if (!policiesAll || !policiesMetadata || policiesMetadata.length === 0) {
-      return (
-        <Box style={{ textAlign: 'center' }}>No Content</Box>
-      )
+      return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }
     const filtredPolicies = []
     policiesMetadata.forEach((policyMetadata) => {
@@ -353,7 +336,6 @@ export class VirtualServicePoliciesCard extends Component {
     )
   }
 
-
   render() {
     const showAddPolicyDialog = VirtualServiceStore.getShowAddObjectDialog()
     return (
@@ -372,9 +354,7 @@ export class VirtualServicePoliciesCard extends Component {
               alignItems: 'center'
             }}
           >
-            <Box style={{ marginRight: 20 }}>
-              Policy Icon
-            </Box>
+            <Box style={{ marginRight: 20 }}>Policy Icon</Box>
             <Typography variant='h5'>Policies</Typography>
           </Box>
           <Box
@@ -428,6 +408,5 @@ export class VirtualServicePoliciesCard extends Component {
     )
   }
 }
-
 
 export default observer(VirtualServicePoliciesCard)

@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import { MaterialBox } from 'libs/material'
+import Box from '@material-ui/core/Box'
 import { Pie } from 'react-chartjs-2'
-import { policyStore } from 'apps/proximity/stores/proximity.store'
-
+import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
 
 class PoliciesCard extends Component {
   state = {
@@ -14,10 +13,9 @@ class PoliciesCard extends Component {
     authzPolicies: 0
   }
 
-
   async componentDidMount() {
-    policyStore.setSearchPageObjectCount(1000)
-    const policies = await policyStore.objectQuery()
+    PolicyStore.setSearchPageObjectCount(1000)
+    const policies = await PolicyStore.objectQuery()
     this.setState({ totalPolicies: policies.count })
     let last7Days = 0
     policies.data.forEach((policy) => {
@@ -63,7 +61,7 @@ class PoliciesCard extends Component {
       ]
     }
     return (
-      <MaterialBox
+      <Box
         style={{
           background: 'white',
           padding: '10px',
@@ -73,21 +71,19 @@ class PoliciesCard extends Component {
           alignItems: 'center'
         }}
       >
-        <MaterialBox style={{ textAlign: 'center' }}>
-          <MaterialBox style={{ fontSize: 18 }}>Policies</MaterialBox>
-          <MaterialBox
-            style={{ fontSize: 50, color: '#2D9CDB', margin: '10px 0' }}
-          >
+        <Box style={{ textAlign: 'center' }}>
+          <Box style={{ fontSize: 18 }}>Policies</Box>
+          <Box style={{ fontSize: 50, color: '#2D9CDB', margin: '10px 0' }}>
             {this.state.totalPolicies}
-          </MaterialBox>
-          <MaterialBox>
+          </Box>
+          <Box>
             <span style={{ color: '#00e300' }}>
               +{this.state.policiesLast7days}{' '}
             </span>
             in last 7 days
-          </MaterialBox>
-        </MaterialBox>
-        <MaterialBox>
+          </Box>
+        </Box>
+        <Box>
           <Pie
             width={200}
             height={100}
@@ -102,11 +98,10 @@ class PoliciesCard extends Component {
               }
             }}
           />
-        </MaterialBox>
-      </MaterialBox>
+        </Box>
+      </Box>
     )
   }
 }
-
 
 export default observer(PoliciesCard)

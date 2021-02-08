@@ -20,7 +20,6 @@ const classes = {
   }
 }
 
-
 export class PolicyImpactAnalysisCard extends Component {
   state = {
     allowed: 0,
@@ -29,11 +28,9 @@ export class PolicyImpactAnalysisCard extends Component {
   }
   chartRef = React.createRef()
 
-
   componentWillUnmount() {
     LogStore.resetAllFields()
   }
-
 
   handleDecisionChanged = () => {
     this.setState((prevState) => ({
@@ -41,16 +38,13 @@ export class PolicyImpactAnalysisCard extends Component {
     }))
   }
 
-
   handleAddAllowed = () => {
     this.setState((prevState) => ({ allowed: prevState.allowed + 1 }))
   }
 
-
   handleAddDenied = () => {
     this.setState((prevState) => ({ denied: prevState.denied + 1 }))
   }
-
 
   handleFetchLog = async () => {
     this.setState({
@@ -81,22 +75,17 @@ export class PolicyImpactAnalysisCard extends Component {
     LogStore.setShowProcessCard(false)
   }
 
-
   _renderLogs() {
     const logs = LogStore.getObjects()
     const count = logs ? logs.length : 0
     const percentageChanged = (100 * this.state.decisionChanged) / count
 
     if (!logs || logs.length === 0) {
-      return (
-        <MaterialBox style={{ textAlign: 'center', marginTop: 20 }}>
-          No Logs
-        </MaterialBox>
-      )
+      return <Box style={{ textAlign: 'center', marginTop: 20 }}>No Logs</Box>
     }
     return (
       <React.Fragment>
-        <MaterialBox
+        <Box
           style={{
             display: 'flex',
             justifyContent: 'space-around',
@@ -105,19 +94,13 @@ export class PolicyImpactAnalysisCard extends Component {
             marginBottom: 10
           }}
         >
-          <MaterialBox>
-            <MaterialBox className={this.props.classes.dashTitle}>
-              Sample Requests
-            </MaterialBox>
-            <MaterialBox className={this.props.classes.dashNum}>
-              {count}
-            </MaterialBox>
-          </MaterialBox>
-          <MaterialBox>
-            <MaterialBox className={this.props.classes.dashTitle}>
-              Decision
-            </MaterialBox>
-            <MaterialBox>
+          <Box>
+            <Box className={this.props.classes.dashTitle}>Sample Requests</Box>
+            <Box className={this.props.classes.dashNum}>{count}</Box>
+          </Box>
+          <Box>
+            <Box className={this.props.classes.dashTitle}>Decision</Box>
+            <Box>
               <Pie
                 ref={this.chartRef}
                 width={150}
@@ -144,18 +127,16 @@ export class PolicyImpactAnalysisCard extends Component {
                   }
                 }}
               />
-            </MaterialBox>
-          </MaterialBox>
-          <MaterialBox>
-            <MaterialBox className={this.props.classes.dashTitle}>
-              Decision Changed
-            </MaterialBox>
-            <MaterialBox className={this.props.classes.dashNum}>
+            </Box>
+          </Box>
+          <Box>
+            <Box className={this.props.classes.dashTitle}>Decision Changed</Box>
+            <Box className={this.props.classes.dashNum}>
               {percentageChanged.toFixed(2)} %
-            </MaterialBox>
-          </MaterialBox>
-        </MaterialBox>
-        <MaterialBox
+            </Box>
+          </Box>
+        </Box>
+        <Box
           className='hideScroll'
           style={{
             maxHeight: 300,
@@ -173,24 +154,23 @@ export class PolicyImpactAnalysisCard extends Component {
               decisionChanged={this.handleDecisionChanged}
             />
           ))}
-        </MaterialBox>
+        </Box>
       </React.Fragment>
     )
   }
-
 
   render() {
     const showLoader = LogStore.getShowProcessCard()
     if (showLoader) {
       return (
-        <MaterialBox style={{ margin: 50 }}>
+        <Box style={{ margin: 50 }}>
           <PlatformLoaderCard />
-        </MaterialBox>
+        </Box>
       )
     }
     return (
-      <MaterialBox>
-        <MaterialBox
+      <Box>
+        <Box
           style={{
             display: 'flex',
             justifyContent: 'flex-end',
@@ -198,20 +178,19 @@ export class PolicyImpactAnalysisCard extends Component {
             marginTop: 5
           }}
         >
-          <MaterialButton
+          <Button
             variant='contained'
             color='primary'
             size='small'
             onClick={this.handleFetchLog}
           >
             Run Impact Analysis
-          </MaterialButton>
-        </MaterialBox>
+          </Button>
+        </Box>
         {this._renderLogs()}
-      </MaterialBox>
+      </Box>
     )
   }
 }
-
 
 export default withStyles(classes)(observer(PolicyImpactAnalysisCard))

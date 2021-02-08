@@ -15,10 +15,10 @@ export class NavTabsCard extends Component {
           <Button
             key={button.title}
             onClick={button.click}
-            style={{ 
-              fontWeight: button.isActive ? 700 : 400, 
+            style={{
+              fontWeight: button.isActive ? 700 : 400,
               marginRight: 10,
-              paddingLeft: 0 
+              paddingLeft: 0
             }}
           >
             {button.title}
@@ -28,6 +28,5 @@ export class NavTabsCard extends Component {
     )
   }
 }
-
 
 export default NavTabsCard

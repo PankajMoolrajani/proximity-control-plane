@@ -1,14 +1,12 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import { MaterialBox } from 'libs/material'
-import { policyRecommendationStore } from 'apps/proximity/stores/proximity.store'
-
+import Box from '@material-ui/core/Box'
+import PolicyRecommendation from '/mxr-web/apps/proximity/src/stores/PolicyRecommendation.store'
 
 class RecommendationsCard extends Component {
   state = {
     policyRecommendationsLast7days: 0
   }
-
 
   async componentDidMount() {
     const searchQuery = {}
@@ -16,15 +14,14 @@ class RecommendationsCard extends Component {
       $gt: new Date().getTime() - 7 * 24 * 60 * 60 * 1000,
       $lt: new Date().getTime()
     }
-    policyRecommendationStore.setSearchQuery(searchQuery)
-    const recommendations = await policyRecommendationStore.objectQuery()
+    PolicyRecommendation.setSearchQuery(searchQuery)
+    const recommendations = await PolicyRecommendation.objectQuery()
     this.setState({ policyRecommendationsLast7days: recommendations.count })
   }
 
-
   render() {
     return (
-      <MaterialBox
+      <Box
         style={{
           background: 'white',
           padding: '10px',
@@ -32,17 +29,14 @@ class RecommendationsCard extends Component {
           textAlign: 'center'
         }}
       >
-        <MaterialBox style={{ fontSize: 18 }}>New Recommendations</MaterialBox>
-        <MaterialBox
-          style={{ fontSize: 50, color: '#2D9CDB', margin: '10px 0' }}
-        >
+        <Box style={{ fontSize: 18 }}>New Recommendations</Box>
+        <Box style={{ fontSize: 50, color: '#2D9CDB', margin: '10px 0' }}>
           {this.state.policyRecommendationsLast7days}
-        </MaterialBox>
-        <MaterialBox>in last 7 days</MaterialBox>
-      </MaterialBox>
+        </Box>
+        <Box>in last 7 days</Box>
+      </Box>
     )
   }
 }
-
 
 export default observer(RecommendationsCard)

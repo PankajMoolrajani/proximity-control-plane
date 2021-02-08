@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography'
 import CloseIcon from '@material-ui/icons/Close'
 import PolicyStdObjCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyStdObjCard.react'
 import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
-import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store' 
+import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
 
 const classes = {
   appBar: {
@@ -23,11 +23,9 @@ const classes = {
   }
 }
 
-
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />
 })
-
 
 export class VirtualServiceAddPolicyDialog extends Component {
   render() {
@@ -56,10 +54,7 @@ export class VirtualServiceAddPolicyDialog extends Component {
             >
               <CloseIcon />
             </IconButton>
-            <Typography
-              variant='h6'
-              className={this.props.classes.title}
-            >
+            <Typography variant='h6' className={this.props.classes.title}>
               {formFields.id ? 'Update' : 'Create'} : Policy
             </Typography>
             <Button
@@ -130,6 +125,5 @@ export class VirtualServiceAddPolicyDialog extends Component {
     )
   }
 }
-
 
 export default withStyles(classes)(observer(VirtualServiceAddPolicyDialog))

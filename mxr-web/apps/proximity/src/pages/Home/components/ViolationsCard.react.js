@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import { MaterialBox, MaterialTypography, MaterialGrid } from 'libs/material'
+import Box from '@material-ui/core/Box'
+import Typography from '@material-ui/core/Typography'
+import Grid from '@material-ui/core/Grid'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord'
 import Progress from '/mxr-web/apps/proximity/src/pages/Home/components/progressBar'
-import theme from 'apps/proximity/themes'
 import { Pie, Line } from 'react-chartjs-2'
+import theme from '/mxr-web/apps/proximity/src/libs/theme/theme.lib'
 import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
-import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store' 
+import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
 
 class ViolationsCard extends Component {
   state = {
@@ -18,7 +20,6 @@ class ViolationsCard extends Component {
     authzViolations: 0,
     vsWiseViolations: []
   }
-
 
   async componentDidMount() {
     const searchQuery = {}
@@ -84,15 +85,14 @@ class ViolationsCard extends Component {
           ) / 100
       })
     })
-    
+
     vsWiseViolations.sort((a, b) => {
       if (a.percentage < b.percentage) return 1
       if (a.percentage > b.percentage) return -1
     })
-    vsWiseViolations = vsWiseViolations.slice(0,4)
+    vsWiseViolations = vsWiseViolations.slice(0, 4)
     this.setState({ vsWiseViolations: vsWiseViolations })
   }
-
 
   render() {
     const policyTypeDecisionData = {
@@ -100,12 +100,6 @@ class ViolationsCard extends Component {
       datasets: [
         {
           label: 'Violations',
-          backgroundColor: [theme.error, theme.errorDark, theme.errorLight],
-          hoverBackgroundColor: [
-            theme.errorLight,
-            theme.errorDark,
-            theme.error
-          ],
           data: [
             this.state.authnViolations,
             this.state.authzViolations,
@@ -140,34 +134,34 @@ class ViolationsCard extends Component {
       ]
     }
     return (
-      <MaterialBox
+      <Box
         style={{
           background: 'white',
           padding: '10px 30px',
           borderRadius: 10
         }}
       >
-        <MaterialBox
+        <Box
           style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center'
           }}
         >
-          <MaterialBox
+          <Box
             style={{
               padding: '40px 0'
             }}
           >
-            <MaterialBox
+            <Box
               style={{
                 fontSize: 22,
                 fontWeight: 400
               }}
             >
               Violations
-            </MaterialBox>
-            <MaterialBox
+            </Box>
+            <Box
               style={{
                 fontSize: 50,
                 color: theme.errorLight,
@@ -175,9 +169,9 @@ class ViolationsCard extends Component {
               }}
             >
               {this.state.totalViolations}
-            </MaterialBox>
-          </MaterialBox>
-          <MaterialBox>
+            </Box>
+          </Box>
+          <Box>
             <Pie
               width={200}
               height={100}
@@ -192,9 +186,9 @@ class ViolationsCard extends Component {
                 }
               }}
             />
-          </MaterialBox>
-        </MaterialBox>
-        <MaterialBox>
+          </Box>
+        </Box>
+        <Box>
           <Line
             height={150}
             data={dateWiseViolations}
@@ -221,32 +215,31 @@ class ViolationsCard extends Component {
               }
             }}
           />
-        </MaterialBox>
-        <MaterialBox style={{ marginTop: 40, textAlign: 'left' }}>
-          <MaterialBox style={{ fontSize: 22 }}>
+        </Box>
+        <Box style={{ marginTop: 40, textAlign: 'left' }}>
+          <Box style={{ fontSize: 22 }}>
             Virtual Services with most Violations
-          </MaterialBox>
+          </Box>
           {this.state.vsWiseViolations.map((vsWiseViolation) => (
-            <MaterialBox style={{ marginTop: 20 }} key={vsWiseViolation.name}>
-              <MaterialBox style={{ display: 'flex', alignItems: 'center' }}>
+            <Box style={{ marginTop: 20 }} key={vsWiseViolation.name}>
+              <Box style={{ display: 'flex', alignItems: 'center' }}>
                 <FiberManualRecordIcon
                   style={{ color: theme.errorLight, marginRight: 20 }}
                 />
-                <MaterialBox style={{ fontSize: 18, flexGrow: 1 }}>
+                <Box style={{ fontSize: 18, flexGrow: 1 }}>
                   {vsWiseViolation.name}
-                </MaterialBox>
-                <MaterialBox style={{ fontSize: 18 }}>
+                </Box>
+                <Box style={{ fontSize: 18 }}>
                   {vsWiseViolation.percentage}%
-                </MaterialBox>
-              </MaterialBox>
+                </Box>
+              </Box>
               <Progress done={vsWiseViolation.percentage} />
-            </MaterialBox>
+            </Box>
           ))}
-        </MaterialBox>
-      </MaterialBox>
+        </Box>
+      </Box>
     )
   }
 }
-
 
 export default observer(ViolationsCard)

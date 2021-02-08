@@ -13,20 +13,19 @@ class VirtualServiceMonitor extends Component {
     timeSteps: 5
   }
 
-
   handleLogsForTime = async (hour) => {
     const virtualService = VirtualServiceStore.getSelectedObject()
     LogStore.setSearchQuery({
       type: 'PROXIMITY_DP_HEALTH_LOG',
       'data.virtualServiceId': virtualService.id,
       tsCreate: {
-        $gt: new Date().getTime() - (hour * 60 * 60 * 1000),
+        $gt: new Date().getTime() - hour * 60 * 60 * 1000,
         $lt: new Date().getTime()
       }
     })
     await this.props.fetchMonitorLogs()
     let timeStepsD
-    switch(hour) {
+    switch (hour) {
       case 1:
         timeStepsD = 5
         break
@@ -42,13 +41,10 @@ class VirtualServiceMonitor extends Component {
     this.setState({ timeSteps: timeStepsD })
   }
 
-
   render() {
     const logs = LogStore.getObjects()
     if (!logs || logs.length === 0) {
-      return (
-        <Box style={{ textAlign: 'center' }}>No Content</Box>
-      )
+      return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }
     const timeFormat = 'DD/MM HH:mm'
     const logsTimeFormatted = logs.map((log) => ({
@@ -62,7 +58,7 @@ class VirtualServiceMonitor extends Component {
     const lastTimeStep =
       logsTimeFormatted[logsTimeFormatted.length - 1].tsCreate
     let nextTimeStep = logsTimeFormatted[0].tsCreate
-    const logsTimeUpDownCount = [] 
+    const logsTimeUpDownCount = []
     while (true) {
       nextTimeStep = moment(nextTimeStep, timeFormat).subtract(
         this.state.timeSteps,
@@ -163,19 +159,19 @@ class VirtualServiceMonitor extends Component {
           }}
         >
           <ButtonGroup color='primary'>
-            <Button 
+            <Button
               variant={this.state.timeSteps === 5 ? 'contained' : ''}
               onClick={() => this.handleLogsForTime(1)}
             >
               Last Hour
             </Button>
-            <Button 
+            <Button
               variant={this.state.timeSteps === 15 ? 'contained' : ''}
               onClick={() => this.handleLogsForTime(12)}
             >
               Last 12 Hour
             </Button>
-            <Button 
+            <Button
               variant={this.state.timeSteps === 30 ? 'contained' : ''}
               onClick={() => this.handleLogsForTime(24)}
             >
@@ -219,6 +215,5 @@ class VirtualServiceMonitor extends Component {
     )
   }
 }
-
 
 export default observer(VirtualServiceMonitor)

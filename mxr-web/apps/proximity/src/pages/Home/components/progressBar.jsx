@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import { MaterialBox } from 'libs/material'
-
+import Box from '@material-ui/core/Box'
 
 const Progress = (props) => {
   const [style, setStyle] = useState({})
@@ -32,11 +31,10 @@ const Progress = (props) => {
     width: '100%'
   }
 
-
   return (
-    <MaterialBox style={progress}>
-      <MaterialBox style={style}>{` ${props.done}%`}</MaterialBox>
-    </MaterialBox>
+    <Box style={progress}>
+      <Box style={style}>{` ${props.done}%`}</Box>
+    </Box>
   )
 }
 

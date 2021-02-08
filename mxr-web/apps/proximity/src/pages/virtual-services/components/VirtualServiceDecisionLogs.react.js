@@ -13,7 +13,6 @@ export class VirtualServiceDecisionLogs extends Component {
     expandedRows: null
   }
 
-
   _renderLogTemplate = (log) => {
     return (
       <Box>
@@ -33,14 +32,11 @@ export class VirtualServiceDecisionLogs extends Component {
     )
   }
 
-
   render() {
     const searchQuery = LogStore.getSortQuery()
     const logs = LogStore.getObjects()
     if (!logs || logs.length === 0) {
-      return (
-        <Box style={{ textAlign: 'center' }}>No Content</Box>
-      )
+      return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }
     let searchQueryArray = []
     for (const field in searchQuery) {
@@ -105,22 +101,32 @@ export class VirtualServiceDecisionLogs extends Component {
         <Column
           field='policyName'
           header='Policy'
-          body={(log) => log.data.policyName ? log.data.policyName : 'Access Log'}
+          body={(log) =>
+            log.data.policyName ? log.data.policyName : 'Access Log'
+          }
         ></Column>
         <Column
           field='type'
           header='Type'
-          body={(log) => log.data.policyType ? log.data.policyType : ''}
+          body={(log) => (log.data.policyType ? log.data.policyType : '')}
         ></Column>
         <Column
           field='revision'
           header='Revision'
-          body={(log) => log.data.policyRevisionName ? log.data.policyRevisionName : ''}
+          body={(log) =>
+            log.data.policyRevisionName ? log.data.policyRevisionName : ''
+          }
         ></Column>
         <Column
           field='decision'
           header='Decision'
-          body={(log) => ( log.data.decision ? log.data.decision.allow ? 'ALLOWED' : 'DEINED' : 'NA')}
+          body={(log) =>
+            log.data.decision
+              ? log.data.decision.allow
+                ? 'ALLOWED'
+                : 'DEINED'
+              : 'NA'
+          }
         ></Column>
         <Column
           field='tsCreate'
@@ -132,6 +138,5 @@ export class VirtualServiceDecisionLogs extends Component {
     )
   }
 }
-
 
 export default observer(VirtualServiceDecisionLogs)

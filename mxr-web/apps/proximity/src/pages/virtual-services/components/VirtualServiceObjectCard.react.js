@@ -5,18 +5,15 @@ import VirtualServiceListCard from '/mxr-web/apps/proximity/src/pages/virtual-se
 import VirtualServiceStdObjCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceStdObjCard.react'
 import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
 
-
 export class VirtualServiceObjectCard extends Component {
   componentDidMount() {
     VirtualServiceStore.setShowObjectViewMode('LIST')
   }
 
-
   handleOnClose() {
     VirtualServiceStore.resetAllFields()
     VirtualServiceStore.setShowObjectViewMode('LIST')
   }
-
 
   _renderObjectCard() {
     let viewMode = VirtualServiceStore.getShowObjectViewMode()
@@ -35,11 +32,9 @@ export class VirtualServiceObjectCard extends Component {
     }
   }
 
-
   render() {
     return <Box>{this._renderObjectCard()}</Box>
   }
 }
-
 
 export default observer(VirtualServiceObjectCard)

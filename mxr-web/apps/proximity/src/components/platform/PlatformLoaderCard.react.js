@@ -5,13 +5,12 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 class PlatformLoaderCard extends Component {
   render() {
     return (
-      <MaterialBox style={{flex: 1, textAlign: 'center'}}>
-        <MaterialCircularProgress style = {{color: this.props.color}}/>
-      </MaterialBox>
+      <Box style={{ flex: 1, textAlign: 'center' }}>
+        <CircularProgress style={{ color: this.props.color }} />
+      </Box>
     )
   }
 }
 
-
-PlatformLoaderCard.displayName='PlatformLoaderCard';
-export default PlatformLoaderCard;
+PlatformLoaderCard.displayName = 'PlatformLoaderCard'
+export default PlatformLoaderCard

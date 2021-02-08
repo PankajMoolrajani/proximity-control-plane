@@ -25,7 +25,6 @@ export class VirtualServiceStdObjCard extends Component {
     VirtualServiceStore.setShowObjectViewModeSecondary('DETAILS')
   }
 
-
   async handleRevisionsFetch() {
     VirtualServiceStore.setShowObjectViewModeSecondary('REVISIONS')
     VirtualServiceStore.setShowProcessCard(true)
@@ -42,7 +41,6 @@ export class VirtualServiceStdObjCard extends Component {
     }
     VirtualServiceStore.setShowProcessCard(false)
   }
-
 
   async handlePoliciesFetch() {
     VirtualServiceStore.setShowObjectViewModeSecondary('POLICIES')
@@ -72,16 +70,14 @@ export class VirtualServiceStdObjCard extends Component {
     VirtualServiceStore.setShowProcessCard(false)
   }
 
-
   async handleDecisionLogsFetch() {
     VirtualServiceStore.setShowObjectViewModeSecondary('DECISION_LOGS')
     const virtualService = VirtualServiceStore.getSelectedObject()
     VirtualServiceStore.setShowProcessCard(true)
-    LogStore.setSearchQuery(
-      { 
-        'type': 'PROXIMITY_DECISION_LOG',
-        'data.virtualServiceId': virtualService.id 
-      })
+    LogStore.setSearchQuery({
+      type: 'PROXIMITY_DECISION_LOG',
+      'data.virtualServiceId': virtualService.id
+    })
     try {
       const virtualServices = await LogStore.objectQuery()
       LogStore.setSearchResultsObjectCount(virtualServices.count)
@@ -91,17 +87,15 @@ export class VirtualServiceStdObjCard extends Component {
     }
     VirtualServiceStore.setShowProcessCard(false)
   }
-
 
   async handleAccessLogsFetch() {
     VirtualServiceStore.setShowObjectViewModeSecondary('ACCESS_LOGS')
     const virtualService = VirtualServiceStore.getSelectedObject()
     VirtualServiceStore.setShowProcessCard(true)
-    LogStore.setSearchQuery(
-      { 
-        'type': 'PROXIMITY_ACCESS_LOG',
-        'data.virtualServiceId': virtualService.id 
-      })
+    LogStore.setSearchQuery({
+      type: 'PROXIMITY_ACCESS_LOG',
+      'data.virtualServiceId': virtualService.id
+    })
     try {
       const virtualServices = await LogStore.objectQuery()
       LogStore.setSearchResultsObjectCount(virtualServices.count)
@@ -112,13 +106,14 @@ export class VirtualServiceStdObjCard extends Component {
     VirtualServiceStore.setShowProcessCard(false)
   }
 
-
   async handlePolicyRecommendationsFetch() {
     VirtualServiceStore.setShowObjectViewModeSecondary('RECOMMENDATIONS')
-    VirtualServiceStore.setShowProcessCard(true) 
+    VirtualServiceStore.setShowProcessCard(true)
     try {
       const poilcyRecommendations = await PolicyRecommendation.objectQuery()
-      PolicyRecommendation.setSearchResultsObjectCount(poilcyRecommendations.count)
+      PolicyRecommendation.setSearchResultsObjectCount(
+        poilcyRecommendations.count
+      )
       PolicyRecommendation.setObjects(poilcyRecommendations.data)
     } catch (error) {
       console.log(`Error: Getting poilcy recommendations`)
@@ -126,12 +121,11 @@ export class VirtualServiceStdObjCard extends Component {
     VirtualServiceStore.setShowProcessCard(false)
   }
 
-
   async handleMonitorLogsFetch() {
     VirtualServiceStore.setShowObjectViewModeSecondary('MONITOR')
     // VirtualServiceStore.setShowProcessCard(true)
     LogStore.setSearchPageObjectCount(10000)
-    LogStore.setSortQuery({tsCreate: -1})
+    LogStore.setSortQuery({ tsCreate: -1 })
     try {
       const virtualServices = await LogStore.objectQuery()
       LogStore.setSearchResultsObjectCount(virtualServices.count)
@@ -141,7 +135,6 @@ export class VirtualServiceStdObjCard extends Component {
     }
     // VirtualServiceStore.setShowProcessCard(false)
   }
-
 
   _renderTitleDetailsCard() {
     const virtualService = VirtualServiceStore.getSelectedObject()
@@ -171,7 +164,6 @@ export class VirtualServiceStdObjCard extends Component {
     )
   }
 
-
   _renderCreateButton() {
     return (
       <Button
@@ -199,7 +191,6 @@ export class VirtualServiceStdObjCard extends Component {
       </Button>
     )
   }
-
 
   _renderUpdateButton() {
     return (
@@ -229,7 +220,6 @@ export class VirtualServiceStdObjCard extends Component {
     )
   }
 
-
   _renderOpButtons() {
     const viewMode = VirtualServiceStore.getShowObjectViewMode()
     return (
@@ -243,7 +233,6 @@ export class VirtualServiceStdObjCard extends Component {
     )
   }
 
-
   _renderStdObjCard() {
     const selectedTab = VirtualServiceStore.getShowObjectViewModeSecondary()
     switch (selectedTab) {
@@ -254,7 +243,7 @@ export class VirtualServiceStdObjCard extends Component {
         break
       case 'DEPLOY':
         return <VirtualServiceDeploymentCard />
-        break 
+        break
       case 'REVISIONS':
         return <VirtualServiceRevisionsCard />
         break
@@ -280,18 +269,25 @@ export class VirtualServiceStdObjCard extends Component {
         )
         break
       case 'MONITOR':
-        return <VirtualServiceMonitor fetchMonitorLogs={this.handleMonitorLogsFetch}/>
+        return (
+          <VirtualServiceMonitor
+            fetchMonitorLogs={this.handleMonitorLogsFetch}
+          />
+        )
         break
       case 'RECOMMENDATIONS':
-        return <VirtualServicePolicyRecommendationCard fetchPolicyRecommendations={this.handlePolicyRecommendationsFetch}/>
-        break;
+        return (
+          <VirtualServicePolicyRecommendationCard
+            fetchPolicyRecommendations={this.handlePolicyRecommendationsFetch}
+          />
+        )
+        break
       default:
         return (
           <VirtualServiceDetailsCard actionButtons={this._renderOpButtons()} />
         )
     }
   }
-  
 
   render() {
     const showSuccess = VirtualServiceStore.getShowSuccessCard()
@@ -365,14 +361,13 @@ export class VirtualServiceStdObjCard extends Component {
           const virtualService = VirtualServiceStore.getSelectedObject()
           LogStore.setSearchPageObjectCount(10)
           LogStore.setSearchPageNum(0)
-          LogStore.setSearchQuery(
-            { 
-              'type': 'PROXIMITY_DP_HEALTH_LOG',
-              'data.virtualServiceId': virtualService.id,
-              'tsCreate': {
-                $gt: new Date().getTime() - 1 * 60 * 60 *1000,
-                $lt: new Date().getTime()
-              }
+          LogStore.setSearchQuery({
+            type: 'PROXIMITY_DP_HEALTH_LOG',
+            'data.virtualServiceId': virtualService.id,
+            tsCreate: {
+              $gt: new Date().getTime() - 1 * 60 * 60 * 1000,
+              $lt: new Date().getTime()
+            }
           })
           await this.handleMonitorLogsFetch()
         },
@@ -392,7 +387,7 @@ export class VirtualServiceStdObjCard extends Component {
       <Box>
         {viewMode === 'UPDATE' ? (
           <React.Fragment>
-            <NavTabsCard buttons={buttons}/>
+            <NavTabsCard buttons={buttons} />
             <Divider />
           </React.Fragment>
         ) : null}
@@ -401,6 +396,5 @@ export class VirtualServiceStdObjCard extends Component {
     )
   }
 }
-
 
 export default observer(VirtualServiceStdObjCard)

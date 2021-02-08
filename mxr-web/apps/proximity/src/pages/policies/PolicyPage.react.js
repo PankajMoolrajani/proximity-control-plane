@@ -6,11 +6,12 @@ import Typography from '@material-ui/core/Typography'
 import AddIcon from '@material-ui/icons/Add'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import ListIcon from '@material-ui/icons/List'
-import PolicyIcon from '@material-ui/icons/Policy' 
+import PolicyIcon from '@material-ui/icons/Policy'
 import PageLayout from '/mxr-web/apps/proximity/src/components/PageLayout'
 import PolicyObjectCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyObjectCard.react'
+import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
 
-class PolicyPage extends Component { 
+class PolicyPage extends Component {
   _renderTitle() {
     return (
       <Box
@@ -20,16 +21,15 @@ class PolicyPage extends Component {
         }}
       >
         <Box style={{ marginRight: 25 }}>
-          <PolicyIcon/>
+          <PolicyIcon />
         </Box>
         <Typography variant='h5'>Policies</Typography>
       </Box>
     )
   }
 
-
   _renderSelectedObjectTitle() {
-    const selectedObject = policyStore.getSelectedObject()
+    const selectedObject = PolicyStore.getSelectedObject()
     return (
       <Box
         style={{
@@ -45,9 +45,9 @@ class PolicyPage extends Component {
         >
           <CheckCircleIcon color='inherit' />
         </Box>
-        <Box  style={{ fontSize:20 }}>
+        <Box style={{ fontSize: 20 }}>
           <Box>{selectedObject.name}</Box>
-          <Box style={{ marginTop: 5, fontSize:14 }}>
+          <Box style={{ marginTop: 5, fontSize: 14 }}>
             <b>REVISION:</b> {selectedObject.currentRevision.name}
           </Box>
         </Box>
@@ -55,9 +55,8 @@ class PolicyPage extends Component {
     )
   }
 
-
   _renderObjectHeader() {
-    const viewMode = policyStore.getShowObjectViewMode()
+    const viewMode = PolicyStore.getShowObjectViewMode()
     return (
       <Box>
         {viewMode === 'UPDATE'
@@ -67,9 +66,8 @@ class PolicyPage extends Component {
     )
   }
 
-
   _renderButtons() {
-    const viewMode = policyStore.getShowObjectViewMode()
+    const viewMode = PolicyStore.getShowObjectViewMode()
     return (
       <Box>
         {viewMode !== 'CREATE' ? (
@@ -79,14 +77,14 @@ class PolicyPage extends Component {
             startIcon={<AddIcon />}
             style={{ fontWeight: 700 }}
             onClick={() => {
-              policyStore.setFormFields({
+              PolicyStore.setFormFields({
                 name: '',
                 displayName: '',
                 type: '',
                 rules: ''
               })
-              policyStore.setShowObjectViewMode('CREATE')
-              policyStore.setShowObjectViewModeSecondary('DETAILS')
+              PolicyStore.setShowObjectViewMode('CREATE')
+              PolicyStore.setShowObjectViewModeSecondary('DETAILS')
             }}
           >
             Create
@@ -100,8 +98,8 @@ class PolicyPage extends Component {
             startIcon={<ListIcon />}
             style={{ fontWeight: 700 }}
             onClick={() => {
-              policyStore.resetAllFields()
-              policyStore.setShowObjectViewMode('LIST')
+              PolicyStore.resetAllFields()
+              PolicyStore.setShowObjectViewMode('LIST')
             }}
           >
             Show All
@@ -110,7 +108,6 @@ class PolicyPage extends Component {
       </Box>
     )
   }
-
 
   render() {
     return (
@@ -123,6 +120,5 @@ class PolicyPage extends Component {
     )
   }
 }
-
 
 export default observer(PolicyPage)

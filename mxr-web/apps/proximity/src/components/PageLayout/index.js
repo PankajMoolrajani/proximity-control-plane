@@ -9,7 +9,6 @@ import Typography from '@material-ui/core/Typography'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 
-
 class PageLayout extends Component {
   render() {
     return (
@@ -26,9 +25,7 @@ class PageLayout extends Component {
               >
                 <Box style={{ padding: 10 }}>
                   <Box>{this.props.pageIcon}</Box>
-                  <Typography variant='h6'>
-                    {this.props.title}
-                  </Typography>
+                  <Typography variant='h6'>{this.props.title}</Typography>
                 </Box>
                 <Divider />
                 <Box>
@@ -64,15 +61,12 @@ class PageLayout extends Component {
               {this.props.actionButtons}
             </Box>
             <Divider />
-            <Box >
-              {this.props.children}
-            </Box>
+            <Box>{this.props.children}</Box>
           </Grid>
         </Grid>
       </Box>
     )
   }
 }
-
 
 export default observer(PageLayout)

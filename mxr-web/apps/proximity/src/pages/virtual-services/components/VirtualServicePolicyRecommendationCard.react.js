@@ -20,20 +20,17 @@ import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualServi
 import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
 import PolicyRecommendation from '/mxr-web/apps/proximity/src/stores/PolicyRecommendation.store'
 
-
 class VirtualServicePolicyRecommendationCard extends Component {
   state = {
     expandedRows: null,
     showAddPolicyPopUp: false
   }
 
-
   handleShowAddPolicyPopup = (showAddPolicyPopUp) => {
     this.setState({
       showAddPolicyPopUp: showAddPolicyPopUp
     })
   }
-
 
   _renderPolicyTemplate = (poilcyRecommendation) => {
     return (
@@ -42,7 +39,6 @@ class VirtualServicePolicyRecommendationCard extends Component {
       </Box>
     )
   }
-
 
   _renderAddExistingPolicyDialogCard() {
     const policyDraftObject = PolicyStore.getDraftObject()
@@ -62,7 +58,7 @@ class VirtualServicePolicyRecommendationCard extends Component {
         >
           <Box
             style={{
-              width: screen.width > 600 ? 600 : '100%',
+              width: window.screen.width > 600 ? 600 : '100%',
               marginTop: 20
             }}
           >
@@ -140,11 +136,7 @@ class VirtualServicePolicyRecommendationCard extends Component {
             {policyDraftObject ? (
               <React.Fragment>
                 <Box style={{ marginTop: 20 }}>
-                  <FormControl
-                    fullWidth
-                    variant='outlined'
-                    size='small'
-                  >
+                  <FormControl fullWidth variant='outlined' size='small'>
                     <InputLabel id='policy-revision-lable-id'>
                       Revision Name
                     </InputLabel>
@@ -175,11 +167,7 @@ class VirtualServicePolicyRecommendationCard extends Component {
                   </FormControl>
                 </Box>
                 <Box style={{ marginTop: 20 }}>
-                  <FormControl
-                    fullWidth
-                    variant='outlined'
-                    size='small'
-                  >
+                  <FormControl fullWidth variant='outlined' size='small'>
                     <InputLabel id='enforcement-lable-id'>
                       Enforcement Mode
                     </InputLabel>
@@ -200,12 +188,8 @@ class VirtualServicePolicyRecommendationCard extends Component {
                       }}
                     >
                       <MenuItem value='ACTIVE'>Active</MenuItem>
-                      <MenuItem value='PASSIVE'>
-                        Passive
-                      </MenuItem>
-                      <MenuItem value='LEARNING'>
-                        Learning
-                      </MenuItem>
+                      <MenuItem value='PASSIVE'>Passive</MenuItem>
+                      <MenuItem value='LEARNING'>Learning</MenuItem>
                     </Select>
                   </FormControl>
                 </Box>
@@ -264,15 +248,12 @@ class VirtualServicePolicyRecommendationCard extends Component {
     )
   }
 
-
   render() {
     const searchQuery = PolicyRecommendation.getSortQuery()
     const poilcyRecommendations = PolicyRecommendation.getObjects()
     const showAddPolicyDialog = VirtualServiceStore.getShowAddObjectDialog()
     if (!poilcyRecommendations || poilcyRecommendations.length === 0) {
-      return (
-        <Box style={{ textAlign: 'center' }}>No Content</Box>
-      )
+      return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }
     let searchQueryArray = []
     for (const field in searchQuery) {
@@ -380,6 +361,5 @@ class VirtualServicePolicyRecommendationCard extends Component {
     )
   }
 }
-
 
 export default observer(VirtualServicePolicyRecommendationCard)

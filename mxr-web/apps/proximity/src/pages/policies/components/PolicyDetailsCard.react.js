@@ -20,10 +20,8 @@ import VpnKeyIcon from '@material-ui/icons/VpnKey'
 import { Controlled as CodeMirror } from 'react-codemirror2'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import PolicyImpactAnalysisCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyImpactAnalysisCard.react'
-// import {
-//   policyStore,
-//   virtualServiceStore
-// } from 'apps/proximity/stores/proximity.store'
+import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
+import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
 import 'codemirror-rego/mode'
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/addon/comment/comment'
@@ -32,7 +30,6 @@ import 'codemirror-rego/key-map'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/idea.css'
 import { toJS } from 'mobx'
-
 
 const classes = {
   codeMirrorFull: {
@@ -64,10 +61,9 @@ export class PolicyDetailsCard extends Component {
     selectedServices: []
   }
 
-
   handleEvaluate = async () => {
-    const policy = policyStore.getFormFields()
-    const response = await axiosinstance.post(
+    const policy = PolicyStore.getFormFields()
+    const response = await axiosInstance.post(
       'opa/eval',
       {
         rules: policy.rules,
@@ -84,7 +80,6 @@ export class PolicyDetailsCard extends Component {
     }
   }
 
-
   isJson = (str) => {
     try {
       JSON.parse(str)
@@ -93,7 +88,6 @@ export class PolicyDetailsCard extends Component {
     }
     return true
   }
-
 
   _renderIOCard() {
     return (
@@ -106,9 +100,7 @@ export class PolicyDetailsCard extends Component {
               alignItems: 'center'
             }}
           >
-            <Box className={this.props.classes.codeMirrorTitle}>
-              Input
-            </Box>
+            <Box className={this.props.classes.codeMirrorTitle}>Input</Box>
             <Button
               variant='contained'
               color='primary'
@@ -135,9 +127,7 @@ export class PolicyDetailsCard extends Component {
           />
         </Box>
         <Box>
-          <Box className={this.props.classes.codeMirrorTitle}>
-            Output
-          </Box>
+          <Box className={this.props.classes.codeMirrorTitle}>Output</Box>
           <JSONPretty
             className='hideScroll'
             style={{ maxHeight: 200, overflowY: 'auto' }}
@@ -147,7 +137,6 @@ export class PolicyDetailsCard extends Component {
       </React.Fragment>
     )
   }
-
 
   _renderTabs() {
     return (
@@ -173,7 +162,7 @@ export class PolicyDetailsCard extends Component {
               padding: '6px 15px'
             }}
             onClick={() => {
-              const policy = policyStore.getSelectedObject()
+              const policy = PolicyStore.getSelectedObject()
               if (!policy.id) {
                 return
               }
@@ -189,10 +178,9 @@ export class PolicyDetailsCard extends Component {
       </Box>
     )
   }
-  
 
   _renderPlayGround = () => {
-    const formFields = policyStore.getFormFields()
+    const formFields = PolicyStore.getFormFields()
     if (formFields.type !== 'AUTHZ') {
       return <Box></Box>
     }
@@ -212,7 +200,7 @@ export class PolicyDetailsCard extends Component {
                   height: '600px'
                 }}
                 onBeforeChange={(editor, data, value) => {
-                  policyStore.setFormFields({
+                  PolicyStore.setFormFields({
                     ...formFields,
                     rules: value
                   })
@@ -242,9 +230,8 @@ export class PolicyDetailsCard extends Component {
     )
   }
 
-
   _renderWAFOps = () => {
-    const formFields = policyStore.getFormFields()
+    const formFields = PolicyStore.getFormFields()
     if (formFields.type !== 'WAF') {
       return <Box></Box>
     }
@@ -285,7 +272,7 @@ export class PolicyDetailsCard extends Component {
                 : false
             }
             onChange={(e) => {
-              policyStore.setFormFields({
+              PolicyStore.setFormFields({
                 ...formFields,
                 rules: JSON.stringify({
                   ...JSON.parse(formFields.rules),
@@ -313,7 +300,7 @@ export class PolicyDetailsCard extends Component {
                 : false
             }
             onChange={(e) => {
-              policyStore.setFormFields({
+              PolicyStore.setFormFields({
                 ...formFields,
                 rules: JSON.stringify({
                   ...JSON.parse(formFields.rules),
@@ -341,7 +328,7 @@ export class PolicyDetailsCard extends Component {
                 : false
             }
             onChange={(e) => {
-              policyStore.setFormFields({
+              PolicyStore.setFormFields({
                 ...formFields,
                 rules: JSON.stringify({
                   ...JSON.parse(formFields.rules),
@@ -369,7 +356,7 @@ export class PolicyDetailsCard extends Component {
                 : false
             }
             onChange={(e) => {
-              policyStore.setFormFields({
+              PolicyStore.setFormFields({
                 ...formFields,
                 rules: JSON.stringify({
                   ...JSON.parse(formFields.rules),
@@ -384,9 +371,8 @@ export class PolicyDetailsCard extends Component {
     )
   }
 
-
   _renderDynamicDefence = () => {
-    const formFields = policyStore.getFormFields()
+    const formFields = PolicyStore.getFormFields()
     if (formFields.type !== 'DYNAMIC') {
       return <Box></Box>
     }
@@ -410,7 +396,7 @@ export class PolicyDetailsCard extends Component {
                 : false
             }
             onChange={(e) => {
-              policyStore.setFormFields({
+              PolicyStore.setFormFields({
                 ...formFields,
                 rules: JSON.stringify({
                   ...JSON.parse(formFields.rules),
@@ -425,11 +411,10 @@ export class PolicyDetailsCard extends Component {
     )
   }
 
-
   generateKey = async () => {
-    const formFields = policyStore.getFormFields()
-    const response = await axiosinstance.get('/crypto/apikey')
-    policyStore.setFormFields({
+    const formFields = PolicyStore.getFormFields()
+    const response = await axiosInstance.get('/crypto/apikey')
+    PolicyStore.setFormFields({
       ...formFields,
       rules: JSON.stringify({
         ...JSON.parse(formFields.rules),
@@ -441,9 +426,8 @@ export class PolicyDetailsCard extends Component {
     })
   }
 
-
   _renderAuthNConfig = () => {
-    const formFields = policyStore.getFormFields()
+    const formFields = PolicyStore.getFormFields()
     const type = JSON.parse(formFields.rules).type
     if (!type) {
       return <Box></Box>
@@ -468,7 +452,7 @@ export class PolicyDetailsCard extends Component {
                     : ''
                 }
                 onChange={(event) => {
-                  policyStore.setFormFields({
+                  PolicyStore.setFormFields({
                     ...formFields,
                     rules: JSON.stringify({
                       ...JSON.parse(formFields.rules),
@@ -501,7 +485,7 @@ export class PolicyDetailsCard extends Component {
                     : ''
                 }
                 onChange={(event) => {
-                  policyStore.setFormFields({
+                  PolicyStore.setFormFields({
                     ...formFields,
                     rules: JSON.stringify({
                       ...JSON.parse(formFields.rules),
@@ -559,9 +543,8 @@ export class PolicyDetailsCard extends Component {
     }
   }
 
-
   _renderAuthN = () => {
-    const formFields = policyStore.getFormFields()
+    const formFields = PolicyStore.getFormFields()
     if (formFields.type !== 'AUTHN') {
       return <Box></Box>
     }
@@ -576,9 +559,7 @@ export class PolicyDetailsCard extends Component {
         >
           <Box style={{ maxWidth: 700, marginTop: 20 }}>
             <FormControl fullWidth variant='outlined' size='small'>
-              <InputLabel id='auth-lable-id'>
-                Auth Type
-              </InputLabel>
+              <InputLabel id='auth-lable-id'>Auth Type</InputLabel>
               <Select
                 ref={null}
                 labelId='auth-lable-id'
@@ -616,7 +597,7 @@ export class PolicyDetailsCard extends Component {
                         password: ''
                       }
                   }
-                  policyStore.setFormFields({
+                  PolicyStore.setFormFields({
                     ...formFields,
                     rules: JSON.stringify({
                       ...JSON.parse(formFields.rules),
@@ -640,11 +621,10 @@ export class PolicyDetailsCard extends Component {
     )
   }
 
-
   render() {
-    const formFields = policyStore.getFormFields()
-    const policy = policyStore.getSelectedObject()
-    const viewMode = policyStore.getShowObjectViewMode()
+    const formFields = PolicyStore.getFormFields()
+    const policy = PolicyStore.getSelectedObject()
+    const viewMode = PolicyStore.getShowObjectViewMode()
     let policyName
     if (viewMode === 'CREATE') {
       policyName = formFields.name ? formFields.name : ''
@@ -672,7 +652,7 @@ export class PolicyDetailsCard extends Component {
               if (viewMode !== 'CREATE') {
                 return
               }
-              policyStore.setFormFields({
+              PolicyStore.setFormFields({
                 ...formFields,
                 name: event.target.value
               })
@@ -687,7 +667,7 @@ export class PolicyDetailsCard extends Component {
             size='small'
             value={formFields.displayName ? formFields.displayName : ''}
             onChange={(event) => {
-              policyStore.setFormFields({
+              PolicyStore.setFormFields({
                 ...formFields,
                 displayName: event.target.value
               })
@@ -732,7 +712,7 @@ export class PolicyDetailsCard extends Component {
                   default:
                     rules = ''
                 }
-                policyStore.setFormFields({
+                PolicyStore.setFormFields({
                   ...formFields,
                   type: event.target.value,
                   rules: rules
@@ -756,6 +736,5 @@ export class PolicyDetailsCard extends Component {
     )
   }
 }
-
 
 export default withStyles(classes)(observer(PolicyDetailsCard))

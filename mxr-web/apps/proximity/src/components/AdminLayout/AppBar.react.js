@@ -12,8 +12,6 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { observer } from 'mobx-react-lite'
 import UserStore from '/mxr-web/apps/proximity/src/stores/User.store'
 
-
-
 const drawerWidth = 240
 const useStyles = makeStyles((theme) => ({
   toolbar: {

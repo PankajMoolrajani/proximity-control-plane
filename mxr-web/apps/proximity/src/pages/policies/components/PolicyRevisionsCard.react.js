@@ -60,5 +60,4 @@ export class PolicyRevisionsCard extends Component {
   }
 }
 
-
 export default observer(PolicyRevisionsCard)

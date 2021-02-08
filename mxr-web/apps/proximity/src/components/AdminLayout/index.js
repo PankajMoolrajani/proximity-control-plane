@@ -5,7 +5,6 @@ import Box from '@material-ui/core/Box'
 import AppBar from './AppBar.react'
 import SideBar from './SideBar.react'
 
-
 const theme = createMuiTheme({
   palette: {
     primary: {
@@ -20,21 +19,22 @@ const theme = createMuiTheme({
   }
 })
 
-
 class AdminLayout extends Component {
   render() {
     return (
       <ThemeProvider theme={theme}>
-        <AppBar/>
-        <SideBar/>
-        <Box component='main'
-           style={{
-              paddingTop: 48, color:theme.palette.text.primary,
-              backgroundColor: '#fafafa'
-            }}
-          >
+        <AppBar />
+        <SideBar />
+        <Box
+          component='main'
+          style={{
+            paddingTop: 48,
+            color: theme.palette.text.primary,
+            backgroundColor: '#fafafa'
+          }}
+        >
           {this.props.children}
-        </Box> 
+        </Box>
       </ThemeProvider>
     )
   }
