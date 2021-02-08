@@ -1,25 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import { Route, Switch } from 'react-router-dom'
+import { observer } from 'mobx-react'
+import AdminLayout from '/mxr-web/apps/proximity/src/components/AdminLayout'
+import Home from '/mxr-web/apps/proximity/src/pages/Home/Home.react'
+import VirtualServices from '/mxr-web/apps/proximity/src/pages/virtual-services'
+import Policies from '/mxr-web/apps/proximity/src/pages/policies'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class SRS extends Component {
+
+  render() {
+    return (
+      <AdminLayout>
+        <Switch>
+          <Route path='/proximity/virtual-services' component={VirtualServices} />
+          <Route path='/proximity/policies' component={Policies} />
+          <Route path='/proximity' component={Home} /> 
+        </Switch>
+      </AdminLayout>
+    )
+  }
 }
 
-export default App;
+export default observer(SRS)
