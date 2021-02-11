@@ -1,8 +1,8 @@
-import { makeAutoObservable, observable, toJS } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 
 class LayoutStore {
+  showMenu = false
   constructor() {
-    let showMenu = null
     makeAutoObservable(this)
   }
 

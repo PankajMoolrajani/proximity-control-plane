@@ -13,9 +13,9 @@ class VirtualServiceListCard extends Component {
   handleFetch = async () => {
     virtualServiceStore.setShowProcessCard(true)
     try {
-      const virtualServices = await virtualServiceStore.objectQuery()
+      const virtualServices = await virtualServiceStore.objectQuery() 
       virtualServiceStore.setSearchResultsObjectCount(virtualServices.count)
-      virtualServiceStore.setObjects(virtualServices.data)
+      virtualServiceStore.setObjects(virtualServices.rows)
     } catch (error) {
       console.log(`Error: Getting Virtual Service`)
     }
@@ -39,14 +39,14 @@ class VirtualServiceListCard extends Component {
       )
     }
 
-    const searchQuery = virtualServiceStore.getSortQuery()
-    let searchQueryArray = []
-    for (const field in searchQuery) {
-      searchQueryArray.push({
-        field: field,
-        order: searchQuery[field]
-      })
-    }
+    // const sortQuery = virtualServiceStore.getSortQuery()
+    // let searchQueryArray = []
+    // for (const field in searchQuery) {
+    //   searchQueryArray.push({
+    //     field: field,
+    //     order: searchQuery[field]
+    //   })
+    // }
     return (
       <DataTable
         className='p-datatable-striped p-datatable-hovered'
@@ -64,7 +64,7 @@ class VirtualServiceListCard extends Component {
           virtualServiceStore.getSearchPageNum() *
           virtualServiceStore.getSearchPageObjectCount()
         }
-        sortMode='multiple'
+        // sortMode='multiple'
         rowsPerPageOptions={[10, 20, 50, 1000]}
         onSelectionChange={(e) => {
           const virtualService = e.value
@@ -72,11 +72,9 @@ class VirtualServiceListCard extends Component {
           virtualServiceStore.setFormFields({
             id: virtualService.id,
             displayName: virtualService.displayName,
-            proximityUrl:
-              virtualService.currentRevision.virtualService.proximityUrl,
-            targetUrl: virtualService.currentRevision.virtualService.targetUrl,
-            policiesMetadata:
-              virtualService.currentRevision.virtualService.policiesMetadata
+            proximityUrl:virtualService.proximityUrl,
+            targetUrl: virtualService.targetUrl,
+            authKey: virtualService.authKey
           })
           virtualServiceStore.setShowObjectViewMode('UPDATE')
           virtualServiceStore.setShowObjectViewModeSecondary('DETAILS')
@@ -86,30 +84,30 @@ class VirtualServiceListCard extends Component {
           virtualServiceStore.setSearchPageObjectCount(e.rows)
           await this.handleFetch()
         }}
-        multiSortMeta={searchQueryArray}
-        onSort={async (e) => {
-          let sortQuery = virtualServiceStore.getSortQuery()
-          if (!sortQuery) {
-            sortQuery = {}
-          }
+        // multiSortMeta={searchQueryArray}
+        // onSort={async (e) => {
+        //   let sortQuery = virtualServiceStore.getSortQuery()
+        //   if (!sortQuery) {
+        //     sortQuery = {}
+        //   }
 
-          e.multiSortMeta.forEach((sortMeta) => {
-            sortQuery[sortMeta.field] = sortMeta.order
-          })
+        //   e.multiSortMeta.forEach((sortMeta) => {
+        //     sortQuery[sortMeta.field] = sortMeta.order
+        //   })
 
-          for (const field in sortQuery) {
-            if (
-              e.multiSortMeta.findIndex(
-                (msortMeta) => msortMeta.field === field
-              ) === -1
-            ) {
-              delete sortQuery[field]
-            }
-          }
-          virtualServiceStore.setSortQuery(sortQuery)
-          await this.handleFetch()
-        }}
-        removableSort
+        //   for (const field in sortQuery) {
+        //     if (
+        //       e.multiSortMeta.findIndex(
+        //         (msortMeta) => msortMeta.field === field
+        //       ) === -1
+        //     ) {
+        //       delete sortQuery[field]
+        //     }
+        //   }
+        //   virtualServiceStore.setSortQuery(sortQuery)
+        //   await this.handleFetch()
+        // }}
+        // removableSort
         lazy
         paginator
       >
@@ -120,16 +118,10 @@ class VirtualServiceListCard extends Component {
           sortable
         ></Column>
         <Column
-          field='revision'
-          header='Revision'
-          body={(virtualService) => virtualService.currentRevision.name}
-          sortable
-        ></Column>
-        <Column
           field='tsCreate'
           header='Date Created'
           body={(virtualService) =>
-            moment(virtualService.tsCreate).format('MMM DD, YYYY')
+            moment(virtualService.createdAt).format('MMM DD, YYYY')
           }
           sortable
         ></Column>
@@ -137,7 +129,7 @@ class VirtualServiceListCard extends Component {
           field='tsUpdate'
           header='Date Modified'
           body={(virtualService) =>
-            moment(virtualService.tsUpdate).format('MMM DD, YYYY')
+            moment(virtualService.updatedAt).format('MMM DD, YYYY')
           }
           sortable
         ></Column>

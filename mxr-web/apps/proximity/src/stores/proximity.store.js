@@ -1,28 +1,27 @@
 import { makeAutoObservable, observable } from 'mobx'
 import { axiosInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
 import objects from './objects.json'
-console.log(objects)
 
 class ProximityStore {
+  objectName = null
+  formFields = null
+  showObjectViewMode = null
+  showObjectViewModeSecondary = null
+  showProcessCard = null
+  showSuccessCard = null
+  searchQuery = null
+  searchPageNum = null
+  searchPageObjectCount = null
+  searchResultsObjectCount = null
+  searchText = null
+  objects = null
+  selectedObjects = null
+  selectedObject = null
+  draftObject = null
+  filteredObjects = null
+  showAddObjectDialog = null
   constructor(objectName) {
     this.objectName = objectName
-    let formFields = null
-    let showObjectViewMode = null
-    let showObjectViewModeSecondary = null
-    let showProcessCard = null
-    let showSuccessCard = null
-    let searchQuery = null
-    let searchPageNum = null
-    let searchPageObjectCount = null
-    let searchResultsObjectCount = null
-    let searchText = null
-    let objects = null
-    let selectedObjects = null
-    let selectedObject = null
-    let draftObject = null
-    let filteredObjects = null
-    let showAddObjectDialog = null
-
     makeAutoObservable(this)
   }
 
@@ -71,11 +70,19 @@ class ProximityStore {
     if (!searchQuery) {
       searchQuery = {}
     }
+
+    let sortQuery = this.getSortQuery()
+    if(!sortQuery) {
+      sortQuery= []
+    }
     const response = await axiosInstance.post(`/${this.objectName}/search`, {
-      where: searchQuery,
-      limit: pageObjectCount,
-      offset: pageNum * pageObjectCount,
-      include: include
+      query: {
+        where: searchQuery,
+        limit: pageObjectCount,
+        offset: pageNum * pageObjectCount,
+        include: include,
+        order: sortQuery
+      }
     })
     if (response.status === 200) {
       return response.data
@@ -283,10 +290,9 @@ class ProximityStore {
   }
 
   setSortQuery(sortQuery) {
-    this.sortQuery=sortQuery
+    this.sortQuery = sortQuery
     return this.sortQuery
   }
-
 
   getSortQuery() {
     return this.sortQuery

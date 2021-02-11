@@ -54,11 +54,8 @@ class VirtualServicePage extends Component {
         </Box>
         <Box>
           <Box style={{ fontSize: 20 }}>
-            {selectedObject.currentRevision.virtualService.name}
-          </Box>
-          <Box style={{ marginTop: 5, fontSize: 14 }}>
-            <b>REVISION:</b> {selectedObject.currentRevision.name}
-          </Box>
+            {selectedObject.name}
+          </Box> 
         </Box>
       </Box>
     )
@@ -91,7 +88,7 @@ class VirtualServicePage extends Component {
                 displayName: '',
                 proximityUrl: '',
                 targetUrl: '',
-                policiesMetadata: []
+                authKey: ''
               })
               virtualServiceStore.setShowObjectViewMode('CREATE')
               virtualServiceStore.setShowObjectViewModeSecondary('DETAILS')
@@ -125,7 +122,7 @@ class VirtualServicePage extends Component {
         title={this._renderObjectHeader()}
         actionButtons={this._renderButtons()}
       >
-        <VirtualServiceObjectCard />
+        <VirtualServiceObjectCard /> 
       </PageLayout>
     )
   }

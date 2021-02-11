@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
+import { v4 as uuid } from 'uuid'
 import Box from '@material-ui/core/Box'
 import TextField from '@material-ui/core/TextField'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import IconButton from '@material-ui/core/IconButton'
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
+import BuildIcon from '@material-ui/icons/Build'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { virtualServiceStore } = stores
 export class VirtualServiceDetailsCard extends Component {
@@ -90,6 +92,41 @@ export class VirtualServiceDetailsCard extends Component {
             }}
           />
         </Box>
+        <Box style={{ marginTop: 20 }}>
+          <TextField
+            fullWidth
+            type={this.state.showSecret ? 'text' : 'password'}
+            label='Auth Key'
+            variant='outlined'
+            size='small'
+            value={formFields.authKey ? formFields.authKey : ''}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment>
+                  <IconButton
+                    onClick={() => {
+                      virtualServiceStore.setFormFields({
+                        ...formFields,
+                        authKey: uuid().replaceAll('-', '')
+                      })
+                    }}
+                  >
+                    <BuildIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={() =>
+                      this.setState((prevState) => ({
+                        showSecret: !prevState.showSecret
+                      }))
+                    }
+                  >
+                    {this.state.showSecret ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+          />
+        </Box>
         {viewMode === 'UPDATE' ? (
           <React.Fragment>
             <Box style={{ marginTop: 20 }}>
@@ -99,35 +136,6 @@ export class VirtualServiceDetailsCard extends Component {
                 variant='outlined'
                 size='small'
                 value={formFields.id ? formFields.id : ''}
-              />
-            </Box>
-            <Box style={{ marginTop: 20 }}>
-              <TextField
-                fullWidth
-                type={this.state.showSecret ? 'text' : 'password'}
-                label='Auth Key'
-                variant='outlined'
-                size='small'
-                value={virtualService.authKey ? virtualService.authKey : ''}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment>
-                      <IconButton
-                        onClick={() =>
-                          this.setState((prevState) => ({
-                            showSecret: !prevState.showSecret
-                          }))
-                        }
-                      >
-                        {this.state.showSecret ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
               />
             </Box>
           </React.Fragment>

@@ -4,7 +4,8 @@ import { observer } from 'mobx-react'
 import VirtualServicesPage from '/mxr-web/apps/proximity/src/pages/virtual-services/VirtualServicesPage.react'
 
 export class VirtualServices extends Component {
-  render() {
+
+  render() { 
     return (
       <Router>
         <Switch>
