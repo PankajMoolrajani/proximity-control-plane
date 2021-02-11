@@ -3,20 +3,21 @@ import { observer } from 'mobx-react'
 import Box from '@material-ui/core/Box'
 import VirtualServiceListCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceListCard.react'
 import VirtualServiceStdObjCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceStdObjCard.react'
-import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { virtualServiceStore } = stores
 
 export class VirtualServiceObjectCard extends Component {
   componentDidMount() {
-    VirtualServiceStore.setShowObjectViewMode('LIST')
+    virtualServiceStore.setShowObjectViewMode('LIST')
   }
 
   handleOnClose() {
-    VirtualServiceStore.resetAllFields()
-    VirtualServiceStore.setShowObjectViewMode('LIST')
+    virtualServiceStore.resetAllFields()
+    virtualServiceStore.setShowObjectViewMode('LIST')
   }
 
   _renderObjectCard() {
-    let viewMode = VirtualServiceStore.getShowObjectViewMode()
+    let viewMode = virtualServiceStore.getShowObjectViewMode()
     switch (viewMode) {
       case 'CREATE':
         return <VirtualServiceStdObjCard onClose={this.handleOnClose} />

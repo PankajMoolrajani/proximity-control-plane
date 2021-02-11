@@ -17,8 +17,8 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import AddIcon from '@material-ui/icons/Add'
 import PlatfromPopUpCard from '/mxr-web/apps/proximity/src/components/platform/PlatfromPopUpCard.react'
 import VirtualServiceAddPolicyDialog from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceAddPolicyDialog.react'
-import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
-import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { virtualServiceStore, policyStore } = stores
 
 export class VirtualServicePoliciesCard extends Component {
   state = {
@@ -32,7 +32,7 @@ export class VirtualServicePoliciesCard extends Component {
   }
 
   _renderAddExistingPolicyDialogCard() {
-    const policyDraftObject = PolicyStore.getDraftObject()
+    const policyDraftObject = policyStore.getDraftObject()
 
     return (
       <PlatfromPopUpCard
@@ -62,31 +62,31 @@ export class VirtualServicePoliciesCard extends Component {
                 }
                 getOptionLabel={(option) => option.name}
                 options={
-                  PolicyStore.getObjects() ? PolicyStore.getObjects() : []
+                  policyStore.getObjects() ? policyStore.getObjects() : []
                 }
                 inputValue={
-                  PolicyStore.getSearchText()
-                    ? PolicyStore.getSearchText()
-                    : PolicyStore.getDraftObject()
-                    ? PolicyStore.getDraftObject()['name']
+                  policyStore.getSearchText()
+                    ? policyStore.getSearchText()
+                    : policyStore.getDraftObject()
+                    ? policyStore.getDraftObject()['name']
                     : ''
                 }
-                loading={PolicyStore.getShowProcessCard()}
+                loading={policyStore.getShowProcessCard()}
                 onChange={async (event, option) => {
                   if (!option) {
                     return
                   }
-                  let formFields = PolicyStore.getFormFields()
+                  let formFields = policyStore.getFormFields()
                   if (!formFields) {
                     formFields = {}
                   }
-                  PolicyStore.setShowProcessCard(true)
-                  const policy = await PolicyStore.objectQueryById(
+                  policyStore.setShowProcessCard(true)
+                  const policy = await policyStore.objectQueryById(
                     option.id,
                     true
                   )
-                  PolicyStore.setShowProcessCard(false)
-                  PolicyStore.setDraftObject({
+                  policyStore.setShowProcessCard(false)
+                  policyStore.setDraftObject({
                     ...policyDraftObject,
                     id: policy.id,
                     name: policy.name,
@@ -95,14 +95,14 @@ export class VirtualServicePoliciesCard extends Component {
                 }}
                 onInputChange={async (e) => {
                   if (!e.target.value) {
-                    PolicyStore.resetAllFields()
+                    policyStore.resetAllFields()
                     return
                   }
-                  PolicyStore.setSearchText(e.target.value)
-                  PolicyStore.setShowProcessCard(true)
-                  const policies = await PolicyStore.objectQuery()
-                  PolicyStore.setObjects(policies.data)
-                  PolicyStore.setShowProcessCard(false)
+                  policyStore.setSearchText(e.target.value)
+                  policyStore.setShowProcessCard(true)
+                  const policies = await policyStore.objectQuery()
+                  policyStore.setObjects(policies.data)
+                  policyStore.setShowProcessCard(false)
                 }}
                 renderInput={(params) => (
                   <TextField
@@ -113,7 +113,7 @@ export class VirtualServicePoliciesCard extends Component {
                       ...params.InputProps,
                       endAdornment: (
                         <React.Fragment>
-                          {PolicyStore.getShowProcessCard() ? (
+                          {policyStore.getShowProcessCard() ? (
                             <CircularProgress color='inherit' size={20} />
                           ) : null}
                           {params.InputProps.endAdornment}
@@ -142,7 +142,7 @@ export class VirtualServicePoliciesCard extends Component {
                       }
                       renderValue={(value) => (value ? value : '')}
                       onChange={(event) => {
-                        PolicyStore.setDraftObject({
+                        policyStore.setDraftObject({
                           ...policyDraftObject,
                           selectedRevisionId: event.target.value.id,
                           selectedRevisionName: event.target.value.name
@@ -172,7 +172,7 @@ export class VirtualServicePoliciesCard extends Component {
                           : ''
                       }
                       onChange={(event) => {
-                        PolicyStore.setDraftObject({
+                        policyStore.setDraftObject({
                           ...policyDraftObject,
                           enforcementMode: event.target.value
                         })
@@ -189,9 +189,9 @@ export class VirtualServicePoliciesCard extends Component {
                     variant='contained'
                     color='primary'
                     onClick={async () => {
-                      const virtualService = VirtualServiceStore.getSelectedObject()
-                      const draftPolicy = PolicyStore.getDraftObject()
-                      VirtualServiceStore.setFormFields({
+                      const virtualService = virtualServiceStore.getSelectedObject()
+                      const draftPolicy = policyStore.getDraftObject()
+                      virtualServiceStore.setFormFields({
                         id: virtualService.id,
                         displayName: virtualService.displayName,
                         proximityUrl:
@@ -210,21 +210,21 @@ export class VirtualServicePoliciesCard extends Component {
                           }
                         ]
                       })
-                      VirtualServiceStore.setShowProcessCard(true)
+                      virtualServiceStore.setShowProcessCard(true)
                       try {
-                        const updatedVirtualService = await VirtualServiceStore.objectUpdate()
-                        VirtualServiceStore.setSelectedObject(
+                        const updatedVirtualService = await virtualServiceStore.objectUpdate()
+                        virtualServiceStore.setSelectedObject(
                           updatedVirtualService
                         )
-                        VirtualServiceStore.setShowProcessCard(false)
-                        VirtualServiceStore.setShowSuccessCard(true)
+                        virtualServiceStore.setShowProcessCard(false)
+                        virtualServiceStore.setShowSuccessCard(true)
                         await new Promise((res) => setTimeout(res, 2000))
-                        VirtualServiceStore.setShowSuccessCard(false)
+                        virtualServiceStore.setShowSuccessCard(false)
                       } catch (error) {
                         console.log('Error: Updating Virtual Service', error)
                       }
-                      VirtualServiceStore.setShowProcessCard(false)
-                      PolicyStore.resetAllFields()
+                      virtualServiceStore.setShowProcessCard(false)
+                      policyStore.resetAllFields()
                       await this.props.fetchPolicies()
                     }}
                   >
@@ -240,8 +240,8 @@ export class VirtualServicePoliciesCard extends Component {
   }
 
   _renderPoliciesListCard() {
-    const virtualService = VirtualServiceStore.getSelectedObject()
-    const policiesAll = VirtualServiceStore.getRelatedObjects()
+    const virtualService = virtualServiceStore.getSelectedObject()
+    const policiesAll = virtualServiceStore.getRelatedObjects()
     const policiesMetadata =
       virtualService.currentRevision.virtualService.policiesMetadata
     if (!policiesAll || !policiesMetadata || policiesMetadata.length === 0) {
@@ -288,12 +288,12 @@ export class VirtualServicePoliciesCard extends Component {
             type: e.value.type,
             rules: e.value.rules
           }
-          PolicyStore.setSelectedObject(policy)
+          policyStore.setSelectedObject(policy)
           delete policy.name
-          PolicyStore.setFormFields(policy)
+          policyStore.setFormFields(policy)
 
-          PolicyStore.setShowObjectViewMode('UPDATE')
-          VirtualServiceStore.setShowAddObjectDialog(true)
+          policyStore.setShowObjectViewMode('UPDATE')
+          virtualServiceStore.setShowAddObjectDialog(true)
         }}
         removableSort
         paginator
@@ -337,7 +337,7 @@ export class VirtualServicePoliciesCard extends Component {
   }
 
   render() {
-    const showAddPolicyDialog = VirtualServiceStore.getShowAddObjectDialog()
+    const showAddPolicyDialog = virtualServiceStore.getShowAddObjectDialog()
     return (
       <Box>
         <Box
@@ -369,7 +369,7 @@ export class VirtualServicePoliciesCard extends Component {
               startIcon={<AddIcon />}
               style={{ marginRight: 10, fontWeight: 700 }}
               onClick={() => {
-                PolicyStore.resetAllFields()
+                policyStore.resetAllFields()
                 this.handleShowAddPolicyPopup(true)
               }}
             >
@@ -381,14 +381,14 @@ export class VirtualServicePoliciesCard extends Component {
               startIcon={<AddIcon />}
               style={{ fontWeight: 700 }}
               onClick={() => {
-                PolicyStore.setFormFields({
+                policyStore.setFormFields({
                   name: '',
                   displayName: '',
                   type: '',
                   rules: ''
                 })
-                PolicyStore.setShowObjectViewMode('CREATE')
-                VirtualServiceStore.setShowAddObjectDialog(true)
+                policyStore.setShowObjectViewMode('CREATE')
+                virtualServiceStore.setShowAddObjectDialog(true)
               }}
             >
               Create new policy

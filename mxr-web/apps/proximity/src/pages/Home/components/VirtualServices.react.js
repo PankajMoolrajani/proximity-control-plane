@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import Box from '@material-ui/core/Box'
-import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { virtualServiceStore } = stores
 
 class VirtualServices extends Component {
   state = {
@@ -10,8 +11,8 @@ class VirtualServices extends Component {
   }
 
   async componentDidMount() {
-    VirtualServiceStore.setSearchPageObjectCount(1000)
-    const virtualServices = await VirtualServiceStore.objectQuery()
+    virtualServiceStore.setSearchPageObjectCount(1000)
+    const virtualServices = await virtualServiceStore.objectQuery()
     this.setState({ totalVirtualServices: virtualServices.count })
     let last7Days = 0
     virtualServices.data.forEach((virtualService) => {

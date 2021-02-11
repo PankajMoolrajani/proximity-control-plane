@@ -6,7 +6,8 @@ import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
-import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { logStore } = stores
 
 export class PolicyDecisionLogsCard extends Component {
   state = {
@@ -33,7 +34,7 @@ export class PolicyDecisionLogsCard extends Component {
   }
 
   render() {
-    const searchQuery = LogStore.getSortQuery()
+    const searchQuery = logStore.getSortQuery()
     const logs = ''
     if (!logs || logs.length === 0) {
       return <Box style={{ textAlign: 'center' }}>No Content</Box>
@@ -54,23 +55,23 @@ export class PolicyDecisionLogsCard extends Component {
         expandedRows={this.state.expandedRows}
         onRowToggle={(e) => this.setState({ expandedRows: e.data })}
         rowExpansionTemplate={this._renderLogTemplate}
-        totalRecords={LogStore.getSearchResultsObjectCount()}
-        loading={LogStore.getShowProcessCard()}
-        rows={LogStore.getSearchPageObjectCount()}
+        totalRecords={logStore.getSearchResultsObjectCount()}
+        loading={logStore.getShowProcessCard()}
+        rows={logStore.getSearchPageObjectCount()}
         first={
-          LogStore.getSearchPageNum() * LogStore.getSearchPageObjectCount()
+          logStore.getSearchPageNum() * logStore.getSearchPageObjectCount()
         }
         sortMode='multiple'
         rowsPerPageOptions={[10, 20, 50, 1000]}
         onSelectionChange={(e) => {}}
         onPage={async (e) => {
-          LogStore.setSearchPageNum(e.page)
-          LogStore.setSearchPageObjectCount(e.rows)
+          logStore.setSearchPageNum(e.page)
+          logStore.setSearchPageObjectCount(e.rows)
           await this.props.fetchDecisionLogs()
         }}
         multiSortMeta={searchQueryArray}
         onSort={async (e) => {
-          let sortQuery = LogStore.getSortQuery()
+          let sortQuery = logStore.getSortQuery()
           if (!sortQuery) {
             sortQuery = {}
           }
@@ -88,7 +89,7 @@ export class PolicyDecisionLogsCard extends Component {
               delete sortQuery[field]
             }
           }
-          LogStore.setSortQuery(sortQuery)
+          logStore.setSortQuery(sortQuery)
           await this.props.fetchDecisionLogs()
         }}
         removableSort

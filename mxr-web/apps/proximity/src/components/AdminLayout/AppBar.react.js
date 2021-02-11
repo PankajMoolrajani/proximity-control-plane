@@ -10,7 +10,6 @@ import IconButton from '@material-ui/core/IconButton'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import { useAuth0 } from '@auth0/auth0-react'
 import { observer } from 'mobx-react-lite'
-import UserStore from '/mxr-web/apps/proximity/src/stores/User.store'
 
 const drawerWidth = 240
 const useStyles = makeStyles((theme) => ({
@@ -49,7 +48,6 @@ const useStyles = makeStyles((theme) => ({
 const AppBarTop = ({ handleDrawerOpen, open }) => {
   const classes = useStyles()
   const { user, logout } = useAuth0()
-  const org = UserStore.getCurOrg()
   return (
     <AppBar
       position='absolute'
@@ -74,18 +72,7 @@ const AppBarTop = ({ handleDrawerOpen, open }) => {
         >
           Data API
         </Typography>
-        {org ? (
-          <Box
-            style={{
-              padding: 5,
-              background: '#ffffff',
-              marginRight: 10,
-              borderRadius: 5
-            }}
-          >
-            <Typography color='primary'>{org.name}</Typography>
-          </Box>
-        ) : null}
+
         <Avatar alt={user.name} src={user.picture} className={classes.avatar} />
         <Typography>Hi, {user.name}</Typography>
         <IconButton

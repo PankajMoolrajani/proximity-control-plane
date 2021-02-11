@@ -6,17 +6,17 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import IconButton from '@material-ui/core/IconButton'
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
-import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
-
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { virtualServiceStore } = stores
 export class VirtualServiceDetailsCard extends Component {
   state = {
     showSecret: false
   }
 
   render() {
-    const formFields = VirtualServiceStore.getFormFields()
-    const virtualService = VirtualServiceStore.getSelectedObject()
-    const viewMode = VirtualServiceStore.getShowObjectViewMode()
+    const formFields = virtualServiceStore.getFormFields()
+    const virtualService = virtualServiceStore.getSelectedObject()
+    const viewMode = virtualServiceStore.getShowObjectViewMode()
     let virtualServiceName
     if (viewMode === 'CREATE') {
       virtualServiceName = formFields.name ? formFields.name : ''
@@ -38,7 +38,7 @@ export class VirtualServiceDetailsCard extends Component {
               if (viewMode !== 'CREATE') {
                 return
               }
-              VirtualServiceStore.setFormFields({
+              virtualServiceStore.setFormFields({
                 ...formFields,
                 name: event.target.value
               })
@@ -53,7 +53,7 @@ export class VirtualServiceDetailsCard extends Component {
             size='small'
             value={formFields.displayName ? formFields.displayName : ''}
             onChange={(event) => {
-              VirtualServiceStore.setFormFields({
+              virtualServiceStore.setFormFields({
                 ...formFields,
                 displayName: event.target.value
               })
@@ -68,7 +68,7 @@ export class VirtualServiceDetailsCard extends Component {
             size='small'
             value={formFields.proximityUrl ? formFields.proximityUrl : ''}
             onChange={(event) => {
-              VirtualServiceStore.setFormFields({
+              virtualServiceStore.setFormFields({
                 ...formFields,
                 proximityUrl: event.target.value
               })
@@ -83,7 +83,7 @@ export class VirtualServiceDetailsCard extends Component {
             size='small'
             value={formFields.targetUrl ? formFields.targetUrl : ''}
             onChange={(event) => {
-              VirtualServiceStore.setFormFields({
+              virtualServiceStore.setFormFields({
                 ...formFields,
                 targetUrl: event.target.value
               })

@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import Box from '@material-ui/core/Box'
 import { Pie } from 'react-chartjs-2'
-import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { policyStore } = stores
 
 class PoliciesCard extends Component {
   state = {
@@ -14,8 +15,8 @@ class PoliciesCard extends Component {
   }
 
   async componentDidMount() {
-    PolicyStore.setSearchPageObjectCount(1000)
-    const policies = await PolicyStore.objectQuery()
+    policyStore.setSearchPageObjectCount(1000)
+    const policies = await policyStore.objectQuery()
     this.setState({ totalPolicies: policies.count })
     let last7Days = 0
     policies.data.forEach((policy) => {

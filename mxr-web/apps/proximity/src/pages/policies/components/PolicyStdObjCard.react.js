@@ -9,23 +9,23 @@ import NavTabsCard from '/mxr-web/apps/proximity/src/components/PageLayout/NavTa
 import PolicyDetailsCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyDetailsCard.react'
 import PolicyRevisionsCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyRevisionsCard.react'
 import PolicyDecisionLogsCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyDecisionLogsCard.react'
-import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
-import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { policyStore, logStore } = stores
 
 export class PolicyStdObjCard extends Component {
   async handleDecisionLogsFetch() {
-    PolicyStore.setShowObjectViewModeSecondary('DECISION_LOGS')
-    const policy = PolicyStore.getSelectedObject()
-    PolicyStore.setShowProcessCard(true)
-    LogStore.setSearchQuery({ 'data.policyId': policy.id })
+    policyStore.setShowObjectViewModeSecondary('DECISION_LOGS')
+    const policy = policyStore.getSelectedObject()
+    policyStore.setShowProcessCard(true)
+    logStore.setSearchQuery({ 'data.policyId': policy.id })
     try {
-      const logs = await LogStore.objectQuery()
-      LogStore.setSearchResultsObjectCount(logs.count)
-      LogStore.setObjects(logs.data)
+      const logs = await logStore.objectQuery()
+      logStore.setSearchResultsObjectCount(logs.count)
+      logStore.setObjects(logs.data)
     } catch (error) {
       console.log(`Error: Getting Logs`)
     }
-    PolicyStore.setShowProcessCard(false)
+    policyStore.setShowProcessCard(false)
   }
 
   _renderCreateButton() {
@@ -37,18 +37,18 @@ export class PolicyStdObjCard extends Component {
           marginRight: 20
         }}
         onClick={async () => {
-          PolicyStore.setShowProcessCard(true)
+          policyStore.setShowProcessCard(true)
           try {
-            await PolicyStore.objectCreate()
-            PolicyStore.setShowProcessCard(false)
-            PolicyStore.setShowSuccessCard(true)
+            await policyStore.objectCreate()
+            policyStore.setShowProcessCard(false)
+            policyStore.setShowSuccessCard(true)
             await new Promise((res) => setTimeout(res, 2000))
-            PolicyStore.setShowSuccessCard(false)
-            PolicyStore.resetAllFields()
+            policyStore.setShowSuccessCard(false)
+            policyStore.resetAllFields()
           } catch (error) {
             console.log('Error: Creating Policy', error)
           }
-          PolicyStore.setShowProcessCard(false)
+          policyStore.setShowProcessCard(false)
         }}
       >
         Create
@@ -65,18 +65,18 @@ export class PolicyStdObjCard extends Component {
           marginRight: 20
         }}
         onClick={async () => {
-          PolicyStore.setShowProcessCard(true)
+          policyStore.setShowProcessCard(true)
           try {
-            const updatedPolicy = await PolicyStore.objectUpdate()
-            PolicyStore.setSelectedObject(updatedPolicy)
-            PolicyStore.setShowProcessCard(false)
-            PolicyStore.setShowSuccessCard(true)
+            const updatedPolicy = await policyStore.objectUpdate()
+            policyStore.setSelectedObject(updatedPolicy)
+            policyStore.setShowProcessCard(false)
+            policyStore.setShowSuccessCard(true)
             await new Promise((res) => setTimeout(res, 2000))
-            PolicyStore.setShowSuccessCard(false)
+            policyStore.setShowSuccessCard(false)
           } catch (error) {
             console.log('Error: Updating Policy', error)
           }
-          PolicyStore.setShowProcessCard(false)
+          policyStore.setShowProcessCard(false)
         }}
       >
         Update
@@ -85,7 +85,7 @@ export class PolicyStdObjCard extends Component {
   }
 
   _renderOpButtons() {
-    const viewMode = PolicyStore.getShowObjectViewMode()
+    const viewMode = policyStore.getShowObjectViewMode()
     if (this.props.hideOpsButton) {
       return <Box></Box>
     }
@@ -101,7 +101,7 @@ export class PolicyStdObjCard extends Component {
   }
 
   _renderStdObjCard() {
-    const selectedTab = PolicyStore.getShowObjectViewModeSecondary()
+    const selectedTab = policyStore.getShowObjectViewModeSecondary()
     switch (selectedTab) {
       case 'DETAILS':
         return <PolicyDetailsCard actionButtons={this._renderOpButtons()} />
@@ -122,9 +122,9 @@ export class PolicyStdObjCard extends Component {
   }
 
   render() {
-    const showSuccess = PolicyStore.getShowSuccessCard()
-    const showLoader = PolicyStore.getShowProcessCard()
-    const viewMode = PolicyStore.getShowObjectViewMode()
+    const showSuccess = policyStore.getShowSuccessCard()
+    const showLoader = policyStore.getShowProcessCard()
+    const viewMode = policyStore.getShowObjectViewMode()
     if (showSuccess) {
       return (
         <Box style={{ margin: 50 }}>
@@ -136,39 +136,39 @@ export class PolicyStdObjCard extends Component {
     if (showLoader) {
       return <Box style={{ margin: 50 }}>Loading...</Box>
     }
-    const selectedTab = PolicyStore.getShowObjectViewModeSecondary()
+    const selectedTab = policyStore.getShowObjectViewModeSecondary()
     const buttons = [
       {
         title: 'DETAILS',
         click: () => {
-          PolicyStore.setShowObjectViewModeSecondary('DETAILS')
+          policyStore.setShowObjectViewModeSecondary('DETAILS')
         },
         isActive: selectedTab === 'DETAILS'
       },
       {
         title: 'REVISIONS',
         click: async () => {
-          PolicyStore.setShowProcessCard(true)
+          policyStore.setShowProcessCard(true)
           try {
-            const selectedPolicy = PolicyStore.getSelectedObject()
-            const policy = await PolicyStore.objectQueryById(
+            const selectedPolicy = policyStore.getSelectedObject()
+            const policy = await policyStore.objectQueryById(
               selectedPolicy.id,
               true
             )
-            PolicyStore.setSelectedObject(policy)
-            PolicyStore.setShowProcessCard(false)
+            policyStore.setSelectedObject(policy)
+            policyStore.setShowProcessCard(false)
           } catch (error) {
             console.log('Error: getting Policy', error)
           }
-          PolicyStore.setShowProcessCard(false)
-          PolicyStore.setShowObjectViewModeSecondary('REVISIONS')
+          policyStore.setShowProcessCard(false)
+          policyStore.setShowObjectViewModeSecondary('REVISIONS')
         },
         isActive: selectedTab === 'REVISIONS'
       },
       {
         title: 'DECISION LOGS',
         click: async () => {
-          PolicyStore.setShowObjectViewModeSecondary('DECISION_LOGS')
+          policyStore.setShowObjectViewModeSecondary('DECISION_LOGS')
           this.handleDecisionLogsFetch()
         },
         isActive: selectedTab === 'DECISION_LOGS'

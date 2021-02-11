@@ -1,24 +1,26 @@
 import React, { Component } from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch, BrowserRouter as Router } from 'react-router-dom'
 import { observer } from 'mobx-react'
 import AdminLayout from '/mxr-web/apps/proximity/src/components/AdminLayout'
 import Home from '/mxr-web/apps/proximity/src/pages/Home/Home.react'
 import VirtualServices from '/mxr-web/apps/proximity/src/pages/virtual-services'
 import Policies from '/mxr-web/apps/proximity/src/pages/policies'
 
-const SRS = () => {
+const App = () => {
   return (
-    <AdminLayout>
-      <Switch>
-        {/* <Route
+    <Router>
+      <AdminLayout>
+        <Switch>
+          {/* <Route
             path='/proximity/virtual-services'
             component={VirtualServices}
           />
           <Route path='/proximity/policies' component={Policies} /> */}
-        <Route path='/proximity' component={Home} />
-      </Switch>
-    </AdminLayout>
+          <Route path='/' component={Home} />
+        </Switch>
+      </AdminLayout>
+    </Router>
   )
 }
 
-export default observer(SRS)
+export default observer(App)

@@ -5,14 +5,12 @@ import Accordion from '@material-ui/core/Accordion'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionSummary'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import UserStore from '/mxr-web/apps/proximity/src/stores/User.store'
-import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
-import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { virtualServiceStore } = stores
 
 export class VirtualServiceDeploymentCard extends Component {
   render() {
-    const virtualService = VirtualServiceStore.getSelectedObject()
-    const user = UserStore.getUser()
+    const virtualService = virtualServiceStore.getSelectedObject()
     const servicePort = virtualService.currentRevision.virtualService.proximityUrl
       .split(':')[2]
       .split('/')[0]
@@ -27,8 +25,8 @@ export class VirtualServiceDeploymentCard extends Component {
           </AccordionSummary>
           <AccordionDetails style={{ padding: '0 16px 16px' }}>
             <Box style={{ fontWeight: 300, opacity: 0.8 }}>
-              #] docker run -d -p {servicePort}:5005 -e ORG_ID=
-              {user.defaultOrgId} -e VIRTUAL_SERVICE_ID={virtualService.id} -e
+              #] docker run -d -p {servicePort}:5005 -e ORG_ID= -e
+              VIRTUAL_SERVICE_ID={virtualService.id} -e
               VIRUTAL_SERVICE_AUTH_KEY={virtualService.authKey}{' '}
               esque/mxr-proximity-dp:latest
             </Box>

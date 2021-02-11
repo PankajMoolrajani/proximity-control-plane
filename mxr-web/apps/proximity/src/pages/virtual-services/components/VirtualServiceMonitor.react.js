@@ -5,8 +5,8 @@ import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import { Line } from 'react-chartjs-2'
-import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
-import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { virtualServiceStore, logStore } = stores
 
 class VirtualServiceMonitor extends Component {
   state = {
@@ -14,8 +14,8 @@ class VirtualServiceMonitor extends Component {
   }
 
   handleLogsForTime = async (hour) => {
-    const virtualService = VirtualServiceStore.getSelectedObject()
-    LogStore.setSearchQuery({
+    const virtualService = virtualServiceStore.getSelectedObject()
+    logStore.setSearchQuery({
       type: 'PROXIMITY_DP_HEALTH_LOG',
       'data.virtualServiceId': virtualService.id,
       tsCreate: {
@@ -42,7 +42,7 @@ class VirtualServiceMonitor extends Component {
   }
 
   render() {
-    const logs = LogStore.getObjects()
+    const logs = logStore.getObjects()
     if (!logs || logs.length === 0) {
       return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }

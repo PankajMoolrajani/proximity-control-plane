@@ -7,9 +7,8 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord'
 import Progress from '/mxr-web/apps/proximity/src/pages/Home/components/progressBar'
 import { Pie, Line } from 'react-chartjs-2'
 import theme from '/mxr-web/apps/proximity/src/libs/theme/theme.lib'
-import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
-import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
-
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { virtualServiceStore, logStore } = stores
 class ViolationsCard extends Component {
   state = {
     totalViolations: 0,
@@ -29,9 +28,9 @@ class ViolationsCard extends Component {
       $gt: new Date().getTime() - 30 * 24 * 60 * 60 * 1000,
       $lt: new Date().getTime()
     }
-    LogStore.setSearchPageObjectCount(1000000)
-    LogStore.setSearchQuery(searchQuery)
-    const logs = await LogStore.objectQuery()
+    logStore.setSearchPageObjectCount(1000000)
+    logStore.setSearchQuery(searchQuery)
+    const logs = await logStore.objectQuery()
     this.setState({ totalViolations: logs.count })
     this.setState({
       wafViolations: logs.data.filter((log) => log.data.policyType === 'WAF')
@@ -69,8 +68,8 @@ class ViolationsCard extends Component {
 
     //Get All Virtual Services
     let vsWiseViolations = []
-    VirtualServiceStore.setSearchPageObjectCount(1000)
-    const virtualServices = await VirtualServiceStore.objectQuery()
+    virtualServiceStore.setSearchPageObjectCount(1000)
+    const virtualServices = await virtualServiceStore.objectQuery()
     virtualServices.data.forEach((virtualService) => {
       vsWiseViolations.push({
         name: virtualService.name,

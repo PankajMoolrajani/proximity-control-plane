@@ -9,7 +9,8 @@ import ListIcon from '@material-ui/icons/List'
 import PolicyIcon from '@material-ui/icons/Policy'
 import PageLayout from '/mxr-web/apps/proximity/src/components/PageLayout'
 import PolicyObjectCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyObjectCard.react'
-import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { policyStore } = stores
 
 class PolicyPage extends Component {
   _renderTitle() {
@@ -29,7 +30,7 @@ class PolicyPage extends Component {
   }
 
   _renderSelectedObjectTitle() {
-    const selectedObject = PolicyStore.getSelectedObject()
+    const selectedObject = policyStore.getSelectedObject()
     return (
       <Box
         style={{
@@ -56,7 +57,7 @@ class PolicyPage extends Component {
   }
 
   _renderObjectHeader() {
-    const viewMode = PolicyStore.getShowObjectViewMode()
+    const viewMode = policyStore.getShowObjectViewMode()
     return (
       <Box>
         {viewMode === 'UPDATE'
@@ -67,7 +68,7 @@ class PolicyPage extends Component {
   }
 
   _renderButtons() {
-    const viewMode = PolicyStore.getShowObjectViewMode()
+    const viewMode = policyStore.getShowObjectViewMode()
     return (
       <Box>
         {viewMode !== 'CREATE' ? (
@@ -77,14 +78,14 @@ class PolicyPage extends Component {
             startIcon={<AddIcon />}
             style={{ fontWeight: 700 }}
             onClick={() => {
-              PolicyStore.setFormFields({
+              policyStore.setFormFields({
                 name: '',
                 displayName: '',
                 type: '',
                 rules: ''
               })
-              PolicyStore.setShowObjectViewMode('CREATE')
-              PolicyStore.setShowObjectViewModeSecondary('DETAILS')
+              policyStore.setShowObjectViewMode('CREATE')
+              policyStore.setShowObjectViewModeSecondary('DETAILS')
             }}
           >
             Create
@@ -98,8 +99,8 @@ class PolicyPage extends Component {
             startIcon={<ListIcon />}
             style={{ fontWeight: 700 }}
             onClick={() => {
-              PolicyStore.resetAllFields()
-              PolicyStore.setShowObjectViewMode('LIST')
+              policyStore.resetAllFields()
+              policyStore.setShowObjectViewMode('LIST')
             }}
           >
             Show All

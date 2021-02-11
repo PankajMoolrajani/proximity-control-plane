@@ -6,30 +6,31 @@ import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import Box from '@material-ui/core/Box'
 import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
-import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { virtualServiceStore } = stores
 
 class VirtualServiceListCard extends Component {
   handleFetch = async () => {
-    VirtualServiceStore.setShowProcessCard(true)
+    virtualServiceStore.setShowProcessCard(true)
     try {
-      const virtualServices = await VirtualServiceStore.objectQuery()
-      VirtualServiceStore.setSearchResultsObjectCount(virtualServices.count)
-      VirtualServiceStore.setObjects(virtualServices.data)
+      const virtualServices = await virtualServiceStore.objectQuery()
+      virtualServiceStore.setSearchResultsObjectCount(virtualServices.count)
+      virtualServiceStore.setObjects(virtualServices.data)
     } catch (error) {
       console.log(`Error: Getting Virtual Service`)
     }
-    VirtualServiceStore.setShowProcessCard(false)
+    virtualServiceStore.setShowProcessCard(false)
   }
 
   async componentDidMount() {
-    VirtualServiceStore.setSearchPageObjectCount(10)
-    VirtualServiceStore.setSearchPageNum(0)
+    virtualServiceStore.setSearchPageObjectCount(10)
+    virtualServiceStore.setSearchPageNum(0)
     await this.handleFetch()
   }
 
   render() {
-    const showLoader = VirtualServiceStore.getShowProcessCard()
-    const virtualServices = VirtualServiceStore.getObjects()
+    const showLoader = virtualServiceStore.getShowProcessCard()
+    const virtualServices = virtualServiceStore.getObjects()
     if (showLoader && !virtualServices) {
       return (
         <Box style={{ margin: 50 }}>
@@ -38,7 +39,7 @@ class VirtualServiceListCard extends Component {
       )
     }
 
-    const searchQuery = VirtualServiceStore.getSortQuery()
+    const searchQuery = virtualServiceStore.getSortQuery()
     let searchQueryArray = []
     for (const field in searchQuery) {
       searchQueryArray.push({
@@ -52,23 +53,23 @@ class VirtualServiceListCard extends Component {
         value={virtualServices}
         selectionMode='single'
         dataKey={
-          VirtualServiceStore.getSelectedObject()
-            ? VirtualServiceStore.getSelectedObject().id
+          virtualServiceStore.getSelectedObject()
+            ? virtualServiceStore.getSelectedObject().id
             : ''
         }
-        totalRecords={VirtualServiceStore.getSearchResultsObjectCount()}
-        loading={VirtualServiceStore.getShowProcessCard()}
-        rows={VirtualServiceStore.getSearchPageObjectCount()}
+        totalRecords={virtualServiceStore.getSearchResultsObjectCount()}
+        loading={virtualServiceStore.getShowProcessCard()}
+        rows={virtualServiceStore.getSearchPageObjectCount()}
         first={
-          VirtualServiceStore.getSearchPageNum() *
-          VirtualServiceStore.getSearchPageObjectCount()
+          virtualServiceStore.getSearchPageNum() *
+          virtualServiceStore.getSearchPageObjectCount()
         }
         sortMode='multiple'
         rowsPerPageOptions={[10, 20, 50, 1000]}
         onSelectionChange={(e) => {
           const virtualService = e.value
-          VirtualServiceStore.setSelectedObject(virtualService)
-          VirtualServiceStore.setFormFields({
+          virtualServiceStore.setSelectedObject(virtualService)
+          virtualServiceStore.setFormFields({
             id: virtualService.id,
             displayName: virtualService.displayName,
             proximityUrl:
@@ -77,17 +78,17 @@ class VirtualServiceListCard extends Component {
             policiesMetadata:
               virtualService.currentRevision.virtualService.policiesMetadata
           })
-          VirtualServiceStore.setShowObjectViewMode('UPDATE')
-          VirtualServiceStore.setShowObjectViewModeSecondary('DETAILS')
+          virtualServiceStore.setShowObjectViewMode('UPDATE')
+          virtualServiceStore.setShowObjectViewModeSecondary('DETAILS')
         }}
         onPage={async (e) => {
-          VirtualServiceStore.setSearchPageNum(e.page)
-          VirtualServiceStore.setSearchPageObjectCount(e.rows)
+          virtualServiceStore.setSearchPageNum(e.page)
+          virtualServiceStore.setSearchPageObjectCount(e.rows)
           await this.handleFetch()
         }}
         multiSortMeta={searchQueryArray}
         onSort={async (e) => {
-          let sortQuery = VirtualServiceStore.getSortQuery()
+          let sortQuery = virtualServiceStore.getSortQuery()
           if (!sortQuery) {
             sortQuery = {}
           }
@@ -105,7 +106,7 @@ class VirtualServiceListCard extends Component {
               delete sortQuery[field]
             }
           }
-          VirtualServiceStore.setSortQuery(sortQuery)
+          virtualServiceStore.setSortQuery(sortQuery)
           await this.handleFetch()
         }}
         removableSort

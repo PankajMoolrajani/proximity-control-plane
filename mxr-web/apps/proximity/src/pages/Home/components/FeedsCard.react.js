@@ -4,18 +4,18 @@ import moment from 'moment'
 import Box from '@material-ui/core/Box'
 import List from '@material-ui/core/List'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord'
-import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
-
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { logStore } = stores
 export class FeedsCard extends Component {
   state = {
     feeds: []
   }
 
   async componentDidMount() {
-    LogStore.setSearchPageObjectCount(1000000)
-    LogStore.setSearchQuery({ type: 'PROXIMITY_CRUD_LOG' })
-    LogStore.setSortQuery({ tsCreate: -1 })
-    const logs = await LogStore.objectQuery()
+    logStore.setSearchPageObjectCount(1000000)
+    logStore.setSearchQuery({ type: 'PROXIMITY_CRUD_LOG' })
+    logStore.setSortQuery({ tsCreate: -1 })
+    const logs = await logStore.objectQuery()
     this.setState({ feeds: logs.data })
   }
 

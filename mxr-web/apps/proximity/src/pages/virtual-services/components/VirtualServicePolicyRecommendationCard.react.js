@@ -16,9 +16,8 @@ import { Autocomplete } from '@material-ui/lab'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import PlatfromPopUpCard from '/mxr-web/apps/proximity/src/components/platform/PlatfromPopUpCard.react'
 import VirtualServiceAddPolicyDialog from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceAddPolicyDialog.react'
-import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
-import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
-import PolicyRecommendation from '/mxr-web/apps/proximity/src/stores/PolicyRecommendation.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { virtualServiceStore, policyStore, policyRecommendationStore } = stores
 
 class VirtualServicePolicyRecommendationCard extends Component {
   state = {
@@ -41,7 +40,7 @@ class VirtualServicePolicyRecommendationCard extends Component {
   }
 
   _renderAddExistingPolicyDialogCard() {
-    const policyDraftObject = PolicyStore.getDraftObject()
+    const policyDraftObject = policyStore.getDraftObject()
 
     return (
       <PlatfromPopUpCard
@@ -71,31 +70,31 @@ class VirtualServicePolicyRecommendationCard extends Component {
                 }
                 getOptionLabel={(option) => option.name}
                 options={
-                  PolicyStore.getObjects() ? PolicyStore.getObjects() : []
+                  policyStore.getObjects() ? policyStore.getObjects() : []
                 }
                 inputValue={
-                  PolicyStore.getSearchText()
-                    ? PolicyStore.getSearchText()
-                    : PolicyStore.getDraftObject()
-                    ? PolicyStore.getDraftObject()['name']
+                  policyStore.getSearchText()
+                    ? policyStore.getSearchText()
+                    : policyStore.getDraftObject()
+                    ? policyStore.getDraftObject()['name']
                     : ''
                 }
-                loading={PolicyStore.getShowProcessCard()}
+                loading={policyStore.getShowProcessCard()}
                 onChange={async (event, option) => {
                   if (!option) {
                     return
                   }
-                  let formFields = PolicyStore.getFormFields()
+                  let formFields = policyStore.getFormFields()
                   if (!formFields) {
                     formFields = {}
                   }
-                  PolicyStore.setShowProcessCard(true)
-                  const policy = await PolicyStore.objectQueryById(
+                  policyStore.setShowProcessCard(true)
+                  const policy = await policyStore.objectQueryById(
                     option.id,
                     true
                   )
-                  PolicyStore.setShowProcessCard(false)
-                  PolicyStore.setDraftObject({
+                  policyStore.setShowProcessCard(false)
+                  policyStore.setDraftObject({
                     ...policyDraftObject,
                     id: policy.id,
                     name: policy.name,
@@ -104,14 +103,14 @@ class VirtualServicePolicyRecommendationCard extends Component {
                 }}
                 onInputChange={async (e) => {
                   if (!e.target.value) {
-                    PolicyStore.resetAllFields()
+                    policyStore.resetAllFields()
                     return
                   }
-                  PolicyStore.setSearchText(e.target.value)
-                  PolicyStore.setShowProcessCard(true)
-                  const policies = await PolicyStore.objectQuery()
-                  PolicyStore.setObjects(policies.data)
-                  PolicyStore.setShowProcessCard(false)
+                  policyStore.setSearchText(e.target.value)
+                  policyStore.setShowProcessCard(true)
+                  const policies = await policyStore.objectQuery()
+                  policyStore.setObjects(policies.data)
+                  policyStore.setShowProcessCard(false)
                 }}
                 renderInput={(params) => (
                   <TextField
@@ -122,7 +121,7 @@ class VirtualServicePolicyRecommendationCard extends Component {
                       ...params.InputProps,
                       endAdornment: (
                         <React.Fragment>
-                          {PolicyStore.getShowProcessCard() ? (
+                          {policyStore.getShowProcessCard() ? (
                             <CircularProgress color='inherit' size={20} />
                           ) : null}
                           {params.InputProps.endAdornment}
@@ -151,7 +150,7 @@ class VirtualServicePolicyRecommendationCard extends Component {
                       }
                       renderValue={(value) => (value ? value : '')}
                       onChange={(event) => {
-                        PolicyStore.setDraftObject({
+                        policyStore.setDraftObject({
                           ...policyDraftObject,
                           selectedRevisionId: event.target.value.id,
                           selectedRevisionName: event.target.value.name
@@ -181,7 +180,7 @@ class VirtualServicePolicyRecommendationCard extends Component {
                           : ''
                       }
                       onChange={(event) => {
-                        PolicyStore.setDraftObject({
+                        policyStore.setDraftObject({
                           ...policyDraftObject,
                           enforcementMode: event.target.value
                         })
@@ -198,9 +197,9 @@ class VirtualServicePolicyRecommendationCard extends Component {
                     variant='contained'
                     color='primary'
                     onClick={async () => {
-                      const virtualService = VirtualServiceStore.getSelectedObject()
-                      const draftPolicy = PolicyStore.getDraftObject()
-                      VirtualServiceStore.setFormFields({
+                      const virtualService = virtualServiceStore.getSelectedObject()
+                      const draftPolicy = policyStore.getDraftObject()
+                      virtualServiceStore.setFormFields({
                         id: virtualService.id,
                         displayName: virtualService.displayName,
                         proximityUrl:
@@ -219,21 +218,21 @@ class VirtualServicePolicyRecommendationCard extends Component {
                           }
                         ]
                       })
-                      VirtualServiceStore.setShowProcessCard(true)
+                      virtualServiceStore.setShowProcessCard(true)
                       try {
-                        const updatedVirtualService = await VirtualServiceStore.objectUpdate()
-                        VirtualServiceStore.setSelectedObject(
+                        const updatedVirtualService = await virtualServiceStore.objectUpdate()
+                        virtualServiceStore.setSelectedObject(
                           updatedVirtualService
                         )
-                        VirtualServiceStore.setShowProcessCard(false)
-                        VirtualServiceStore.setShowSuccessCard(true)
+                        virtualServiceStore.setShowProcessCard(false)
+                        virtualServiceStore.setShowSuccessCard(true)
                         await new Promise((res) => setTimeout(res, 2000))
-                        VirtualServiceStore.setShowSuccessCard(false)
+                        virtualServiceStore.setShowSuccessCard(false)
                       } catch (error) {
                         console.log('Error: Updating Virtual Service', error)
                       }
-                      VirtualServiceStore.setShowProcessCard(false)
-                      PolicyStore.resetAllFields()
+                      virtualServiceStore.setShowProcessCard(false)
+                      policyStore.resetAllFields()
                       await this.props.fetchPolicies()
                     }}
                   >
@@ -249,9 +248,9 @@ class VirtualServicePolicyRecommendationCard extends Component {
   }
 
   render() {
-    const searchQuery = PolicyRecommendation.getSortQuery()
-    const poilcyRecommendations = PolicyRecommendation.getObjects()
-    const showAddPolicyDialog = VirtualServiceStore.getShowAddObjectDialog()
+    const searchQuery = policyRecommendationStore.getSortQuery()
+    const poilcyRecommendations = policyRecommendationStore.getObjects()
+    const showAddPolicyDialog = virtualServiceStore.getShowAddObjectDialog()
     if (!poilcyRecommendations || poilcyRecommendations.length === 0) {
       return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }
@@ -269,18 +268,18 @@ class VirtualServicePolicyRecommendationCard extends Component {
           value={poilcyRecommendations}
           selectionMode='single'
           dataKey={
-            PolicyRecommendation.getSelectedObject()
-              ? PolicyRecommendation.getSelectedObject().id
+            policyRecommendationStore.getSelectedObject()
+              ? policyRecommendationStore.getSelectedObject().id
               : ''
           }
           onRowToggle={(e) => this.setState({ expandedRows: e.data })}
           rowExpansionTemplate={this._renderPolicyTemplate}
-          totalRecords={PolicyRecommendation.getSearchResultsObjectCount()}
-          loading={PolicyRecommendation.getShowProcessCard()}
-          rows={PolicyRecommendation.getSearchPageObjectCount()}
+          totalRecords={policyRecommendationStore.getSearchResultsObjectCount()}
+          loading={policyRecommendationStore.getShowProcessCard()}
+          rows={policyRecommendationStore.getSearchPageObjectCount()}
           first={
-            PolicyRecommendation.getSearchPageNum() *
-            PolicyRecommendation.getSearchPageObjectCount()
+            policyRecommendationStore.getSearchPageNum() *
+            policyRecommendationStore.getSearchPageObjectCount()
           }
           sortMode='multiple'
           rowsPerPageOptions={[10, 20, 50, 1000]}
@@ -292,19 +291,19 @@ class VirtualServicePolicyRecommendationCard extends Component {
               type: e.value.type,
               rules: e.value.rules
             }
-            PolicyStore.setSelectedObject(policy)
-            PolicyStore.setFormFields(policy)
-            PolicyStore.setShowObjectViewMode('CREATE')
-            VirtualServiceStore.setShowAddObjectDialog(true)
+            policyStore.setSelectedObject(policy)
+            policyStore.setFormFields(policy)
+            policyStore.setShowObjectViewMode('CREATE')
+            virtualServiceStore.setShowAddObjectDialog(true)
           }}
           onPage={async (e) => {
-            PolicyRecommendation.setSearchPageNum(e.page)
-            PolicyRecommendation.setSearchPageObjectCount(e.rows)
+            policyRecommendationStore.setSearchPageNum(e.page)
+            policyRecommendationStore.setSearchPageObjectCount(e.rows)
             await this.props.fetchPolicyRecommendations()
           }}
           multiSortMeta={searchQueryArray}
           onSort={async (e) => {
-            let sortQuery = PolicyRecommendation.getSortQuery()
+            let sortQuery = policyRecommendationStore.getSortQuery()
             if (!sortQuery) {
               sortQuery = {}
             }
@@ -322,7 +321,7 @@ class VirtualServicePolicyRecommendationCard extends Component {
                 delete sortQuery[field]
               }
             }
-            PolicyRecommendation.setSortQuery(sortQuery)
+            policyRecommendationStore.setSortQuery(sortQuery)
             await this.props.fetchPolicyRecommendations()
           }}
           removableSort

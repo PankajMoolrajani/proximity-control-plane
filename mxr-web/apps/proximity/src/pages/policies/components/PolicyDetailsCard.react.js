@@ -20,8 +20,7 @@ import VpnKeyIcon from '@material-ui/icons/VpnKey'
 import { Controlled as CodeMirror } from 'react-codemirror2'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import PolicyImpactAnalysisCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyImpactAnalysisCard.react'
-import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
-import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 import 'codemirror-rego/mode'
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/addon/comment/comment'
@@ -30,7 +29,7 @@ import 'codemirror-rego/key-map'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/idea.css'
 import { toJS } from 'mobx'
-
+const { policyStore, virtualServiceStore } = stores
 const classes = {
   codeMirrorFull: {
     height: '500px',
@@ -62,7 +61,7 @@ export class PolicyDetailsCard extends Component {
   }
 
   handleEvaluate = async () => {
-    const policy = PolicyStore.getFormFields()
+    const policy = policyStore.getFormFields()
     const response = await axiosInstance.post(
       'opa/eval',
       {
@@ -162,7 +161,7 @@ export class PolicyDetailsCard extends Component {
               padding: '6px 15px'
             }}
             onClick={() => {
-              const policy = PolicyStore.getSelectedObject()
+              const policy = policyStore.getSelectedObject()
               if (!policy.id) {
                 return
               }
@@ -180,7 +179,7 @@ export class PolicyDetailsCard extends Component {
   }
 
   _renderPlayGround = () => {
-    const formFields = PolicyStore.getFormFields()
+    const formFields = policyStore.getFormFields()
     if (formFields.type !== 'AUTHZ') {
       return <Box></Box>
     }
@@ -200,7 +199,7 @@ export class PolicyDetailsCard extends Component {
                   height: '600px'
                 }}
                 onBeforeChange={(editor, data, value) => {
-                  PolicyStore.setFormFields({
+                  policyStore.setFormFields({
                     ...formFields,
                     rules: value
                   })
@@ -231,7 +230,7 @@ export class PolicyDetailsCard extends Component {
   }
 
   _renderWAFOps = () => {
-    const formFields = PolicyStore.getFormFields()
+    const formFields = policyStore.getFormFields()
     if (formFields.type !== 'WAF') {
       return <Box></Box>
     }
@@ -272,7 +271,7 @@ export class PolicyDetailsCard extends Component {
                 : false
             }
             onChange={(e) => {
-              PolicyStore.setFormFields({
+              policyStore.setFormFields({
                 ...formFields,
                 rules: JSON.stringify({
                   ...JSON.parse(formFields.rules),
@@ -300,7 +299,7 @@ export class PolicyDetailsCard extends Component {
                 : false
             }
             onChange={(e) => {
-              PolicyStore.setFormFields({
+              policyStore.setFormFields({
                 ...formFields,
                 rules: JSON.stringify({
                   ...JSON.parse(formFields.rules),
@@ -328,7 +327,7 @@ export class PolicyDetailsCard extends Component {
                 : false
             }
             onChange={(e) => {
-              PolicyStore.setFormFields({
+              policyStore.setFormFields({
                 ...formFields,
                 rules: JSON.stringify({
                   ...JSON.parse(formFields.rules),
@@ -356,7 +355,7 @@ export class PolicyDetailsCard extends Component {
                 : false
             }
             onChange={(e) => {
-              PolicyStore.setFormFields({
+              policyStore.setFormFields({
                 ...formFields,
                 rules: JSON.stringify({
                   ...JSON.parse(formFields.rules),
@@ -372,7 +371,7 @@ export class PolicyDetailsCard extends Component {
   }
 
   _renderDynamicDefence = () => {
-    const formFields = PolicyStore.getFormFields()
+    const formFields = policyStore.getFormFields()
     if (formFields.type !== 'DYNAMIC') {
       return <Box></Box>
     }
@@ -396,7 +395,7 @@ export class PolicyDetailsCard extends Component {
                 : false
             }
             onChange={(e) => {
-              PolicyStore.setFormFields({
+              policyStore.setFormFields({
                 ...formFields,
                 rules: JSON.stringify({
                   ...JSON.parse(formFields.rules),
@@ -412,9 +411,9 @@ export class PolicyDetailsCard extends Component {
   }
 
   generateKey = async () => {
-    const formFields = PolicyStore.getFormFields()
+    const formFields = policyStore.getFormFields()
     const response = await axiosInstance.get('/crypto/apikey')
-    PolicyStore.setFormFields({
+    policyStore.setFormFields({
       ...formFields,
       rules: JSON.stringify({
         ...JSON.parse(formFields.rules),
@@ -427,7 +426,7 @@ export class PolicyDetailsCard extends Component {
   }
 
   _renderAuthNConfig = () => {
-    const formFields = PolicyStore.getFormFields()
+    const formFields = policyStore.getFormFields()
     const type = JSON.parse(formFields.rules).type
     if (!type) {
       return <Box></Box>
@@ -452,7 +451,7 @@ export class PolicyDetailsCard extends Component {
                     : ''
                 }
                 onChange={(event) => {
-                  PolicyStore.setFormFields({
+                  policyStore.setFormFields({
                     ...formFields,
                     rules: JSON.stringify({
                       ...JSON.parse(formFields.rules),
@@ -485,7 +484,7 @@ export class PolicyDetailsCard extends Component {
                     : ''
                 }
                 onChange={(event) => {
-                  PolicyStore.setFormFields({
+                  policyStore.setFormFields({
                     ...formFields,
                     rules: JSON.stringify({
                       ...JSON.parse(formFields.rules),
@@ -544,7 +543,7 @@ export class PolicyDetailsCard extends Component {
   }
 
   _renderAuthN = () => {
-    const formFields = PolicyStore.getFormFields()
+    const formFields = policyStore.getFormFields()
     if (formFields.type !== 'AUTHN') {
       return <Box></Box>
     }
@@ -597,7 +596,7 @@ export class PolicyDetailsCard extends Component {
                         password: ''
                       }
                   }
-                  PolicyStore.setFormFields({
+                  policyStore.setFormFields({
                     ...formFields,
                     rules: JSON.stringify({
                       ...JSON.parse(formFields.rules),
@@ -622,9 +621,9 @@ export class PolicyDetailsCard extends Component {
   }
 
   render() {
-    const formFields = PolicyStore.getFormFields()
-    const policy = PolicyStore.getSelectedObject()
-    const viewMode = PolicyStore.getShowObjectViewMode()
+    const formFields = policyStore.getFormFields()
+    const policy = policyStore.getSelectedObject()
+    const viewMode = policyStore.getShowObjectViewMode()
     let policyName
     if (viewMode === 'CREATE') {
       policyName = formFields.name ? formFields.name : ''
@@ -652,7 +651,7 @@ export class PolicyDetailsCard extends Component {
               if (viewMode !== 'CREATE') {
                 return
               }
-              PolicyStore.setFormFields({
+              policyStore.setFormFields({
                 ...formFields,
                 name: event.target.value
               })
@@ -667,7 +666,7 @@ export class PolicyDetailsCard extends Component {
             size='small'
             value={formFields.displayName ? formFields.displayName : ''}
             onChange={(event) => {
-              PolicyStore.setFormFields({
+              policyStore.setFormFields({
                 ...formFields,
                 displayName: event.target.value
               })
@@ -712,7 +711,7 @@ export class PolicyDetailsCard extends Component {
                   default:
                     rules = ''
                 }
-                PolicyStore.setFormFields({
+                policyStore.setFormFields({
                   ...formFields,
                   type: event.target.value,
                   rules: rules

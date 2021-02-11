@@ -6,9 +6,8 @@ import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
 import PolicyImpactAnalysisLogCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyImpactAnalysisLogCard.react'
-import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
-import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
-import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { logStore, policyStore, virtualServiceStore } = stores
 
 const classes = {
   dashTitle: {
@@ -29,7 +28,7 @@ export class PolicyImpactAnalysisCard extends Component {
   chartRef = React.createRef()
 
   componentWillUnmount() {
-    LogStore.resetAllFields()
+    logStore.resetAllFields()
   }
 
   handleDecisionChanged = () => {
@@ -52,9 +51,9 @@ export class PolicyImpactAnalysisCard extends Component {
       denied: 0,
       decisionChanged: 0
     })
-    const policy = PolicyStore.getSelectedObject()
-    const virtualService = VirtualServiceStore.getSelectedObject()
-    LogStore.setShowProcessCard(true)
+    const policy = policyStore.getSelectedObject()
+    const virtualService = virtualServiceStore.getSelectedObject()
+    logStore.setShowProcessCard(true)
     const searchQuery = {}
     if (virtualService) {
       searchQuery['data.virtualServiceId'] = virtualService.id
@@ -62,21 +61,21 @@ export class PolicyImpactAnalysisCard extends Component {
     if (policy) {
       searchQuery['data.policyId'] = policy.id
     }
-    LogStore.setSearchQuery(searchQuery)
-    LogStore.setSearchPageObjectCount(100)
-    LogStore.setSortQuery({ _id: -1 })
+    logStore.setSearchQuery(searchQuery)
+    logStore.setSearchPageObjectCount(100)
+    logStore.setSortQuery({ _id: -1 })
     try {
-      const logs = await LogStore.objectQuery()
-      LogStore.setSearchResultsObjectCount(logs.count)
-      LogStore.setObjects(logs.data)
+      const logs = await logStore.objectQuery()
+      logStore.setSearchResultsObjectCount(logs.count)
+      logStore.setObjects(logs.data)
     } catch (error) {
       console.log(`Error: Getting logs`)
     }
-    LogStore.setShowProcessCard(false)
+    logStore.setShowProcessCard(false)
   }
 
   _renderLogs() {
-    const logs = LogStore.getObjects()
+    const logs = logStore.getObjects()
     const count = logs ? logs.length : 0
     const percentageChanged = (100 * this.state.decisionChanged) / count
 
@@ -160,7 +159,7 @@ export class PolicyImpactAnalysisCard extends Component {
   }
 
   render() {
-    const showLoader = LogStore.getShowProcessCard()
+    const showLoader = logStore.getShowProcessCard()
     if (showLoader) {
       return (
         <Box style={{ margin: 50 }}>

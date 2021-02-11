@@ -8,7 +8,7 @@ import PageLayout from '/mxr-web/apps/proximity/src/components/PageLayout'
 import ViolationsCard from '/mxr-web/apps/proximity/src/pages/Home/components/ViolationsCard.react'
 import VirtualServices from '/mxr-web/apps/proximity/src/pages/Home/components/VirtualServices.react'
 import PoliciesCard from '/mxr-web/apps/proximity/src/pages/Home/components/PoliciesCard.react'
-import RecommedationsCard from '/mxr-web/apps/proximity/src/pages/Home/components/RecommedationsCard.react'
+// import RecommedationsCard from '/mxr-web/apps/proximity/src/pages/Home/components/RecommedationsCard.react'
 import FeedsCard from '/mxr-web/apps/proximity/src/pages/Home/components/FeedsCard.react'
 
 class Home extends Component {
@@ -50,7 +50,7 @@ class Home extends Component {
                   <PoliciesCard />
                 </Grid>
                 <Grid item sm={4}>
-                  <RecommedationsCard />
+                  {/* <RecommedationsCard /> */}
                 </Grid>
               </Grid>
               <Grid container spacing={2} style={{ marginTop: 10 }}>

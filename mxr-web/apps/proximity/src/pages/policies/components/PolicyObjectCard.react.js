@@ -3,20 +3,21 @@ import { observer } from 'mobx-react'
 import Box from '@material-ui/core/Box'
 import PolicyListCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyListCard.react'
 import PolicyStdObjCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyStdObjCard.react'
-import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { policyStore } = stores
 
 export class PolicyObjectCard extends Component {
   componentDidMount() {
-    PolicyStore.setShowObjectViewMode('LIST')
+    policyStore.setShowObjectViewMode('LIST')
   }
 
   handleOnClose() {
-    PolicyStore.resetAllFields()
-    PolicyStore.setShowObjectViewMode('LIST')
+    policyStore.resetAllFields()
+    policyStore.setShowObjectViewMode('LIST')
   }
 
   _renderObjectCard() {
-    const viewMode = PolicyStore.getShowObjectViewMode()
+    const viewMode = policyStore.getShowObjectViewMode()
     switch (viewMode) {
       case 'CREATE':
         return <PolicyStdObjCard onClose={this.handleOnClose} />

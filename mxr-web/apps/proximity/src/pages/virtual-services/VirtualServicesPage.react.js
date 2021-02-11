@@ -9,15 +9,14 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import ListIcon from '@material-ui/icons/List'
 import PageLayout from '/mxr-web/apps/proximity/src/components/PageLayout'
 import VirtualServiceObjectCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceObjectCard.react'
-import LogStore from '/mxr-web/apps/proximity/src/stores/Log.store'
-import PolicyStore from '/mxr-web/apps/proximity/src/stores/Policy.store'
-import VirtualServiceStore from '/mxr-web/apps/proximity/src/stores/VirtualService.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const { policyStore, virtualServiceStore, logStore } = stores
 
 class VirtualServicePage extends Component {
   componentWillUnmount() {
-    VirtualServiceStore.resetAllFields()
-    PolicyStore.resetAllFields()
-    LogStore.resetAllFields()
+    virtualServiceStore.resetAllFields()
+    policyStore.resetAllFields()
+    logStore.resetAllFields()
   }
 
   _renderTitle() {
@@ -37,7 +36,7 @@ class VirtualServicePage extends Component {
   }
 
   _renderSelectedObjectTitle() {
-    const selectedObject = VirtualServiceStore.getSelectedObject()
+    const selectedObject = virtualServiceStore.getSelectedObject()
     return (
       <Box
         style={{
@@ -66,7 +65,7 @@ class VirtualServicePage extends Component {
   }
 
   _renderObjectHeader() {
-    const viewMode = VirtualServiceStore.getShowObjectViewMode()
+    const viewMode = virtualServiceStore.getShowObjectViewMode()
     return (
       <Box>
         {viewMode === 'UPDATE'
@@ -77,7 +76,7 @@ class VirtualServicePage extends Component {
   }
 
   _renderButtons() {
-    const viewMode = VirtualServiceStore.getShowObjectViewMode()
+    const viewMode = virtualServiceStore.getShowObjectViewMode()
     return (
       <Box>
         {viewMode !== 'CREATE' ? (
@@ -87,15 +86,15 @@ class VirtualServicePage extends Component {
             startIcon={<AddIcon />}
             style={{ fontWeight: 700 }}
             onClick={() => {
-              VirtualServiceStore.setFormFields({
+              virtualServiceStore.setFormFields({
                 name: '',
                 displayName: '',
                 proximityUrl: '',
                 targetUrl: '',
                 policiesMetadata: []
               })
-              VirtualServiceStore.setShowObjectViewMode('CREATE')
-              VirtualServiceStore.setShowObjectViewModeSecondary('DETAILS')
+              virtualServiceStore.setShowObjectViewMode('CREATE')
+              virtualServiceStore.setShowObjectViewModeSecondary('DETAILS')
             }}
           >
             Create
@@ -109,8 +108,8 @@ class VirtualServicePage extends Component {
             startIcon={<ListIcon />}
             style={{ fontWeight: 700 }}
             onClick={() => {
-              VirtualServiceStore.resetAllFields()
-              VirtualServiceStore.setShowObjectViewMode('LIST')
+              virtualServiceStore.resetAllFields()
+              virtualServiceStore.setShowObjectViewMode('LIST')
             }}
           >
             Show All
