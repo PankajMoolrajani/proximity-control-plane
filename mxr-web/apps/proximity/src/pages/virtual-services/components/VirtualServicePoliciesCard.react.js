@@ -240,42 +240,12 @@ export class VirtualServicePoliciesCard extends Component {
   }
 
   _renderPoliciesListCard() {
-    const virtualService = virtualServiceStore.getSelectedObject()
-    const policiesAll = virtualServiceStore.getRelatedObjects()
-    const policiesMetadata =
-      virtualService.currentRevision.virtualService.policiesMetadata
-    if (!policiesAll || !policiesMetadata || policiesMetadata.length === 0) {
-      return <Box style={{ textAlign: 'center' }}>No Content</Box>
-    }
-    const filtredPolicies = []
-    policiesMetadata.forEach((policyMetadata) => {
-      const filtredPolicy = policiesAll.find(
-        (policy) => policyMetadata.id === policy.id
-      )
-      if (filtredPolicy) {
-        const filtredPolicyByRevision = filtredPolicy.revisions.find(
-          (revision) => policyMetadata.revisionId === revision.id
-        )
-        if (filtredPolicyByRevision) {
-          filtredPolicies.push({
-            policyId: filtredPolicy.id,
-            policyRevisonId: filtredPolicyByRevision.id,
-            name: filtredPolicy.name,
-            displayName: filtredPolicy.displayName,
-            enforcementMode: policyMetadata.enforcementMode,
-            revisionName: filtredPolicyByRevision.name,
-            createdAt: filtredPolicy.tsCreate,
-            updatedAt: filtredPolicy.tsUpdate,
-            rules: filtredPolicyByRevision.policy.rules,
-            type: filtredPolicyByRevision.policy.type
-          })
-        }
-      }
-    })
+    const virtualService = virtualServiceStore.getSelectedObject() 
+    const policyRevisions = virtualService.PolicyRevisions
     return (
       <DataTable
         className='p-datatable-striped p-datatable-hovered'
-        value={filtredPolicies}
+        value={policyRevisions}
         selectionMode='single'
         rows={10}
         sortMode='multiple'
@@ -301,34 +271,34 @@ export class VirtualServicePoliciesCard extends Component {
         <Column
           field='name'
           header='Name'
-          body={(filtredPolicy) => filtredPolicy.name}
+          body={(policyRevision) => policyRevision.name}
           sortable
         ></Column>
         <Column
           field='enforcementMode'
           header='Enforcement Mode'
-          body={(filtredPolicy) => filtredPolicy.enforcementMode}
+          body={(policyRevision) => policyRevision.VirtualServicePolicyRevision.enforcementMode}
           sortable
         ></Column>
         <Column
           field='revision'
           header='Revision'
-          body={(filtredPolicy) => filtredPolicy.revisionName}
+          body={(policyRevision) => policyRevision.id}
           sortable
         ></Column>
         <Column
           field='tsCreate'
           header='Date Created'
-          body={(filtredPolicy) =>
-            moment(filtredPolicy.createdAt).format('MMM DD, YYYY')
+          body={(policyRevision) =>
+            moment(policyRevision.createdAt).format('MMM DD, YYYY')
           }
           sortable
         ></Column>
         <Column
           field='tsUpdate'
           header='Date Modified'
-          body={(filtredPolicy) =>
-            moment(filtredPolicy.updatedAt).format('MMM DD, YYYY')
+          body={(policyRevision) =>
+            moment(policyRevision.updatedAt).format('MMM DD, YYYY')
           }
           sortable
         ></Column>

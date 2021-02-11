@@ -9,7 +9,6 @@ import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/
 import NavTabsCard from '/mxr-web/apps/proximity/src/components/PageLayout/NavTabsCard'
 import VirtualServiceDetailsCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceDetailsCard.react'
 import VirtualServiceDeploymentCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceDeploymentCard.react'
-import VirtualServiceRevisionsCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceRevisionsCard.react'
 import VirtualServicePoliciesCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServicePoliciesCard.react'
 import VirtualServiceDecisionLogs from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceDecisionLogs.react'
 import VirtualServiceMonitor from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceMonitor.react'
@@ -45,33 +44,7 @@ export class VirtualServiceStdObjCard extends Component {
     virtualServiceStore.setShowProcessCard(false)
   }
 
-  async handlePoliciesFetch() {
-    virtualServiceStore.setShowObjectViewModeSecondary('POLICIES')
-    const selectedVirtualService = virtualServiceStore.getSelectedObject()
-
-    const policiesMetaData =
-      selectedVirtualService.currentRevision.virtualService.policiesMetadata
-    if (!policiesMetaData || policiesMetaData.length === 0) {
-      return
-    }
-    virtualServiceStore.setShowProcessCard(true)
-    const policies = []
-    try {
-      await Promise.all(
-        policiesMetaData.map(async (policyMetaData) => {
-          const policy = await policyStore.objectQueryById(
-            policyMetaData.id,
-            true
-          )
-          policies.push(policy)
-        })
-      )
-      virtualServiceStore.setRelatedObjects(policies)
-    } catch (error) {
-      console.log('Error: Getting Policies')
-    }
-    virtualServiceStore.setShowProcessCard(false)
-  }
+ 
 
   async handleDecisionLogsFetch() {
     virtualServiceStore.setShowObjectViewModeSecondary('DECISION_LOGS')
@@ -247,14 +220,9 @@ export class VirtualServiceStdObjCard extends Component {
       case 'DEPLOY':
         return <VirtualServiceDeploymentCard />
         break
-      case 'REVISIONS':
-        return <VirtualServiceRevisionsCard />
-        break
       case 'POLICIES':
         return (
-          <VirtualServicePoliciesCard
-            fetchPolicies={this.handlePoliciesFetch}
-          />
+          <VirtualServicePoliciesCard />
         )
         break
       case 'DECISION_LOGS':
@@ -327,16 +295,9 @@ export class VirtualServiceStdObjCard extends Component {
         isActive: selectedTab === 'DEPLOY'
       },
       {
-        title: 'REVISIONS',
-        click: async () => {
-          this.handleRevisionsFetch()
-        },
-        isActive: selectedTab === 'REVISIONS'
-      },
-      {
         title: 'POLICIES',
-        click: async () => {
-          this.handlePoliciesFetch()
+        click: () => {
+          virtualServiceStore.setShowObjectViewModeSecondary('POLICIES')
         },
         isActive: selectedTab === 'POLICIES'
       },
