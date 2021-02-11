@@ -5,6 +5,7 @@ import moment from 'moment'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import Box from '@material-ui/core/Box'
+import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { policyStore } = stores
 
@@ -23,9 +24,13 @@ class PolicyListCard extends Component {
   handleFetch = async () => {
     policyStore.setShowProcessCard(true)
     try {
-      const policies = await policyStore.objectQuery()
+      const policies = await policyStore.objectQuery([
+        {
+          model: 'PolicyRevision'
+        }
+      ])
       policyStore.setSearchResultsObjectCount(policies.count)
-      policyStore.setObjects(policies.data)
+      policyStore.setObjects(policies.rows)
     } catch (error) {
       console.log(`Error: Getting Policies`)
     }
@@ -42,21 +47,21 @@ class PolicyListCard extends Component {
     const showLoader = policyStore.getShowProcessCard()
     const policies = policyStore.getObjects()
     if (showLoader && !policies) {
-      return <Box style={{ margin: 50 }}>Loading...</Box>
+      return <Box style={{ margin: 50 }}><PlatformLoaderCard /></Box>
     }
 
     if (!policies || policies.length === 0) {
       return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }
 
-    const searchQuery = policyStore.getSortQuery()
-    let searchQueryArray = []
-    for (const field in searchQuery) {
-      searchQueryArray.push({
-        field: field,
-        order: searchQuery[field]
-      })
-    }
+    // const searchQuery = policyStore.getSortQuery()
+    // let searchQueryArray = []
+    // for (const field in searchQuery) {
+    //   searchQueryArray.push({
+    //     field: field,
+    //     order: searchQuery[field]
+    //   })
+    // }
     return (
       <Box className='card'>
         <DataTable
@@ -74,16 +79,17 @@ class PolicyListCard extends Component {
             policyStore.getSearchPageNum() *
             policyStore.getSearchPageObjectCount()
           }
-          sortMode='multiple'
+          // sortMode='multiple'
           rowsPerPageOptions={[10, 20, 50, 1000]}
           onSelectionChange={(e) => {
             const policy = e.value
             policyStore.setSelectedObject(policy)
             policyStore.setFormFields({
               id: policy.id,
+              name: policy.name,
               displayName: policy.displayName,
-              type: policy.currentRevision.policy.type,
-              rules: policy.currentRevision.policy.rules
+              type: policy.type,
+              rules: policy.rules
             })
             policyStore.setShowObjectViewMode('UPDATE')
             policyStore.setShowObjectViewModeSecondary('DETAILS')
@@ -93,30 +99,30 @@ class PolicyListCard extends Component {
             policyStore.setSearchPageObjectCount(e.rows)
             await this.handleFetch()
           }}
-          multiSortMeta={searchQueryArray}
-          onSort={async (e) => {
-            let sortQuery = policyStore.getSortQuery()
-            if (!sortQuery) {
-              sortQuery = {}
-            }
+          // multiSortMeta={searchQueryArray}
+          // onSort={async (e) => {
+          //   let sortQuery = policyStore.getSortQuery()
+          //   if (!sortQuery) {
+          //     sortQuery = {}
+          //   }
 
-            e.multiSortMeta.forEach((sortMeta) => {
-              sortQuery[sortMeta.field] = sortMeta.order
-            })
+          //   e.multiSortMeta.forEach((sortMeta) => {
+          //     sortQuery[sortMeta.field] = sortMeta.order
+          //   })
 
-            for (const field in sortQuery) {
-              if (
-                e.multiSortMeta.findIndex(
-                  (msortMeta) => msortMeta.field === field
-                ) === -1
-              ) {
-                delete sortQuery[field]
-              }
-            }
-            policyStore.setSortQuery(sortQuery)
-            await this.handleFetch()
-          }}
-          removableSort
+          //   for (const field in sortQuery) {
+          //     if (
+          //       e.multiSortMeta.findIndex(
+          //         (msortMeta) => msortMeta.field === field
+          //       ) === -1
+          //     ) {
+          //       delete sortQuery[field]
+          //     }
+          //   }
+          //   policyStore.setSortQuery(sortQuery)
+          //   await this.handleFetch()
+          // }}
+          // removableSort
           lazy
           paginator
         >
@@ -125,23 +131,17 @@ class PolicyListCard extends Component {
             header='Name'
             body={(policy) => policy.name}
             sortable
-          ></Column>
-          <Column
-            field='revision'
-            header='Revision'
-            body={(policy) => policy.currentRevision.name}
-            sortable
-          ></Column>
+          ></Column> 
           <Column
             field='tsCreate'
             header='Date Created'
-            body={(policy) => moment(policy.tsCreate).format('MMM DD, YYYY')}
+            body={(policy) => moment(policy.createdAt).format('MMM DD, YYYY')}
             sortable
           ></Column>
           <Column
             field='tsUpdate'
             header='Date Modified'
-            body={(policy) => moment(policy.tsUpdate).format('MMM DD, YYYY')}
+            body={(policy) => moment(policy.updatedAt).format('MMM DD, YYYY')}
             sortable
           ></Column>
         </DataTable>

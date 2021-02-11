@@ -20,7 +20,7 @@ const App = () => {
       <AdminLayout>
         <Switch>
           <Route path='/virtual-services' component={VirtualServices} />
-          {/* <Route path='/proximity/policies' component={Policies} /> */}
+          <Route path='/policies' component={Policies} />
           {/* <Route path='/' component={Home} /> */}
           <Redirect to='/virtual-services' from='/' />
         </Switch>

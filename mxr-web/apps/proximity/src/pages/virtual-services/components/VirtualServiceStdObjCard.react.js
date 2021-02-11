@@ -70,7 +70,9 @@ export class VirtualServiceStdObjCard extends Component {
     virtualServiceStore.setShowProcessCard(true)
     logStore.setSearchQuery({
       type: 'PROXIMITY_ACCESS_LOG',
-      'data.virtualServiceId': virtualService.id
+      data: {
+        virtualServiceId: virtualService.id
+      } 
     })
     try {
       const virtualServices = await logStore.objectQuery()

@@ -12,22 +12,22 @@ export class PolicyRevisionsCard extends Component {
     return (
       <DataTable
         className='p-datatable-striped p-datatable-hovered'
-        value={policy.revisions}
+        value={policy.PolicyRevisions}
         selectionMode='single'
         rows={10}
         sortMode='multiple'
         rowsPerPageOptions={[10, 20, 50, 1000]}
-        onSelectionChange={(e) => {
-          console.log(JSON.parse(JSON.stringify(e.value)))
-          // const policy = e.value
-          // policyStore.setSelectedObject(policy)
-          // policyStore.setFormFields({
-          //   id: policy.id,
-          //   name: policy.currentRevision.policy.name,
-          //   type: policy.currentRevision.policy.type,
-          //   rules: policy.currentRevision.policy.rules
-          // })
-          // policyStore.setShowObjectViewMode('UPDATE')
+        onSelectionChange={(e) => { 
+          const revision = e.value
+          policyStore.setSelectedObject(revision)
+          policyStore.setFormFields({
+            id: revision.PolicyId,
+            name: revision.name,
+            displayName: revision.displayName,
+            type: revision.type,
+            rules: revision.rules
+          })
+          policyStore.setShowObjectViewMode('UPDATE')
         }}
         removableSort
         paginator
@@ -35,25 +35,25 @@ export class PolicyRevisionsCard extends Component {
         <Column
           field='name'
           header='Name'
-          body={(revision) => revision.policy.name}
+          body={(revision) => revision.name}
           sortable
         ></Column>
         <Column
           field='displayName'
           header='Display Name'
-          body={(revision) => revision.policy.displayName}
+          body={(revision) => revision.displayName}
           sortable
         ></Column>
         <Column
-          field='revision'
+          field='revisionId'
           header='Revision'
-          body={(revision) => revision.name}
+          body={(revision) => revision.id}
           sortable
         ></Column>
         <Column
           field='tsCreate'
           header='Date Created'
-          body={(policy) => moment(policy.tsCreate).format('MMM DD, YYYY')}
+          body={(revision) => moment(revision.createdAt).format('MMM DD, YYYY')}
           sortable
         ></Column>
       </DataTable>

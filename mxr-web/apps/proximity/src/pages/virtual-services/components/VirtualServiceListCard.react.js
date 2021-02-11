@@ -13,7 +13,9 @@ class VirtualServiceListCard extends Component {
   handleFetch = async () => {
     virtualServiceStore.setShowProcessCard(true)
     try {
-      const virtualServices = await virtualServiceStore.objectQuery() 
+      const virtualServices = await virtualServiceStore.objectQuery([{
+        model: 'PolicyRevision'
+      }]) 
       virtualServiceStore.setSearchResultsObjectCount(virtualServices.count)
       virtualServiceStore.setObjects(virtualServices.rows)
     } catch (error) {

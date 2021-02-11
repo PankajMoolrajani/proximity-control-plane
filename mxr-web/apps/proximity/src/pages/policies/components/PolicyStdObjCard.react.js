@@ -147,20 +147,7 @@ export class PolicyStdObjCard extends Component {
       },
       {
         title: 'REVISIONS',
-        click: async () => {
-          policyStore.setShowProcessCard(true)
-          try {
-            const selectedPolicy = policyStore.getSelectedObject()
-            const policy = await policyStore.objectQueryById(
-              selectedPolicy.id,
-              true
-            )
-            policyStore.setSelectedObject(policy)
-            policyStore.setShowProcessCard(false)
-          } catch (error) {
-            console.log('Error: getting Policy', error)
-          }
-          policyStore.setShowProcessCard(false)
+        click: () => { 
           policyStore.setShowObjectViewModeSecondary('REVISIONS')
         },
         isActive: selectedTab === 'REVISIONS'

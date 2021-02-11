@@ -49,7 +49,7 @@ class PolicyPage extends Component {
         <Box style={{ fontSize: 20 }}>
           <Box>{selectedObject.name}</Box>
           <Box style={{ marginTop: 5, fontSize: 14 }}>
-            <b>REVISION:</b> {selectedObject.currentRevision.name}
+            <b>REVISION:</b> {selectedObject.name}
           </Box>
         </Box>
       </Box>
