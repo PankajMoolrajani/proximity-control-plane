@@ -12,7 +12,6 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { observer } from 'mobx-react-lite'
 import LayoutStore from '/mxr-web/apps/proximity/src/stores/Layout.store'
 
-
 const drawerWidth = 240
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -63,7 +62,10 @@ const AppBarTop = () => {
           color='inherit'
           aria-label='open drawer'
           onClick={() => LayoutStore.setShowMenu(true)}
-          className={clsx(classes.menuButton, showMenu && classes.menuButtonHidden)}
+          className={clsx(
+            classes.menuButton,
+            showMenu && classes.menuButtonHidden
+          )}
         >
           <MenuIcon />
         </IconButton>

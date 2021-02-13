@@ -37,13 +37,12 @@ class ProximityStore {
 
   async objectUpdate() {
     const data = this.getFormFields()
-    const response = await axiosInstance.post(
-      `/${this.objectName}/${data.id}`,
-      {
-        data: data
-      }
-    )
-    return response.data.data[`${this.objectName}Update`]
+    const response = await axiosInstance.put(`/${this.objectName}/${data.id}`, {
+      data: data
+    })
+    if (response.status === 200) {
+      return response.data
+    }
   }
 
   async objectQueryById(id, include) {
@@ -72,8 +71,8 @@ class ProximityStore {
     }
 
     let sortQuery = this.getSortQuery()
-    if(!sortQuery) {
-      sortQuery= []
+    if (!sortQuery) {
+      sortQuery = []
     }
     const response = await axiosInstance.post(`/${this.objectName}/search`, {
       query: {

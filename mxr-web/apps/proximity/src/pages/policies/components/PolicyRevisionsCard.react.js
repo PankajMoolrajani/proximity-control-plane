@@ -17,18 +17,7 @@ export class PolicyRevisionsCard extends Component {
         rows={10}
         sortMode='multiple'
         rowsPerPageOptions={[10, 20, 50, 1000]}
-        onSelectionChange={(e) => { 
-          const revision = e.value
-          policyStore.setSelectedObject(revision)
-          policyStore.setFormFields({
-            id: revision.PolicyId,
-            name: revision.name,
-            displayName: revision.displayName,
-            type: revision.type,
-            rules: revision.rules
-          })
-          policyStore.setShowObjectViewMode('UPDATE')
-        }}
+        onSelectionChange={(e) => {}}
         removableSort
         paginator
       >
@@ -47,7 +36,7 @@ export class PolicyRevisionsCard extends Component {
         <Column
           field='revisionId'
           header='Revision'
-          body={(revision) => revision.id}
+          body={(revision) => `rev-${revision.id.split('-').reverse()[0]}`}
           sortable
         ></Column>
         <Column

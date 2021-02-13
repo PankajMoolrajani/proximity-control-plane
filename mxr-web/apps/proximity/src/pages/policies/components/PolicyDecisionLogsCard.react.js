@@ -34,24 +34,26 @@ export class PolicyDecisionLogsCard extends Component {
   }
 
   render() {
-    const searchQuery = logStore.getSortQuery()
-    const logs = ''
+    // const searchQuery = logStore.getSortQuery()
+    const logs = logStore.getObjects()
     if (!logs || logs.length === 0) {
       return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }
-    let searchQueryArray = []
-    for (const field in searchQuery) {
-      searchQueryArray.push({
-        field: field,
-        order: searchQuery[field]
-      })
-    }
+    // let searchQueryArray = []
+    // for (const field in searchQuery) {
+    //   searchQueryArray.push({
+    //     field: field,
+    //     order: searchQuery[field]
+    //   })
+    // }
     return (
       <DataTable
         className='p-datatable-striped p-datatable-hovered'
         value={logs}
         selectionMode='single'
-        dataKey={{ test: '1' }}
+        dataKey={
+          logStore.getSelectedObject() ? logStore.getSelectedObject().id : ''
+        }
         expandedRows={this.state.expandedRows}
         onRowToggle={(e) => this.setState({ expandedRows: e.data })}
         rowExpansionTemplate={this._renderLogTemplate}
@@ -61,7 +63,7 @@ export class PolicyDecisionLogsCard extends Component {
         first={
           logStore.getSearchPageNum() * logStore.getSearchPageObjectCount()
         }
-        sortMode='multiple'
+        // sortMode='multiple'
         rowsPerPageOptions={[10, 20, 50, 1000]}
         onSelectionChange={(e) => {}}
         onPage={async (e) => {
@@ -69,30 +71,30 @@ export class PolicyDecisionLogsCard extends Component {
           logStore.setSearchPageObjectCount(e.rows)
           await this.props.fetchDecisionLogs()
         }}
-        multiSortMeta={searchQueryArray}
-        onSort={async (e) => {
-          let sortQuery = logStore.getSortQuery()
-          if (!sortQuery) {
-            sortQuery = {}
-          }
+        // multiSortMeta={searchQueryArray}
+        // onSort={async (e) => {
+        //   let sortQuery = logStore.getSortQuery()
+        //   if (!sortQuery) {
+        //     sortQuery = {}
+        //   }
 
-          e.multiSortMeta.forEach((sortMeta) => {
-            sortQuery[sortMeta.field] = sortMeta.order
-          })
+        //   e.multiSortMeta.forEach((sortMeta) => {
+        //     sortQuery[sortMeta.field] = sortMeta.order
+        //   })
 
-          for (const field in sortQuery) {
-            if (
-              e.multiSortMeta.findIndex(
-                (msortMeta) => msortMeta.field === field
-              ) === -1
-            ) {
-              delete sortQuery[field]
-            }
-          }
-          logStore.setSortQuery(sortQuery)
-          await this.props.fetchDecisionLogs()
-        }}
-        removableSort
+        //   for (const field in sortQuery) {
+        //     if (
+        //       e.multiSortMeta.findIndex(
+        //         (msortMeta) => msortMeta.field === field
+        //       ) === -1
+        //     ) {
+        //       delete sortQuery[field]
+        //     }
+        //   }
+        //   logStore.setSortQuery(sortQuery)
+        //   await this.props.fetchDecisionLogs()
+        // }}
+        // removableSort
         lazy
         paginator
       >
@@ -110,7 +112,7 @@ export class PolicyDecisionLogsCard extends Component {
         <Column
           field='revision'
           header='Revision'
-          body={(log) => log.data.policyRevisionName}
+          body={(log) => `rev-${log.PolicyRevisionId.split('-').reverse()[0]}`}
         ></Column>
         <Column
           field='decision'
@@ -120,7 +122,7 @@ export class PolicyDecisionLogsCard extends Component {
         <Column
           field='tsCreate'
           header='Time Stamp'
-          body={(log) => moment(log.tsCreate).format('MMM DD, YYYY hh:mm A')}
+          body={(log) => moment(log.createdAt).format('MMM DD, YYYY hh:mm A')}
           sortable
         ></Column>
       </DataTable>

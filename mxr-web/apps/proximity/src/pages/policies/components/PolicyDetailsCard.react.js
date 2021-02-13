@@ -1,7 +1,11 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { withStyles } from '@material-ui/styles'
-import { axiosInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
+import { v4 as uuid } from 'uuid'
+import {
+  axiosInstance,
+  axiosServiceInstance
+} from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
 import JSONPretty from 'react-json-pretty'
 import Box from '@material-ui/core/Box'
 import TextField from '@material-ui/core/TextField'
@@ -62,7 +66,7 @@ export class PolicyDetailsCard extends Component {
 
   handleEvaluate = async () => {
     const policy = policyStore.getFormFields()
-    const response = await axiosInstance.post(
+    const response = await axiosServiceInstance.post(
       'opa/eval',
       {
         rules: policy.rules,
@@ -412,14 +416,13 @@ export class PolicyDetailsCard extends Component {
 
   generateKey = async () => {
     const formFields = policyStore.getFormFields()
-    const response = await axiosInstance.get('/crypto/apikey')
     policyStore.setFormFields({
       ...formFields,
       rules: JSON.stringify({
         ...JSON.parse(formFields.rules),
         authData: {
           ...JSON.parse(formFields.rules).authData,
-          apiKey: response.data.apikey
+          apiKey: uuid().replaceAll('-', '')
         }
       })
     })

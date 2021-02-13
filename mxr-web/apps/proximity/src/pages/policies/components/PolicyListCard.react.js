@@ -47,7 +47,11 @@ class PolicyListCard extends Component {
     const showLoader = policyStore.getShowProcessCard()
     const policies = policyStore.getObjects()
     if (showLoader && !policies) {
-      return <Box style={{ margin: 50 }}><PlatformLoaderCard /></Box>
+      return (
+        <Box style={{ margin: 50 }}>
+          <PlatformLoaderCard />
+        </Box>
+      )
     }
 
     if (!policies || policies.length === 0) {
@@ -131,7 +135,7 @@ class PolicyListCard extends Component {
             header='Name'
             body={(policy) => policy.name}
             sortable
-          ></Column> 
+          ></Column>
           <Column
             field='tsCreate'
             header='Date Created'

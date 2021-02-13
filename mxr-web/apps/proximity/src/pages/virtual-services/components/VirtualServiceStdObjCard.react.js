@@ -44,20 +44,19 @@ export class VirtualServiceStdObjCard extends Component {
     virtualServiceStore.setShowProcessCard(false)
   }
 
- 
-
   async handleDecisionLogsFetch() {
     virtualServiceStore.setShowObjectViewModeSecondary('DECISION_LOGS')
     const virtualService = virtualServiceStore.getSelectedObject()
     virtualServiceStore.setShowProcessCard(true)
+    logStore.setSearchPageObjectCount(10)
     logStore.setSearchQuery({
-      type: 'PROXIMITY_DECISION_LOG',
-      'data.virtualServiceId': virtualService.id
+      VirtualServiceId: virtualService.id,
+      type: 'PROXIMITY_DECISION_LOG'
     })
     try {
       const virtualServices = await logStore.objectQuery()
       logStore.setSearchResultsObjectCount(virtualServices.count)
-      logStore.setObjects(virtualServices.data)
+      logStore.setObjects(virtualServices.rows)
     } catch (error) {
       console.log(`Error: Getting logs`)
     }
@@ -68,16 +67,15 @@ export class VirtualServiceStdObjCard extends Component {
     virtualServiceStore.setShowObjectViewModeSecondary('ACCESS_LOGS')
     const virtualService = virtualServiceStore.getSelectedObject()
     virtualServiceStore.setShowProcessCard(true)
+    logStore.setSearchPageObjectCount(10)
     logStore.setSearchQuery({
-      type: 'PROXIMITY_ACCESS_LOG',
-      data: {
-        virtualServiceId: virtualService.id
-      } 
+      VirtualServiceId: virtualService.id,
+      type: 'PROXIMITY_ACCESS_LOG'
     })
     try {
       const virtualServices = await logStore.objectQuery()
       logStore.setSearchResultsObjectCount(virtualServices.count)
-      logStore.setObjects(virtualServices.data)
+      logStore.setObjects(virtualServices.rows)
     } catch (error) {
       console.log(`Error: Getting logs`)
     }
@@ -92,7 +90,7 @@ export class VirtualServiceStdObjCard extends Component {
       policyRecommendationStore.setSearchResultsObjectCount(
         poilcyRecommendations.count
       )
-      policyRecommendationStore.setObjects(poilcyRecommendations.data)
+      policyRecommendationStore.setObjects(poilcyRecommendations.rows)
     } catch (error) {
       console.log(`Error: Getting poilcy recommendations`)
     }
@@ -101,17 +99,21 @@ export class VirtualServiceStdObjCard extends Component {
 
   async handleMonitorLogsFetch() {
     virtualServiceStore.setShowObjectViewModeSecondary('MONITOR')
-    // virtualServiceStore.setShowProcessCard(true)
-    logStore.setSearchPageObjectCount(10000)
-    logStore.setSortQuery({ tsCreate: -1 })
+    const virtualService = virtualServiceStore.getSelectedObject()
+    virtualServiceStore.setShowProcessCard(true)
+    logStore.setSearchPageObjectCount(10)
+    logStore.setSearchQuery({
+      VirtualServiceId: virtualService.id,
+      type: 'PROXIMITY_DP_HEALTH_LOG'
+    })
     try {
       const virtualServices = await logStore.objectQuery()
       logStore.setSearchResultsObjectCount(virtualServices.count)
-      logStore.setObjects(virtualServices.data)
+      logStore.setObjects(virtualServices.rows)
     } catch (error) {
       console.log(`Error: Getting logs`)
     }
-    // virtualServiceStore.setShowProcessCard(false)
+    virtualServiceStore.setShowProcessCard(false)
   }
 
   _renderTitleDetailsCard() {
@@ -223,9 +225,7 @@ export class VirtualServiceStdObjCard extends Component {
         return <VirtualServiceDeploymentCard />
         break
       case 'POLICIES':
-        return (
-          <VirtualServicePoliciesCard />
-        )
+        return <VirtualServicePoliciesCard />
         break
       case 'DECISION_LOGS':
         return (

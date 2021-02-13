@@ -34,9 +34,7 @@ class SideBar extends Component {
             <ListItemText primary='Home' />
           </ListItem>
           <ListItem
-            onClick={() =>
-              this.props.history.push('/virtual-services')
-            }
+            onClick={() => this.props.history.push('/virtual-services')}
             button
             dense
           >

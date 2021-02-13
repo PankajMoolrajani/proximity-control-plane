@@ -7,7 +7,7 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import IconButton from '@material-ui/core/IconButton'
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
-import BuildIcon from '@material-ui/icons/Build'
+import VpnKeyIcon from '@material-ui/icons/VpnKey'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { virtualServiceStore } = stores
 export class VirtualServiceDetailsCard extends Component {
@@ -111,7 +111,7 @@ export class VirtualServiceDetailsCard extends Component {
                       })
                     }}
                   >
-                    <BuildIcon />
+                    <VpnKeyIcon />
                   </IconButton>
                   <IconButton
                     onClick={() =>

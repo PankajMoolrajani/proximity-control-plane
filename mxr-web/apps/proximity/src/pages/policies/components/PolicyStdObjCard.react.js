@@ -10,18 +10,23 @@ import PolicyDetailsCard from '/mxr-web/apps/proximity/src/pages/policies/compon
 import PolicyRevisionsCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyRevisionsCard.react'
 import PolicyDecisionLogsCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyDecisionLogsCard.react'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
-const { policyStore, logStore } = stores
+const { policyStore, logStore, policyRevisionStore } = stores
 
 export class PolicyStdObjCard extends Component {
   async handleDecisionLogsFetch() {
     policyStore.setShowObjectViewModeSecondary('DECISION_LOGS')
     const policy = policyStore.getSelectedObject()
     policyStore.setShowProcessCard(true)
-    logStore.setSearchQuery({ 'data.policyId': policy.id })
+    logStore.setSearchQuery({
+      type: 'PROXIMITY_DECISION_LOG',
+      PolicyRevisionId: {
+        $in: policy.PolicyRevisions.map((policyRevision) => policyRevision.id)
+      }
+    })
     try {
       const logs = await logStore.objectQuery()
       logStore.setSearchResultsObjectCount(logs.count)
-      logStore.setObjects(logs.data)
+      logStore.setObjects(logs.rows)
     } catch (error) {
       console.log(`Error: Getting Logs`)
     }
@@ -39,12 +44,21 @@ export class PolicyStdObjCard extends Component {
         onClick={async () => {
           policyStore.setShowProcessCard(true)
           try {
-            await policyStore.objectCreate()
+            const createdPolicy = await policyStore.objectCreate()
+            policyRevisionStore.setFormFields({
+              name: createdPolicy.name,
+              displayName: createdPolicy.displayName,
+              type: createdPolicy.type,
+              rules: createdPolicy.rules,
+              PolicyId: createdPolicy.id
+            })
+            const createdPolicyRevision = await policyRevisionStore.objectCreate()
             policyStore.setShowProcessCard(false)
             policyStore.setShowSuccessCard(true)
             await new Promise((res) => setTimeout(res, 2000))
             policyStore.setShowSuccessCard(false)
             policyStore.resetAllFields()
+            policyRevisionStore.resetAllFields()
           } catch (error) {
             console.log('Error: Creating Policy', error)
           }
@@ -68,6 +82,14 @@ export class PolicyStdObjCard extends Component {
           policyStore.setShowProcessCard(true)
           try {
             const updatedPolicy = await policyStore.objectUpdate()
+            policyRevisionStore.setFormFields({
+              name: updatedPolicy.name,
+              displayName: updatedPolicy.displayName,
+              type: updatedPolicy.type,
+              rules: updatedPolicy.rules,
+              PolicyId: updatedPolicy.id
+            })
+            const createdPolicyRevision = await policyRevisionStore.objectCreate()
             policyStore.setSelectedObject(updatedPolicy)
             policyStore.setShowProcessCard(false)
             policyStore.setShowSuccessCard(true)
@@ -128,13 +150,16 @@ export class PolicyStdObjCard extends Component {
     if (showSuccess) {
       return (
         <Box style={{ margin: 50 }}>
-          Success
           <PlatformSuccessCard iconColor='green' msg='Success !' />
         </Box>
       )
     }
     if (showLoader) {
-      return <Box style={{ margin: 50 }}>Loading...</Box>
+      return (
+        <Box style={{ margin: 50 }}>
+          <PlatformLoaderCard />
+        </Box>
+      )
     }
     const selectedTab = policyStore.getShowObjectViewModeSecondary()
     const buttons = [
@@ -147,7 +172,7 @@ export class PolicyStdObjCard extends Component {
       },
       {
         title: 'REVISIONS',
-        click: () => { 
+        click: () => {
           policyStore.setShowObjectViewModeSecondary('REVISIONS')
         },
         isActive: selectedTab === 'REVISIONS'

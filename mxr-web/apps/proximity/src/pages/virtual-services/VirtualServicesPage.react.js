@@ -53,9 +53,7 @@ class VirtualServicePage extends Component {
           <CheckCircleIcon color='inherit' />
         </Box>
         <Box>
-          <Box style={{ fontSize: 20 }}>
-            {selectedObject.name}
-          </Box> 
+          <Box style={{ fontSize: 20 }}>{selectedObject.name}</Box>
         </Box>
       </Box>
     )
@@ -122,7 +120,7 @@ class VirtualServicePage extends Component {
         title={this._renderObjectHeader()}
         actionButtons={this._renderButtons()}
       >
-        <VirtualServiceObjectCard /> 
+        <VirtualServiceObjectCard />
       </PageLayout>
     )
   }

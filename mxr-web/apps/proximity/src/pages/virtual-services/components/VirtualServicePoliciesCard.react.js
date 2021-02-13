@@ -15,6 +15,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import { Autocomplete } from '@material-ui/lab'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import AddIcon from '@material-ui/icons/Add'
+import PolicyIcon from '@material-ui/icons/Policy'
 import PlatfromPopUpCard from '/mxr-web/apps/proximity/src/components/platform/PlatfromPopUpCard.react'
 import VirtualServiceAddPolicyDialog from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceAddPolicyDialog.react'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
@@ -240,7 +241,7 @@ export class VirtualServicePoliciesCard extends Component {
   }
 
   _renderPoliciesListCard() {
-    const virtualService = virtualServiceStore.getSelectedObject() 
+    const virtualService = virtualServiceStore.getSelectedObject()
     const policyRevisions = virtualService.PolicyRevisions
     return (
       <DataTable
@@ -277,7 +278,9 @@ export class VirtualServicePoliciesCard extends Component {
         <Column
           field='enforcementMode'
           header='Enforcement Mode'
-          body={(policyRevision) => policyRevision.VirtualServicePolicyRevision.enforcementMode}
+          body={(policyRevision) =>
+            policyRevision.VirtualServicePolicyRevision.enforcementMode
+          }
           sortable
         ></Column>
         <Column
@@ -324,7 +327,9 @@ export class VirtualServicePoliciesCard extends Component {
               alignItems: 'center'
             }}
           >
-            <Box style={{ marginRight: 20 }}>Policy Icon</Box>
+            <Box style={{ marginRight: 20 }}>
+              <PolicyIcon />
+            </Box>
             <Typography variant='h5'>Policies</Typography>
           </Box>
           <Box

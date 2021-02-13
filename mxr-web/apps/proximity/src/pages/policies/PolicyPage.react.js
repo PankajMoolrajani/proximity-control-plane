@@ -31,6 +31,14 @@ class PolicyPage extends Component {
 
   _renderSelectedObjectTitle() {
     const selectedObject = policyStore.getSelectedObject()
+    let lastPolicyRevision
+    if (selectedObject.PolicyRevisions) {
+      const policyRevisions = JSON.parse(
+        JSON.stringify(selectedObject.PolicyRevisions)
+      )
+      lastPolicyRevision = policyRevisions.reverse()[0]
+    }
+
     return (
       <Box
         style={{
@@ -49,7 +57,10 @@ class PolicyPage extends Component {
         <Box style={{ fontSize: 20 }}>
           <Box>{selectedObject.name}</Box>
           <Box style={{ marginTop: 5, fontSize: 14 }}>
-            <b>REVISION:</b> {selectedObject.name}
+            <b>REVISION:</b> rev-
+            {lastPolicyRevision
+              ? lastPolicyRevision.id.split('-').reverse()[0]
+              : ''}
           </Box>
         </Box>
       </Box>

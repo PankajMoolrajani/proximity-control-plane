@@ -13,9 +13,11 @@ class VirtualServiceListCard extends Component {
   handleFetch = async () => {
     virtualServiceStore.setShowProcessCard(true)
     try {
-      const virtualServices = await virtualServiceStore.objectQuery([{
-        model: 'PolicyRevision'
-      }]) 
+      const virtualServices = await virtualServiceStore.objectQuery([
+        {
+          model: 'PolicyRevision'
+        }
+      ])
       virtualServiceStore.setSearchResultsObjectCount(virtualServices.count)
       virtualServiceStore.setObjects(virtualServices.rows)
     } catch (error) {
@@ -74,7 +76,7 @@ class VirtualServiceListCard extends Component {
           virtualServiceStore.setFormFields({
             id: virtualService.id,
             displayName: virtualService.displayName,
-            proximityUrl:virtualService.proximityUrl,
+            proximityUrl: virtualService.proximityUrl,
             targetUrl: virtualService.targetUrl,
             authKey: virtualService.authKey
           })

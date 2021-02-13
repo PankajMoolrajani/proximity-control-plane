@@ -2,26 +2,31 @@
   "virtualServiceStore": {
     "name": "virtualService",
     "fields": "id name displayName proximityUrl targetUrl authKey",
-    "relatedFields": "policyRevision"
+    "relatedFields": "policyRevision log"
   },
   "policyStore": {
     "name": "policy",
     "fields": "id name displayName type rules",
     "relatedFields": "policyRevision"
   },
+  "virtualServicePolicyRevisionStore": {
+    "name": "virtualServicePolicyRevision",
+    "fields": "id enforcementMode VirtualServiceId PolicyRevisionId",
+    "relatedFields": ""
+  },
   "policyRevisionStore": {
     "name": "policyRevision",
-    "fields": "id name displayName type rules",
-    "relatedFields": "policy virtualService"
+    "fields": "id name displayName type rules PolicyId",
+    "relatedFields": "policy virtualService log"
   },
   "policyRecommendation": {
     "name": "policyRecommendation",
-    "fields": "id name ",
+    "fields": "id name rules",
     "relatedFields": ""
   },
   "logStore": {
     "name": "log",
     "fields": "id type data",
-    "relatedFields": ""
+    "relatedFields": "virtualService policyRevision"
   }
 }
