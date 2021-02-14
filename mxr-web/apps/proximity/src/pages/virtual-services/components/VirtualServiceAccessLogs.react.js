@@ -7,6 +7,10 @@ import { Column } from 'primereact/column'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+import {
+  transformSortQuery,
+  onSortQuery
+} from '/mxr-web/apps/proximity/src/libs/helpers/helper.lib'
 const { logStore } = stores
 
 export class VirtualServiceAccessLogs extends Component {
@@ -34,18 +38,12 @@ export class VirtualServiceAccessLogs extends Component {
   }
 
   render() {
-    const searchQuery = logStore.getSortQuery()
+    const sortQuery = logStore.getSortQuery()
     const logs = logStore.getObjects()
     if (!logs || logs.length === 0) {
       return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }
-    let searchQueryArray = []
-    // for (const field in searchQuery) {
-    //   searchQueryArray.push({
-    //     field: field,
-    //     order: searchQuery[field]
-    //   })
-    // }
+    let sortQueryTransformed = transformSortQuery(sortQuery)
     return (
       <DataTable
         className='p-datatable-striped p-datatable-hovered'
@@ -71,29 +69,12 @@ export class VirtualServiceAccessLogs extends Component {
           logStore.setSearchPageObjectCount(e.rows)
           await this.props.fetchAccessLogs()
         }}
-        multiSortMeta={searchQueryArray}
+        multiSortMeta={sortQueryTransformed}
         onSort={async (e) => {
-          console.log(e)
-          // let sortQuery = logStore.getSortQuery()
-          // if (!sortQuery) {
-          //   sortQuery = {}
-          // }
-
-          // e.multiSortMeta.forEach((sortMeta) => {
-          //   sortQuery[sortMeta.field] = sortMeta.order
-          // })
-
-          // for (const field in sortQuery) {
-          //   if (
-          //     e.multiSortMeta.findIndex(
-          //       (msortMeta) => msortMeta.field === field
-          //     ) === -1
-          //   ) {
-          //     delete sortQuery[field]
-          //   }
-          // }
-          // logStore.setSortQuery(sortQuery)
-          // await this.props.fetchAccessLogs()
+          let sortQuery = logStore.getSortQuery()
+          const updatedSortQuery = onSortQuery(sortQuery, e)
+          logStore.setSortQuery(updatedSortQuery)
+          await this.props.fetchAccessLogs()
         }}
         removableSort
         lazy

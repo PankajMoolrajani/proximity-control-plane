@@ -6,6 +6,10 @@ import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import Box from '@material-ui/core/Box'
 import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
+import {
+  transformSortQuery,
+  onSortQuery
+} from '/mxr-web/apps/proximity/src/libs/helpers/helper.lib'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { virtualServiceStore } = stores
 
@@ -35,6 +39,7 @@ class VirtualServiceListCard extends Component {
   render() {
     const showLoader = virtualServiceStore.getShowProcessCard()
     const virtualServices = virtualServiceStore.getObjects()
+    const sortQuery = virtualServiceStore.getSortQuery()
     if (showLoader && !virtualServices) {
       return (
         <Box style={{ margin: 50 }}>
@@ -43,14 +48,7 @@ class VirtualServiceListCard extends Component {
       )
     }
 
-    // const sortQuery = virtualServiceStore.getSortQuery()
-    // let searchQueryArray = []
-    // for (const field in searchQuery) {
-    //   searchQueryArray.push({
-    //     field: field,
-    //     order: searchQuery[field]
-    //   })
-    // }
+    let sortQueryTransformed = transformSortQuery(sortQuery)
     return (
       <DataTable
         className='p-datatable-striped p-datatable-hovered'
@@ -68,7 +66,7 @@ class VirtualServiceListCard extends Component {
           virtualServiceStore.getSearchPageNum() *
           virtualServiceStore.getSearchPageObjectCount()
         }
-        // sortMode='multiple'
+        sortMode='multiple'
         rowsPerPageOptions={[10, 20, 50, 1000]}
         onSelectionChange={(e) => {
           const virtualService = e.value
@@ -88,30 +86,14 @@ class VirtualServiceListCard extends Component {
           virtualServiceStore.setSearchPageObjectCount(e.rows)
           await this.handleFetch()
         }}
-        // multiSortMeta={searchQueryArray}
-        // onSort={async (e) => {
-        //   let sortQuery = virtualServiceStore.getSortQuery()
-        //   if (!sortQuery) {
-        //     sortQuery = {}
-        //   }
-
-        //   e.multiSortMeta.forEach((sortMeta) => {
-        //     sortQuery[sortMeta.field] = sortMeta.order
-        //   })
-
-        //   for (const field in sortQuery) {
-        //     if (
-        //       e.multiSortMeta.findIndex(
-        //         (msortMeta) => msortMeta.field === field
-        //       ) === -1
-        //     ) {
-        //       delete sortQuery[field]
-        //     }
-        //   }
-        //   virtualServiceStore.setSortQuery(sortQuery)
-        //   await this.handleFetch()
-        // }}
-        // removableSort
+        multiSortMeta={sortQueryTransformed}
+        onSort={async (e) => {
+          let sortQuery = virtualServiceStore.getSortQuery()
+          const updatedSortQuery = onSortQuery(sortQuery, e)
+          virtualServiceStore.setSortQuery(updatedSortQuery)
+          await this.handleFetch()
+        }}
+        removableSort
         lazy
         paginator
       >
@@ -122,7 +104,7 @@ class VirtualServiceListCard extends Component {
           sortable
         ></Column>
         <Column
-          field='tsCreate'
+          field='createdAt'
           header='Date Created'
           body={(virtualService) =>
             moment(virtualService.createdAt).format('MMM DD, YYYY')
@@ -130,7 +112,7 @@ class VirtualServiceListCard extends Component {
           sortable
         ></Column>
         <Column
-          field='tsUpdate'
+          field='updatedAt'
           header='Date Modified'
           body={(virtualService) =>
             moment(virtualService.updatedAt).format('MMM DD, YYYY')

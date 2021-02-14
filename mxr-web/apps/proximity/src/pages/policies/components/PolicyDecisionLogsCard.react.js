@@ -6,6 +6,10 @@ import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
+import {
+  transformSortQuery,
+  onSortQuery
+} from '/mxr-web/apps/proximity/src/libs/helpers/helper.lib'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { logStore } = stores
 
@@ -34,18 +38,12 @@ export class PolicyDecisionLogsCard extends Component {
   }
 
   render() {
-    // const searchQuery = logStore.getSortQuery()
+    const sortQuery = logStore.getSortQuery()
     const logs = logStore.getObjects()
     if (!logs || logs.length === 0) {
       return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }
-    // let searchQueryArray = []
-    // for (const field in searchQuery) {
-    //   searchQueryArray.push({
-    //     field: field,
-    //     order: searchQuery[field]
-    //   })
-    // }
+    let sortQueryTransformed = transformSortQuery(sortQuery)
     return (
       <DataTable
         className='p-datatable-striped p-datatable-hovered'
@@ -63,7 +61,7 @@ export class PolicyDecisionLogsCard extends Component {
         first={
           logStore.getSearchPageNum() * logStore.getSearchPageObjectCount()
         }
-        // sortMode='multiple'
+        sortMode='multiple'
         rowsPerPageOptions={[10, 20, 50, 1000]}
         onSelectionChange={(e) => {}}
         onPage={async (e) => {
@@ -71,30 +69,14 @@ export class PolicyDecisionLogsCard extends Component {
           logStore.setSearchPageObjectCount(e.rows)
           await this.props.fetchDecisionLogs()
         }}
-        // multiSortMeta={searchQueryArray}
-        // onSort={async (e) => {
-        //   let sortQuery = logStore.getSortQuery()
-        //   if (!sortQuery) {
-        //     sortQuery = {}
-        //   }
-
-        //   e.multiSortMeta.forEach((sortMeta) => {
-        //     sortQuery[sortMeta.field] = sortMeta.order
-        //   })
-
-        //   for (const field in sortQuery) {
-        //     if (
-        //       e.multiSortMeta.findIndex(
-        //         (msortMeta) => msortMeta.field === field
-        //       ) === -1
-        //     ) {
-        //       delete sortQuery[field]
-        //     }
-        //   }
-        //   logStore.setSortQuery(sortQuery)
-        //   await this.props.fetchDecisionLogs()
-        // }}
-        // removableSort
+        multiSortMeta={sortQueryTransformed}
+        onSort={async (e) => {
+          let sortQuery = logStore.getSortQuery()
+          const updatedSortQuery = onSortQuery(sortQuery, e)
+          logStore.setSortQuery(updatedSortQuery)
+          await this.props.fetchDecisionLogs()
+        }}
+        removableSort
         lazy
         paginator
       >
@@ -120,7 +102,7 @@ export class PolicyDecisionLogsCard extends Component {
           body={(log) => (log.data.decision.allow ? 'ALLOWED' : 'DEINED')}
         ></Column>
         <Column
-          field='tsCreate'
+          field='createdAt'
           header='Time Stamp'
           body={(log) => moment(log.createdAt).format('MMM DD, YYYY hh:mm A')}
           sortable

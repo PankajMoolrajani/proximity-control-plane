@@ -7,6 +7,10 @@ import { Column } from 'primereact/column'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+import {
+  transformSortQuery,
+  onSortQuery
+} from '/mxr-web/apps/proximity/src/libs/helpers/helper.lib'
 const { logStore } = stores
 
 export class VirtualServiceDecisionLogs extends Component {
@@ -39,15 +43,7 @@ export class VirtualServiceDecisionLogs extends Component {
     if (!logs || logs.length === 0) {
       return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }
-    let sortQueryTransformed = []
-    if (sortQuery) {
-      sortQuery.forEach((sort) => {
-        sortQueryTransformed.push({
-          field: sort[0],
-          order: sort[1] === 'ASC' ? 1 : -1
-        })
-      })
-    }
+    let sortQueryTransformed = transformSortQuery(sortQuery)
 
     return (
       <DataTable
@@ -77,16 +73,8 @@ export class VirtualServiceDecisionLogs extends Component {
         multiSortMeta={sortQueryTransformed}
         onSort={async (e) => {
           let sortQuery = logStore.getSortQuery()
-          if (!sortQuery) {
-            sortQuery = []
-          }
-          e.multiSortMeta.forEach((sortMeta) => {
-            sortQuery.push([
-              sortMeta.field,
-              sortMeta.order === 1 ? 'ASC' : 'DESC'
-            ])
-          })
-          logStore.setSortQuery(sortQuery)
+          const updatedSortQuery = onSortQuery(sortQuery, e)
+          logStore.setSortQuery(updatedSortQuery)
           await this.props.fetchDecisionLogs()
         }}
         removableSort
