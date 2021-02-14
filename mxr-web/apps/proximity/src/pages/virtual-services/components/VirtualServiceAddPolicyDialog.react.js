@@ -12,7 +12,13 @@ import Typography from '@material-ui/core/Typography'
 import CloseIcon from '@material-ui/icons/Close'
 import PolicyStdObjCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyStdObjCard.react'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
-const { virtualServiceStore, policyStore } = stores
+import { toJS } from 'mobx'
+const {
+  virtualServiceStore,
+  policyStore,
+  policyRevisionStore,
+  virtualServicePolicyRevisionStore
+} = stores
 
 const classes = {
   appBar: {
@@ -65,30 +71,53 @@ export class VirtualServiceAddPolicyDialog extends Component {
                 policyStore.setShowProcessCard(true)
                 try {
                   if (viewMode === 'CREATE') {
-                    await policyStore.objectCreate()
+                    const createdPolicy = await policyStore.objectCreate()
+
+                    policyRevisionStore.setFormFields({
+                      name: createdPolicy.name,
+                      displayName: createdPolicy.displayName,
+                      type: createdPolicy.type,
+                      rules: createdPolicy.rules,
+                      PolicyId: createdPolicy.id
+                    })
+                    const createdPolicyRevision = await policyRevisionStore.objectCreate()
                   }
                   if (viewMode === 'UPDATE') {
+                    const selectedPolicyRevision = policyStore.getFormFields()
+                    const selectedVirtualService = virtualServiceStore.getSelectedObject()
+                    const oldPolicyRevisinoId =
+                      selectedPolicyRevision.revisionId
+                    const updatedPolicyDraft = {
+                      ...selectedPolicyRevision
+                    }
+                    delete updatedPolicyDraft.revisionId
+                    policyStore.setFormFields(updatedPolicyDraft)
                     const updatedPolicy = await policyStore.objectUpdate()
-                    const exitingVirtualService = virtualServiceStore.getSelectedObject()
-                    const updatePolicyMeta = exitingVirtualService.currentRevision.virtualService.policiesMetadata.filter(
-                      (policyMeta) => policyMeta.id !== updatedPolicy.id
-                    )
-                    const oldPolicyMeta = exitingVirtualService.currentRevision.virtualService.policiesMetadata.find(
-                      (policyMeta) => policyMeta.id === updatedPolicy.id
-                    )
-                    updatePolicyMeta.push({
-                      id: updatedPolicy.id,
-                      revisionId: updatedPolicy.currentRevisionId,
-                      enforcementMode: oldPolicyMeta.enforcementMode
+                    policyRevisionStore.setFormFields({
+                      name: updatedPolicy.name,
+                      displayName: updatedPolicy.displayName,
+                      type: updatedPolicy.type,
+                      rules: updatedPolicy.rules,
+                      PolicyId: updatedPolicy.id
                     })
-                    virtualServiceStore.setFormFields({
-                      ...virtualServiceStore.getFormFields(),
-                      policiesMetadata: updatePolicyMeta
+                    const createdPolicyRevision = await policyRevisionStore.objectCreate()
+
+                    //Update virtual service policy mapping
+                    virtualServicePolicyRevisionStore.setSearchQuery({
+                      VirtualServiceId: selectedVirtualService.id,
+                      PolicyRevisionId: oldPolicyRevisinoId
                     })
-                    const udpatedVirtualService = await virtualServiceStore.objectUpdate(
-                      true
-                    )
-                    virtualServiceStore.setSelectedObject(udpatedVirtualService)
+                    const existingVSPolicymapResponse = await virtualServicePolicyRevisionStore.objectQuery()
+                    const existingVSPolicymap =
+                      existingVSPolicymapResponse.rows[0]
+                    console.log(existingVSPolicymap)
+                    virtualServicePolicyRevisionStore.setFormFields({
+                      id: existingVSPolicymap.id,
+                      VirtualServiceId: existingVSPolicymap.VirtualServiceId,
+                      PolicyRevisionId: createdPolicyRevision.id,
+                      enforcementMode: existingVSPolicymap.enforcementMode
+                    })
+                    await virtualServicePolicyRevisionStore.objectUpdate()
                   }
                   policyStore.setShowSuccessCard(true)
                   await new Promise((res) => setTimeout(res, 2000))
@@ -96,7 +125,6 @@ export class VirtualServiceAddPolicyDialog extends Component {
                   if (viewMode === 'UPDATE') {
                     await this.props.fetchPolicies()
                   }
-
                   policyStore.setShowObjectViewMode(null)
                   if (viewMode === 'CREATE') {
                     console.log('Show popup')
@@ -108,6 +136,7 @@ export class VirtualServiceAddPolicyDialog extends Component {
                 }
                 policyStore.setShowProcessCard(false)
                 policyStore.resetAllFields()
+                policyRevisionStore.resetAllFields()
                 virtualServiceStore.setShowAddObjectDialog(false)
               }}
               style={{

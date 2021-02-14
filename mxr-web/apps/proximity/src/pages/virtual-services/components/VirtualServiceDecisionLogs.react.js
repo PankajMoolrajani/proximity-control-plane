@@ -34,18 +34,21 @@ export class VirtualServiceDecisionLogs extends Component {
   }
 
   render() {
-    const searchQuery = logStore.getSortQuery()
+    const sortQuery = logStore.getSortQuery()
     const logs = logStore.getObjects()
     if (!logs || logs.length === 0) {
       return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }
-    // let searchQueryArray = []
-    // for (const field in searchQuery) {
-    //   searchQueryArray.push({
-    //     field: field,
-    //     order: searchQuery[field]
-    //   })
-    // }
+    let sortQueryTransformed = []
+    if (sortQuery) {
+      sortQuery.forEach((sort) => {
+        sortQueryTransformed.push({
+          field: sort[0],
+          order: sort[1] === 'ASC' ? 1 : -1
+        })
+      })
+    }
+
     return (
       <DataTable
         className='p-datatable-striped p-datatable-hovered'
@@ -63,7 +66,7 @@ export class VirtualServiceDecisionLogs extends Component {
         first={
           logStore.getSearchPageNum() * logStore.getSearchPageObjectCount()
         }
-        // sortMode='multiple'
+        sortMode='multiple'
         rowsPerPageOptions={[10, 20, 50, 1000]}
         onSelectionChange={(e) => {}}
         onPage={async (e) => {
@@ -71,30 +74,22 @@ export class VirtualServiceDecisionLogs extends Component {
           logStore.setSearchPageObjectCount(e.rows)
           await this.props.fetchDecisionLogs()
         }}
-        // multiSortMeta={searchQueryArray}
-        // onSort={async (e) => {
-        //   let sortQuery = logStore.getSortQuery()
-        //   if (!sortQuery) {
-        //     sortQuery = {}
-        //   }
-
-        //   e.multiSortMeta.forEach((sortMeta) => {
-        //     sortQuery[sortMeta.field] = sortMeta.order
-        //   })
-
-        //   for (const field in sortQuery) {
-        //     if (
-        //       e.multiSortMeta.findIndex(
-        //         (msortMeta) => msortMeta.field === field
-        //       ) === -1
-        //     ) {
-        //       delete sortQuery[field]
-        //     }
-        //   }
-        //   logStore.setSortQuery(sortQuery)
-        //   await this.props.fetchDecisionLogs()
-        // }}
-        // removableSort
+        multiSortMeta={sortQueryTransformed}
+        onSort={async (e) => {
+          let sortQuery = logStore.getSortQuery()
+          if (!sortQuery) {
+            sortQuery = []
+          }
+          e.multiSortMeta.forEach((sortMeta) => {
+            sortQuery.push([
+              sortMeta.field,
+              sortMeta.order === 1 ? 'ASC' : 'DESC'
+            ])
+          })
+          logStore.setSortQuery(sortQuery)
+          await this.props.fetchDecisionLogs()
+        }}
+        removableSort
         lazy
         paginator
       >
@@ -128,7 +123,7 @@ export class VirtualServiceDecisionLogs extends Component {
           }
         ></Column>
         <Column
-          field='tsCreate'
+          field='createdAt'
           header='Time Stamp'
           body={(log) => moment(log.createdAt).format('MMM DD, YYYY hh:mm A')}
           sortable

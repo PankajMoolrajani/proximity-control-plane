@@ -19,7 +19,13 @@ import PolicyIcon from '@material-ui/icons/Policy'
 import PlatfromPopUpCard from '/mxr-web/apps/proximity/src/components/platform/PlatfromPopUpCard.react'
 import VirtualServiceAddPolicyDialog from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceAddPolicyDialog.react'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
-const { virtualServiceStore, policyStore } = stores
+import { toJS } from 'mobx'
+const {
+  virtualServiceStore,
+  policyStore,
+  policyRevisionStore,
+  virtualServicePolicyRevisionStore
+} = stores
 
 export class VirtualServicePoliciesCard extends Component {
   state = {
@@ -33,8 +39,8 @@ export class VirtualServicePoliciesCard extends Component {
   }
 
   _renderAddExistingPolicyDialogCard() {
-    const policyDraftObject = policyStore.getDraftObject()
-
+    const virtualServicePolicyRevision = virtualServicePolicyRevisionStore.getFormFields()
+    const selectedPolicy = policyStore.getSelectedObject()
     return (
       <PlatfromPopUpCard
         isOpen={this.state.showAddPolicyPopUp}
@@ -68,8 +74,8 @@ export class VirtualServicePoliciesCard extends Component {
                 inputValue={
                   policyStore.getSearchText()
                     ? policyStore.getSearchText()
-                    : policyStore.getDraftObject()
-                    ? policyStore.getDraftObject()['name']
+                    : policyStore.getSelectedObject()
+                    ? policyStore.getSelectedObject()['name']
                     : ''
                 }
                 loading={policyStore.getShowProcessCard()}
@@ -77,32 +83,30 @@ export class VirtualServicePoliciesCard extends Component {
                   if (!option) {
                     return
                   }
-                  let formFields = policyStore.getFormFields()
-                  if (!formFields) {
-                    formFields = {}
-                  }
-                  policyStore.setShowProcessCard(true)
-                  const policy = await policyStore.objectQueryById(
-                    option.id,
-                    true
-                  )
-                  policyStore.setShowProcessCard(false)
-                  policyStore.setDraftObject({
-                    ...policyDraftObject,
-                    id: policy.id,
-                    name: policy.name,
-                    revisions: policy.revisions
-                  })
+                  policyStore.setSelectedObject(option)
                 }}
                 onInputChange={async (e) => {
                   if (!e.target.value) {
                     policyStore.resetAllFields()
                     return
                   }
+                  const cancelToken = policyStore.getCancelToken()
+                  if (cancelToken) {
+                    cancelToken.cancel()
+                  }
                   policyStore.setSearchText(e.target.value)
+                  policyStore.setSearchQuery({
+                    name: {
+                      $like: `%${e.target.value}%`
+                    }
+                  })
                   policyStore.setShowProcessCard(true)
-                  const policies = await policyStore.objectQuery()
-                  policyStore.setObjects(policies.data)
+                  const policies = await policyStore.objectQuery([
+                    {
+                      model: 'PolicyRevision'
+                    }
+                  ])
+                  policyStore.setObjects(policies.rows)
                   policyStore.setShowProcessCard(false)
                 }}
                 renderInput={(params) => (
@@ -125,7 +129,7 @@ export class VirtualServicePoliciesCard extends Component {
                 )}
               />
             </Box>
-            {policyDraftObject ? (
+            {selectedPolicy ? (
               <React.Fragment>
                 <Box style={{ marginTop: 20 }}>
                   <FormControl fullWidth variant='outlined' size='small'>
@@ -133,28 +137,29 @@ export class VirtualServicePoliciesCard extends Component {
                       Revision Name
                     </InputLabel>
                     <Select
-                      ref={null}
                       labelId='policy-revision-lable-id'
                       label='Revision Name'
                       value={
-                        policyDraftObject.selectedRevisionName
-                          ? policyDraftObject.selectedRevisionName
+                        virtualServicePolicyRevision
+                          ? virtualServicePolicyRevision.PolicyRevisionId
                           : ''
                       }
-                      renderValue={(value) => (value ? value : '')}
+                      renderValue={(value) =>
+                        value ? `rev-${value.split('-').reverse()[0]}` : ''
+                      }
                       onChange={(event) => {
-                        policyStore.setDraftObject({
-                          ...policyDraftObject,
-                          selectedRevisionId: event.target.value.id,
-                          selectedRevisionName: event.target.value.name
+                        virtualServicePolicyRevisionStore.setFormFields({
+                          ...virtualServicePolicyRevision,
+                          PolicyRevisionId: event.target.value.id
                         })
                       }}
                     >
-                      {policyDraftObject.revisions.map((revision) => (
-                        <MenuItem key={revision.id} value={revision}>
-                          {revision.name}
-                        </MenuItem>
-                      ))}
+                      {selectedPolicy.PolicyRevisions &&
+                        selectedPolicy.PolicyRevisions.map((revision) => (
+                          <MenuItem key={revision.id} value={revision}>
+                            rev-{revision.id.split('-').reverse()[0]}
+                          </MenuItem>
+                        ))}
                     </Select>
                   </FormControl>
                 </Box>
@@ -168,13 +173,13 @@ export class VirtualServicePoliciesCard extends Component {
                       labelId='enforcement-lable-id'
                       label='Enforcement Mode'
                       value={
-                        policyDraftObject.enforcementMode
-                          ? policyDraftObject.enforcementMode
+                        virtualServicePolicyRevision
+                          ? virtualServicePolicyRevision.enforcementMode
                           : ''
                       }
                       onChange={(event) => {
-                        policyStore.setDraftObject({
-                          ...policyDraftObject,
+                        virtualServicePolicyRevisionStore.setFormFields({
+                          ...virtualServicePolicyRevision,
                           enforcementMode: event.target.value
                         })
                       }}
@@ -191,42 +196,27 @@ export class VirtualServicePoliciesCard extends Component {
                     color='primary'
                     onClick={async () => {
                       const virtualService = virtualServiceStore.getSelectedObject()
-                      const draftPolicy = policyStore.getDraftObject()
-                      virtualServiceStore.setFormFields({
-                        id: virtualService.id,
-                        displayName: virtualService.displayName,
-                        proximityUrl:
-                          virtualService.currentRevision.virtualService
-                            .proximityUrl,
-                        targetUrl:
-                          virtualService.currentRevision.virtualService
-                            .targetUrl,
-                        policiesMetadata: [
-                          ...virtualService.currentRevision.virtualService
-                            .policiesMetadata,
-                          {
-                            id: draftPolicy.id,
-                            revisionId: draftPolicy.selectedRevisionId,
-                            enforcementMode: draftPolicy.enforcementMode
-                          }
-                        ]
+                      virtualServicePolicyRevisionStore.setFormFields({
+                        ...virtualServicePolicyRevision,
+                        VirtualServiceId: virtualService.id
                       })
                       virtualServiceStore.setShowProcessCard(true)
                       try {
-                        const updatedVirtualService = await virtualServiceStore.objectUpdate()
-                        virtualServiceStore.setSelectedObject(
-                          updatedVirtualService
-                        )
+                        const createdVirtualServicePolicyRevision = await virtualServicePolicyRevisionStore.objectCreate()
                         virtualServiceStore.setShowProcessCard(false)
                         virtualServiceStore.setShowSuccessCard(true)
                         await new Promise((res) => setTimeout(res, 2000))
                         virtualServiceStore.setShowSuccessCard(false)
                       } catch (error) {
-                        console.log('Error: Updating Virtual Service', error)
+                        console.log(
+                          'Error: Creating virtual service policy mapping',
+                          error
+                        )
                       }
                       virtualServiceStore.setShowProcessCard(false)
-                      policyStore.resetAllFields()
-                      await this.props.fetchPolicies()
+                      this.handleShowAddPolicyPopup(false)
+                      virtualServicePolicyRevisionStore.resetAllFields()
+                      this.props.fetchPolicies()
                     }}
                   >
                     Add
@@ -253,11 +243,12 @@ export class VirtualServicePoliciesCard extends Component {
         rowsPerPageOptions={[10, 20, 50, 1000]}
         onSelectionChange={(e) => {
           const policy = {
-            id: e.value.policyId,
+            id: e.value.PolicyId,
             name: e.value.name,
             displayName: e.value.displayName,
             type: e.value.type,
-            rules: e.value.rules
+            rules: e.value.rules,
+            revisionId: e.value.id
           }
           policyStore.setSelectedObject(policy)
           delete policy.name

@@ -39,7 +39,7 @@ export class VirtualServiceAccessLogs extends Component {
     if (!logs || logs.length === 0) {
       return <Box style={{ textAlign: 'center' }}>No Content</Box>
     }
-    // let searchQueryArray = []
+    let searchQueryArray = []
     // for (const field in searchQuery) {
     //   searchQueryArray.push({
     //     field: field,
@@ -63,7 +63,7 @@ export class VirtualServiceAccessLogs extends Component {
         first={
           logStore.getSearchPageNum() * logStore.getSearchPageObjectCount()
         }
-        // sortMode='multiple'
+        sortMode='multiple'
         rowsPerPageOptions={[10, 20, 50, 1000]}
         onSelectionChange={(e) => {}}
         onPage={async (e) => {
@@ -71,30 +71,31 @@ export class VirtualServiceAccessLogs extends Component {
           logStore.setSearchPageObjectCount(e.rows)
           await this.props.fetchAccessLogs()
         }}
-        // multiSortMeta={searchQueryArray}
-        // onSort={async (e) => {
-        //   let sortQuery = logStore.getSortQuery()
-        //   if (!sortQuery) {
-        //     sortQuery = {}
-        //   }
+        multiSortMeta={searchQueryArray}
+        onSort={async (e) => {
+          console.log(e)
+          // let sortQuery = logStore.getSortQuery()
+          // if (!sortQuery) {
+          //   sortQuery = {}
+          // }
 
-        //   e.multiSortMeta.forEach((sortMeta) => {
-        //     sortQuery[sortMeta.field] = sortMeta.order
-        //   })
+          // e.multiSortMeta.forEach((sortMeta) => {
+          //   sortQuery[sortMeta.field] = sortMeta.order
+          // })
 
-        //   for (const field in sortQuery) {
-        //     if (
-        //       e.multiSortMeta.findIndex(
-        //         (msortMeta) => msortMeta.field === field
-        //       ) === -1
-        //     ) {
-        //       delete sortQuery[field]
-        //     }
-        //   }
-        //   logStore.setSortQuery(sortQuery)
-        //   await this.props.fetchAccessLogs()
-        // }}
-        // removableSort
+          // for (const field in sortQuery) {
+          //   if (
+          //     e.multiSortMeta.findIndex(
+          //       (msortMeta) => msortMeta.field === field
+          //     ) === -1
+          //   ) {
+          //     delete sortQuery[field]
+          //   }
+          // }
+          // logStore.setSortQuery(sortQuery)
+          // await this.props.fetchAccessLogs()
+        }}
+        removableSort
         lazy
         paginator
       >
@@ -102,7 +103,7 @@ export class VirtualServiceAccessLogs extends Component {
         <Column field='log' header='Log' body={(log) => 'Access Log'}></Column>
 
         <Column
-          field='tsCreate'
+          field='createdAt'
           header='Time Stamp'
           body={(log) => moment(log.createdAt).format('MMM DD, YYYY hh:mm A')}
           sortable

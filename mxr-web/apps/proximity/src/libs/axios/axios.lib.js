@@ -7,6 +7,8 @@ const BASE_URL_SERVICES = 'https://graphql-prod.monoxor.com'
 
 const axiosInstance = axios.create()
 axiosInstance.defaults.baseURL = BASE_URL
+axiosInstance.CancelToken = axios.CancelToken
+axiosInstance.isCancel = axios.isCancel
 
 const axiosServiceInstance = axios.create()
 axiosServiceInstance.defaults.baseURL = BASE_URL_SERVICES

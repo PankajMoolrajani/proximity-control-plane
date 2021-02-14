@@ -63,6 +63,26 @@ export class VirtualServiceStdObjCard extends Component {
     virtualServiceStore.setShowProcessCard(false)
   }
 
+  async handleReloadVirtualService() {
+    virtualServiceStore.setShowProcessCard(true)
+    try {
+      const selectedVirtualService = virtualServiceStore.getSelectedObject()
+      const virtualService = await virtualServiceStore.objectQueryById(
+        selectedVirtualService.id,
+        [
+          {
+            model: 'PolicyRevision'
+          }
+        ]
+      )
+      virtualServiceStore.setSelectedObject(virtualService)
+      virtualServiceStore.setShowProcessCard(false)
+    } catch (error) {
+      console.log('Error: getting virtual service', error)
+    }
+    virtualServiceStore.setShowProcessCard(false)
+  }
+
   async handleAccessLogsFetch() {
     virtualServiceStore.setShowObjectViewModeSecondary('ACCESS_LOGS')
     const virtualService = virtualServiceStore.getSelectedObject()
@@ -225,7 +245,11 @@ export class VirtualServiceStdObjCard extends Component {
         return <VirtualServiceDeploymentCard />
         break
       case 'POLICIES':
-        return <VirtualServicePoliciesCard />
+        return (
+          <VirtualServicePoliciesCard
+            fetchPolicies={this.handleReloadVirtualService}
+          />
+        )
         break
       case 'DECISION_LOGS':
         return (
@@ -248,13 +272,13 @@ export class VirtualServiceStdObjCard extends Component {
           />
         )
         break
-      case 'RECOMMENDATIONS':
-        return (
-          <VirtualServicePolicyRecommendationCard
-            fetchPolicyRecommendations={this.handlePolicyRecommendationsFetch}
-          />
-        )
-        break
+      // case 'RECOMMENDATIONS':
+      //   return (
+      //     <VirtualServicePolicyRecommendationCard
+      //       fetchPolicyRecommendations={this.handlePolicyRecommendationsFetch}
+      //     />
+      //   )
+      //   break
       default:
         return (
           <VirtualServiceDetailsCard actionButtons={this._renderOpButtons()} />
@@ -338,16 +362,16 @@ export class VirtualServiceStdObjCard extends Component {
           await this.handleMonitorLogsFetch()
         },
         isActive: selectedTab === 'MONITOR'
-      },
-      {
-        title: 'RECOMMENDATIONS',
-        click: async () => {
-          policyRecommendationStore.setSearchPageObjectCount(10)
-          policyRecommendationStore.setSearchPageNum(0)
-          await this.handlePolicyRecommendationsFetch()
-        },
-        isActive: selectedTab === 'RECOMMENDATIONS'
       }
+      // {
+      //   title: 'RECOMMENDATIONS',
+      //   click: async () => {
+      //     policyRecommendationStore.setSearchPageObjectCount(10)
+      //     policyRecommendationStore.setSearchPageNum(0)
+      //     await this.handlePolicyRecommendationsFetch()
+      //   },
+      //   isActive: selectedTab === 'RECOMMENDATIONS'
+      // }
     ]
     return (
       <Box>

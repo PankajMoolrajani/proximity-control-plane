@@ -1,5 +1,6 @@
-import { makeAutoObservable, observable } from 'mobx'
+import { makeAutoObservable, observable, toJS } from 'mobx'
 import { axiosInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
+import axios from 'axios'
 import objects from './objects.json'
 
 class ProximityStore {
@@ -20,6 +21,7 @@ class ProximityStore {
   draftObject = null
   filteredObjects = null
   showAddObjectDialog = null
+  cancelToken = null
   constructor(objectName) {
     this.objectName = objectName
     makeAutoObservable(this)
@@ -47,7 +49,9 @@ class ProximityStore {
 
   async objectQueryById(id, include) {
     const response = await axiosInstance.get(`/${this.objectName}/${id}`, {
-      include: include
+      params: {
+        include: JSON.stringify(include)
+      }
     })
     if (response.status === 200) {
       return response.data
@@ -74,15 +78,22 @@ class ProximityStore {
     if (!sortQuery) {
       sortQuery = []
     }
-    const response = await axiosInstance.post(`/${this.objectName}/search`, {
-      query: {
-        where: searchQuery,
-        limit: pageObjectCount,
-        offset: pageNum * pageObjectCount,
-        include: include,
-        order: sortQuery
-      }
-    })
+    const CancelToken = axiosInstance.CancelToken
+    const cancelToken = CancelToken.source()
+    this.setCancelToken(cancelToken)
+    const response = await axiosInstance.post(
+      `/${this.objectName}/search`,
+      {
+        query: {
+          where: searchQuery,
+          limit: pageObjectCount,
+          offset: pageNum * pageObjectCount,
+          include: include,
+          order: sortQuery
+        }
+      },
+      { cancelToken: this.cancelToken.token }
+    )
     if (response.status === 200) {
       return response.data
     }
@@ -295,6 +306,15 @@ class ProximityStore {
 
   getSortQuery() {
     return this.sortQuery
+  }
+
+  setCancelToken(cancelToken) {
+    this.cancelToken = cancelToken
+    return this.cancelToken
+  }
+
+  getCancelToken() {
+    return this.cancelToken
   }
 
   resetAllFields() {
