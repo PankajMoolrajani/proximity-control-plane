@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 export const transformSortQuery = (sortQuery) => {
   if (!sortQuery) {
     return []
@@ -25,4 +27,33 @@ export const onSortQuery = (sortQuery, e) => {
     ])
   })
   return updatedSortQuery
+}
+
+export const createPolicyProximityDp = async (virtualService, policy) => {
+  const virtualServiceBaseUrl = new URL(virtualService.proximityUrl).origin
+
+  //Check if service is deployed
+  const healthCheckResponse = await axios.get(`${virtualServiceBaseUrl}/health`)
+  if (healthCheckResponse.status === 200) {
+    console.log(JSON.stringify(policy))
+    let policyName
+    let policyType
+    if (policy.name.includes('INGRESS-')) {
+      policyName = policy.name.replace('INGRESS-', '')
+      policyType = 'INGRESS'
+    }
+
+    if (policy.name.includes('EGRESS-')) {
+      policyName = policy.name.replace('EGRESS-', '')
+      policyType = 'EGRESS'
+    }
+    const createdPolicyProximityDp = await axios.post(
+      `${virtualServiceBaseUrl}/policy/create-policy`,
+      {
+        policyName: policyName,
+        policyType: policyType,
+        rules: policy.rules
+      }
+    )
+  }
 }

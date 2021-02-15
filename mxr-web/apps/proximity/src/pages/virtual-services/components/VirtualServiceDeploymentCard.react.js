@@ -11,7 +11,10 @@ const { virtualServiceStore } = stores
 export class VirtualServiceDeploymentCard extends Component {
   render() {
     const virtualService = virtualServiceStore.getSelectedObject()
-    const servicePort = virtualService.proximityUrl.split(':')[2].split('/')[0]
+    const servicePort =
+      virtualService.proximityUrl.split(':').length > 2
+        ? virtualService.proximityUrl.split(':')[2].split('/')[0]
+        : 80
     return (
       <Box style={{ maxWidth: 800, padding: 24 }}>
         <Accordion

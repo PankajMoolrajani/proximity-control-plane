@@ -10,6 +10,7 @@ import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import CloseIcon from '@material-ui/icons/Close'
+import { createPolicyProximityDp } from '/mxr-web/apps/proximity/src/libs/helpers/helper.lib'
 import PolicyStdObjCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyStdObjCard.react'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 import { toJS } from 'mobx'
@@ -118,6 +119,10 @@ export class VirtualServiceAddPolicyDialog extends Component {
                       enforcementMode: existingVSPolicymap.enforcementMode
                     })
                     await virtualServicePolicyRevisionStore.objectUpdate()
+                    await createPolicyProximityDp(
+                      selectedVirtualService,
+                      createdPolicyRevision
+                    )
                   }
                   policyStore.setShowSuccessCard(true)
                   await new Promise((res) => setTimeout(res, 2000))

@@ -332,6 +332,7 @@ class ProximityStore {
     this.setShowProcessCard(null)
     this.setShowSuccessCard(null)
     this.setSearchQuery(null)
+    this.setSortQuery(null)
     this.setSearchPageNum(null)
     this.setSearchPageObjectCount(null)
     this.setSearchResultsObjectCount(null)

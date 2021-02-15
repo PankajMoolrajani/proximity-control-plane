@@ -48,6 +48,10 @@ class VirtualServiceListCard extends Component {
       )
     }
 
+    if (!virtualServices || virtualServices.length === 0) {
+      return <Box style={{ textAlign: 'center' }}>No Content</Box>
+    }
+
     let sortQueryTransformed = transformSortQuery(sortQuery)
     return (
       <DataTable

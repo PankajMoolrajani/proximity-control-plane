@@ -16,10 +16,10 @@ import { Autocomplete } from '@material-ui/lab'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import AddIcon from '@material-ui/icons/Add'
 import PolicyIcon from '@material-ui/icons/Policy'
+import { createPolicyProximityDp } from '/mxr-web/apps/proximity/src/libs/helpers/helper.lib'
 import PlatfromPopUpCard from '/mxr-web/apps/proximity/src/components/platform/PlatfromPopUpCard.react'
 import VirtualServiceAddPolicyDialog from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceAddPolicyDialog.react'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
-import { toJS } from 'mobx'
 const {
   virtualServiceStore,
   policyStore,
@@ -86,7 +86,7 @@ export class VirtualServicePoliciesCard extends Component {
                   policyStore.setSelectedObject(option)
                 }}
                 onInputChange={async (e) => {
-                  if (!e.target.value) {
+                  if (e && !e.target.value) {
                     policyStore.resetAllFields()
                     return
                   }
@@ -202,7 +202,12 @@ export class VirtualServicePoliciesCard extends Component {
                       })
                       virtualServiceStore.setShowProcessCard(true)
                       try {
+                        const selectedPolicy = policyStore.getSelectedObject()
                         const createdVirtualServicePolicyRevision = await virtualServicePolicyRevisionStore.objectCreate()
+                        await createPolicyProximityDp(
+                          virtualService,
+                          selectedPolicy
+                        )
                         virtualServiceStore.setShowProcessCard(false)
                         virtualServiceStore.setShowSuccessCard(true)
                         await new Promise((res) => setTimeout(res, 2000))
@@ -277,7 +282,9 @@ export class VirtualServicePoliciesCard extends Component {
         <Column
           field='revision'
           header='Revision'
-          body={(policyRevision) => policyRevision.id}
+          body={(policyRevision) =>
+            `rev-${policyRevision.id.split('-').reverse()[0]}`
+          }
           sortable
         ></Column>
         <Column

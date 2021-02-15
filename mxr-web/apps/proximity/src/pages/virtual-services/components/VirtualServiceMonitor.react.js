@@ -13,33 +13,33 @@ class VirtualServiceMonitor extends Component {
     timeSteps: 5
   }
 
-  // handleLogsForTime = async (hour) => {
-  //   // const virtualService = virtualServiceStore.getSelectedObject()
-  //   // // logStore.setSearchQuery({
-  //   //   type: 'PROXIMITY_DP_HEALTH_LOG',
-  //   //   'data.virtualServiceId': virtualService.id,
-  //   //   createdAt: {
-  //   //     $gt: new Date().getTime() - hour * 60 * 60 * 1000,
-  //   //     $lt: new Date().getTime()
-  //   //   }
-  //   // })
-  //   // await this.props.fetchMonitorLogs()
-  //   let timeStepsD
-  //   switch (hour) {
-  //     case 1:
-  //       timeStepsD = 5
-  //       break
-  //     case 12:
-  //       timeStepsD = 15
-  //       break
-  //     case 24:
-  //       timeStepsD = 30
-  //       break
-  //     default:
-  //       timeStepsD = 5
-  //   }
-  //   this.setState({ timeSteps: timeStepsD })
-  // }
+  handleLogsForTime = async (hour) => {
+    const virtualService = virtualServiceStore.getSelectedObject()
+    logStore.setSearchQuery({
+      type: 'PROXIMITY_DP_HEALTH_LOG',
+      VirtualServiceId: virtualService.id,
+      createdAt: {
+        $gt: new Date(new Date().getTime() - hour * 60 * 60 * 1000),
+        $lt: new Date()
+      }
+    })
+    await this.props.fetchMonitorLogs()
+    let timeStepsD
+    switch (hour) {
+      case 1:
+        timeStepsD = 5
+        break
+      case 12:
+        timeStepsD = 15
+        break
+      case 24:
+        timeStepsD = 30
+        break
+      default:
+        timeStepsD = 5
+    }
+    this.setState({ timeSteps: timeStepsD })
+  }
 
   render() {
     const logs = logStore.getObjects()
@@ -158,7 +158,7 @@ class VirtualServiceMonitor extends Component {
             marginBottom: 20
           }}
         >
-          {/* <ButtonGroup color='primary'>
+          <ButtonGroup color='primary'>
             <Button
               variant={this.state.timeSteps === 5 ? 'contained' : ''}
               onClick={() => this.handleLogsForTime(1)}
@@ -177,7 +177,7 @@ class VirtualServiceMonitor extends Component {
             >
               Last 24 Hour
             </Button>
-          </ButtonGroup> */}
+          </ButtonGroup>
         </Box>
         <Box>
           <Line

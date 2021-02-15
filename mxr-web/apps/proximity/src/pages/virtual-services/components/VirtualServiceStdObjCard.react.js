@@ -48,7 +48,6 @@ export class VirtualServiceStdObjCard extends Component {
     virtualServiceStore.setShowObjectViewModeSecondary('DECISION_LOGS')
     const virtualService = virtualServiceStore.getSelectedObject()
     virtualServiceStore.setShowProcessCard(true)
-    logStore.setSearchPageObjectCount(10)
     logStore.setSearchQuery({
       VirtualServiceId: virtualService.id,
       type: 'PROXIMITY_DECISION_LOG'
@@ -119,13 +118,8 @@ export class VirtualServiceStdObjCard extends Component {
 
   async handleMonitorLogsFetch() {
     virtualServiceStore.setShowObjectViewModeSecondary('MONITOR')
-    const virtualService = virtualServiceStore.getSelectedObject()
     virtualServiceStore.setShowProcessCard(true)
-    logStore.setSearchPageObjectCount(10)
-    logStore.setSearchQuery({
-      VirtualServiceId: virtualService.id,
-      type: 'PROXIMITY_DP_HEALTH_LOG'
-    })
+    logStore.setSearchPageObjectCount(1000)
     try {
       const virtualServices = await logStore.objectQuery()
       logStore.setSearchResultsObjectCount(virtualServices.count)
@@ -349,14 +343,15 @@ export class VirtualServiceStdObjCard extends Component {
         title: 'MONITOR',
         click: async () => {
           const virtualService = virtualServiceStore.getSelectedObject()
-          logStore.setSearchPageObjectCount(10)
+          logStore.setSearchPageObjectCount(1000)
           logStore.setSearchPageNum(0)
+          logStore.setSortQuery([['createdAt', 'DESC']])
           logStore.setSearchQuery({
             type: 'PROXIMITY_DP_HEALTH_LOG',
-            'data.virtualServiceId': virtualService.id,
-            tsCreate: {
-              $gt: new Date().getTime() - 1 * 60 * 60 * 1000,
-              $lt: new Date().getTime()
+            VirtualServiceId: virtualService.id,
+            createdAt: {
+              $gt: new Date(new Date().getTime() - 1 * 60 * 60 * 1000),
+              $lt: new Date()
             }
           })
           await this.handleMonitorLogsFetch()
