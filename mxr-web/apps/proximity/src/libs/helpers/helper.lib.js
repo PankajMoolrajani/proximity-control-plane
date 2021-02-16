@@ -1,4 +1,10 @@
 import axios from 'axios'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+const {
+  virtualServiceStore,
+  policyRevisionStore,
+  virtualServicePolicyRevisionStore
+} = stores
 
 export const transformSortQuery = (sortQuery) => {
   if (!sortQuery) {
@@ -29,31 +35,32 @@ export const onSortQuery = (sortQuery, e) => {
   return updatedSortQuery
 }
 
-export const createPolicyProximityDp = async (virtualService, policy) => {
-  const virtualServiceBaseUrl = new URL(virtualService.proximityUrl).origin
+export const createPolicyProximityDp = async (policyRevisionId) => {
+  const selectedVirtualService = virtualServiceStore.getSelectedObject()
+  const virtualServiceBaseUrl = new URL(selectedVirtualService.proximityUrl)
+    .origin
 
   //Check if service is deployed
   const healthCheckResponse = await axios.get(`${virtualServiceBaseUrl}/health`)
   if (healthCheckResponse.status === 200) {
-    console.log(JSON.stringify(policy))
-    let policyName
-    let policyType
-    if (policy.name.includes('INGRESS-')) {
-      policyName = policy.name.replace('INGRESS-', '')
-      policyType = 'INGRESS'
-    }
-
-    if (policy.name.includes('EGRESS-')) {
-      policyName = policy.name.replace('EGRESS-', '')
-      policyType = 'EGRESS'
+    //Get Policy revision with mapping
+    const policyRevision = await policyRevisionStore.objectQueryById(
+      policyRevisionId
+    )
+    virtualServicePolicyRevisionStore.setSearchQuery({
+      PolicyRevisionId: policyRevisionId,
+      VirtualServiceId: selectedVirtualService.id
+    })
+    const virtualServicePolicyRevision = await virtualServicePolicyRevisionStore.objectQuery()
+    const policyRevisionDp = {
+      ...policyRevision,
+      VirtualServicePolicyRevision: {
+        ...virtualServicePolicyRevision[0]
+      }
     }
     const createdPolicyProximityDp = await axios.post(
       `${virtualServiceBaseUrl}/policy/create-policy`,
-      {
-        policyName: policyName,
-        policyType: policyType,
-        rules: policy.rules
-      }
+      policyRevisionDp
     )
   }
 }

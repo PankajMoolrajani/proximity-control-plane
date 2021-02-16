@@ -97,7 +97,11 @@ export class VirtualServiceDecisionLogs extends Component {
         <Column
           field='revision'
           header='Revision'
-          body={(log) => log.PolicyRevisionId ? `rev-${log.PolicyRevisionId.split('-').reverse()[0]}` : ''}
+          body={(log) =>
+            log.PolicyRevisionId
+              ? `rev-${log.PolicyRevisionId.split('-').reverse()[0]}`
+              : ''
+          }
         ></Column>
         <Column
           field='decision'

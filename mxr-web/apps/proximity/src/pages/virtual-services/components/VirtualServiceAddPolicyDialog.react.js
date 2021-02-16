@@ -119,10 +119,7 @@ export class VirtualServiceAddPolicyDialog extends Component {
                       enforcementMode: existingVSPolicymap.enforcementMode
                     })
                     await virtualServicePolicyRevisionStore.objectUpdate()
-                    await createPolicyProximityDp(
-                      selectedVirtualService,
-                      createdPolicyRevision
-                    )
+                    await createPolicyProximityDp(createdPolicyRevision.id)
                   }
                   policyStore.setShowSuccessCard(true)
                   await new Promise((res) => setTimeout(res, 2000))

@@ -205,8 +205,7 @@ export class VirtualServicePoliciesCard extends Component {
                         const selectedPolicy = policyStore.getSelectedObject()
                         const createdVirtualServicePolicyRevision = await virtualServicePolicyRevisionStore.objectCreate()
                         await createPolicyProximityDp(
-                          virtualService,
-                          selectedPolicy
+                          createdVirtualServicePolicyRevision.PolicyRevisionId
                         )
                         virtualServiceStore.setShowProcessCard(false)
                         virtualServiceStore.setShowSuccessCard(true)
