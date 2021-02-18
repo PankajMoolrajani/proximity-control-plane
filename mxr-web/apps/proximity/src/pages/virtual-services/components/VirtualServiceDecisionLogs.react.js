@@ -92,7 +92,7 @@ export class VirtualServiceDecisionLogs extends Component {
         <Column
           field='type'
           header='Type'
-          body={(log) => (log.data.policyType ? log.data.policyType : '')}
+          body={(log) => (log.data.type ? log.data.type : '')}
         ></Column>
         <Column
           field='revision'
