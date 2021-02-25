@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { axiosUnsecureInstance } from '../../libs/axios/axios'
+import { axiosMasterDataserviceInstance } from '../../libs/axios/axios'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
@@ -22,7 +22,7 @@ const List = () => {
   const getAllPages = async () => {
     const curOrg = userStore.getCurOrg()
     const defaultDb = `${curOrg.name}_default`
-    const response = await axiosUnsecureInstance.post(
+    const response = await axiosMasterDataserviceInstance.post(
       `data/${defaultDb}/page/search`,
       {
         query: {}
@@ -34,7 +34,7 @@ const List = () => {
   const deletePage = async (id) => {
     const curOrg = userStore.getCurOrg()
     const defaultDb = `${curOrg.name}_default`
-    const reponse = await axiosUnsecureInstance.delete(
+    const reponse = await axiosMasterDataserviceInstance.delete(
       `data/${defaultDb}/page/${id}`
     )
     const udpatedPages = pages.filter((page) => page.id !== id)

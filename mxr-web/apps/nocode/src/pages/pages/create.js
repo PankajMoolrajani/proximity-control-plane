@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField'
 import Container from '@material-ui/core/Container'
 import Divider from '@material-ui/core/Divider'
 import Button from '@material-ui/core/Button'
-import { axiosUnsecureInstance } from '../../libs/axios/axios'
+import { axiosMasterDataserviceInstance } from '../../libs/axios/axios'
 import userStore from '../../store/user.store'
 import { useHistory } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
@@ -15,7 +15,7 @@ const Create = () => {
   const curOrg = userStore.getCurOrg()
   const defaultDb = `${curOrg.name}_default`
   const createPage = async () => {
-    const response = await axiosUnsecureInstance.post(
+    const response = await axiosMasterDataserviceInstance.post(
       `data/${defaultDb}/page`,
       {
         data: {

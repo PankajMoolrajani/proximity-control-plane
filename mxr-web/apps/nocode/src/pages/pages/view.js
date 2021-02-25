@@ -10,7 +10,7 @@ import { Video } from './components/selectors/Video'
 import { Viewport, RenderNode } from './components/editor'
 import lz from 'lzutf8'
 import { useParams } from 'react-router-dom'
-import { axiosUnsecureInstance } from '../../libs/axios/axios'
+import { axiosMasterDataserviceInstance } from '../../libs/axios/axios'
 
 const View = () => {
   const [pageData, setPageData] = useState(null)
@@ -18,7 +18,7 @@ const View = () => {
   console.log(id, dbName)
 
   const fetchPageData = async () => {
-    const response = await axiosUnsecureInstance.get(
+    const response = await axiosMasterDataserviceInstance.get(
       `/data/${dbName}/page/${id}`
     )
     setPageData(response.data.base64Json)

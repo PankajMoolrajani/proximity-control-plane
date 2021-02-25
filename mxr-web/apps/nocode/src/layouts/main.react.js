@@ -5,7 +5,7 @@ import Container from '@material-ui/core/Container'
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import AppBarTop from './components/AppBar.react'
 import Sidebar from './components/Sidebar.react'
-import { axiosSecureInstance } from '../libs/axios/axios'
+import { axiosMonoxorDataserviceInstance } from '../libs/axios/axios'
 import { useHistory } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import userStore from '../store/user.store'
@@ -72,28 +72,91 @@ const Main = ({ children }) => {
 
     if (isAuthenticated && !isLoading) {
       setIsAppLoading(true)
-      getAccessTokenSilently().then((token) => {
+      getAccessTokenSilently().then(async (token) => {
         userStore.setAccessToken(token)
-        console.log(token)
-        axiosSecureInstance
-          .post('/auth/login', {
-            user: user
-          })
-          .then(({ data }) => {
-            const user = data
-            if (user.Orgs && user.Orgs.length > 0) {
-              user.Orgs.forEach((org) => {
-                if (org.OrgUsers.isDefault) {
-                  userStore.setCurOrg(org)
+        console.log(token, user)
+        //Check if user Exist
+        const searchUserQuery = ` 
+          query($query: JSON!) {
+            users(query: $query) {
+              count
+              rows {
+                id
+                first_name
+                last_name
+                email
+                auth0UserId
+                orgs {
+                  id
+                  name
+                  isDefault
                 }
-              })
-            } else {
-              push('/create-org')
+              }
             }
+          }
+        `
+        const userSearchResponse = await axiosMonoxorDataserviceInstance.post(
+          '',
+          {
+            query: searchUserQuery,
+            variables: {
+              query: {
+                where: {
+                  auth0UserId: user.sub
+                }
+              }
+            }
+          }
+        )
 
-            setIsAppLoading(false)
-          })
+        const foundUserResults = userSearchResponse.data.data.users
+
+        if (foundUserResults.count === 0) {
+          //if no create User
+          const userCreateQuery = `
+              mutation($user: UserInput!) {
+                createUser(user: $user) {
+                  id
+                  first_name
+                  last_name
+                  email
+                  auth0UserId
+                }
+              }
+          `
+          const userCreateResponse = await axiosMonoxorDataserviceInstance.post(
+            '',
+            {
+              query: userCreateQuery,
+              variables: {
+                user: {
+                  first_name: user.given_name || '',
+                  last_name: user.family_name || '',
+                  email: user.email,
+                  auth0UserId: user.sub,
+                  avatar: user.picture || ''
+                }
+              }
+            }
+          )
+          userStore.setUser(userCreateResponse.data.data.createUser)
+          push('/create-org')
+        } else {
+          const foundUser = foundUserResults.rows[0]
+          userStore.setUser(foundUser)
+          //Check if user has orgs
+          if (user.orgs && user.orgs.length > 0) {
+            user.Orgs.forEach((org) => {
+              if (org.OrgUsers.isDefault) {
+                userStore.setCurOrg(org)
+              }
+            })
+          } else {
+            push('/create-org')
+          }
+        }
       })
+      setIsAppLoading(false)
     }
   }, [isAuthenticated, isLoading])
 

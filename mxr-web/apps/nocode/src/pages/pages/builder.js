@@ -13,7 +13,7 @@ import { Viewport, RenderNode } from './components/editor'
 import lz from 'lzutf8'
 import { useLocation } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
-import { axiosUnsecureInstance } from '../../libs/axios/axios'
+import { axiosMasterDataserviceInstance } from '../../libs/axios/axios'
 import userStore from '../../store/user.store'
 
 const PageBuilder = () => {
@@ -50,7 +50,7 @@ const PageBuilder = () => {
             const curOrg = userStore.getCurOrg()
             const defaultDb = `${curOrg.name}_default`
             const updatedBase64 = lz.encodeBase64(lz.compress(json))
-            await axiosUnsecureInstance.put(
+            await axiosMasterDataserviceInstance.put(
               `data/${defaultDb}/page/${pagedata.id}`,
               {
                 data: {
