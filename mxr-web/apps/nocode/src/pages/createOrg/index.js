@@ -21,17 +21,44 @@ const CreateOrg = () => {
         }
       }
     `
-    const response = await axiosMonoxorDataserviceInstance.post('', {
+    const createOrgResponse = await axiosMonoxorDataserviceInstance.post('', {
       query: createOrgQuery,
       variables: {
         org: {
           name: orgName,
-          isDefault: true,
           UserIds: [user.id]
         }
       }
     })
-    userStore.setCurOrg(response.data.data.createOrg)
+    userStore.setCurOrg(createOrgResponse.data.data.createOrg)
+
+    //Update User to set default org
+    const updateUserQuery = `
+      mutation($user: UserUpdateInput!) {
+        updateUser(user: $user) {
+          id
+          first_name
+          last_name
+          email
+          auth0UserId
+          defaultOrgId
+          orgs {
+            id
+            name
+            isDefault
+          }
+        }
+      }
+    `
+    const updateUserResponse = await axiosMonoxorDataserviceInstance.post('', {
+      query: updateUserQuery,
+      variables: {
+        user: {
+          defaultOrgId: user.id
+        }
+      }
+    })
+    userStore.setUser(updateUserResponse.data.data.updateUser)
     push('/')
   }
   return (

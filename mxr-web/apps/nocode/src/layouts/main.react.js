@@ -86,10 +86,10 @@ const Main = ({ children }) => {
                 last_name
                 email
                 auth0UserId
+                defaultOrgId
                 orgs {
                   id
                   name
-                  isDefault
                 }
               }
             }
@@ -145,9 +145,9 @@ const Main = ({ children }) => {
           const foundUser = foundUserResults.rows[0]
           userStore.setUser(foundUser)
           //Check if user has orgs
-          if (user.orgs && user.orgs.length > 0) {
-            user.Orgs.forEach((org) => {
-              if (org.OrgUsers.isDefault) {
+          if (foundUser.orgs && foundUser.orgs.length > 0) {
+            foundUser.orgs.forEach((org) => {
+              if (foundUser.defaultOrgId === org.id) {
                 userStore.setCurOrg(org)
               }
             })
@@ -155,8 +155,8 @@ const Main = ({ children }) => {
             push('/create-org')
           }
         }
+        setIsAppLoading(false)
       })
-      setIsAppLoading(false)
     }
   }, [isAuthenticated, isLoading])
 
