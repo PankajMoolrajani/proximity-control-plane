@@ -6,16 +6,21 @@ import Button from '@material-ui/core/Button'
 import AddIcon from '@material-ui/icons/Add'
 import ListIcon from '@material-ui/icons/List'
 
-const Page = ({ title, onCreate, onShowAll, children }) => {
+const Page = ({ title, icon, onCreate, onShowAll, children }) => {
   return (
     <Papar>
-      <Box p={4}>
-        <Box py={1} display='flex' justifyContent='space-between'>
-          <Typography variant='h5'>{title}</Typography>
+      <Box>
+        <Box px={2} py={1} display='flex' justifyContent='space-between'>
+          <Box display='flex' alignItems='center'>
+            {icon}
+            <Typography variant='h5' style={{ marginLeft: 10 }}>
+              {title}
+            </Typography>
+          </Box>
           <Box>
             {onCreate && (
               <Button
-                variant='outlined'
+                variant='text'
                 color='primary'
                 startIcon={<AddIcon />}
                 onClick={onCreate}
@@ -25,7 +30,7 @@ const Page = ({ title, onCreate, onShowAll, children }) => {
             )}
             {onShowAll && (
               <Button
-                variant='outlined'
+                variant='text'
                 color='primary'
                 startIcon={<ListIcon />}
                 onClick={onShowAll}
@@ -37,7 +42,9 @@ const Page = ({ title, onCreate, onShowAll, children }) => {
           </Box>
         </Box>
         <Divider />
-        <Box py={4}>{children}</Box>
+        <Box py={4} style={{ minHeight: '100vh' }}>
+          {children}
+        </Box>
       </Box>
     </Papar>
   )

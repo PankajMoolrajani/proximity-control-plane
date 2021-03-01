@@ -26,7 +26,7 @@ const View = () => {
 
   useEffect(() => {
     fetchPageData()
-  }, [])
+  }, [fetchPageData])
 
   if (!pageData) {
     return <div>Loading...</div>

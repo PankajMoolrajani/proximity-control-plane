@@ -21,12 +21,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
     overflow: 'auto'
   },
-  container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4)
-  },
   paper: {
-    padding: theme.spacing(2),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column'
@@ -179,7 +174,7 @@ const Main = ({ children }) => {
         <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          <Container maxWidth='lg' className={classes.container}>
+          <Container maxWidth={false} disableGutters>
             {children}
           </Container>
         </main>

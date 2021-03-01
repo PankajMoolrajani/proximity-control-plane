@@ -1,13 +1,16 @@
 import Page from '../../layouts/page.react'
 import { Switch, Route, useHistory, useRouteMatch } from 'react-router-dom'
-import List from './components/list.react'
-import Create from './components/create.react'
+import List from './list/list.react'
+import Create from './create/create.react'
+import { ReactComponent as DatabaseIcon } from '../../assets/icons/database.svg'
+import userStore from '../../store/user.store'
 
 const DataSources = () => {
   const { path } = useRouteMatch()
   const { push } = useHistory()
   return (
     <Page
+      icon={<DatabaseIcon />}
       title='Data Sources'
       onCreate={() => push(`${path}/create`)}
       onShowAll={() => push(path)}
