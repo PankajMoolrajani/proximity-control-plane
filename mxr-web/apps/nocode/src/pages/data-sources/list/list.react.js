@@ -6,6 +6,7 @@ import {
   axiosMonoxorDataserviceInstance,
   axiosMasterDataserviceInstance
 } from '../../../libs/axios/axios'
+import Loader from '../../../components/Loader/'
 import userStore from '../../../store/user.store'
 import databaseStore from '../../../store/database.store'
 
@@ -69,11 +70,7 @@ const List = () => {
   }, [curOrg, fetchDatabases])
 
   if (isLoading) {
-    return (
-      <Box p={10} display='flex' justifyContent='center' alignItems='center'>
-        <CircularProgress />
-      </Box>
-    )
+    return <Loader />
   }
 
   return (

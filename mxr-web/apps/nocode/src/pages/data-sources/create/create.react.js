@@ -1,7 +1,12 @@
-import { Fragment, useState, useEffect } from 'react'
+import { Fragment } from 'react'
 import { useFormik } from 'formik'
+import { observer } from 'mobx-react-lite'
+import { useHistory } from 'react-router-dom'
 import {
-  Typography,
+  axiosMonoxorDataserviceInstance,
+  axiosMasterDataserviceInstance
+} from '../../../libs/axios/axios'
+import {
   TextField,
   InputLabel,
   MenuItem,
@@ -11,12 +16,14 @@ import {
   Divider,
   Box,
   Button,
-  FormGroup,
   FormControlLabel,
   Checkbox
 } from '@material-ui/core'
+import Loader from '../../../components/Loader'
 import { makeStyles } from '@material-ui/core/styles'
 import * as Yup from 'yup'
+import userStore from '../../../store/user.store'
+import databaseStore from '../../../store/database.store'
 
 const useStyles = makeStyles((theme) => ({
   fields: {
@@ -26,6 +33,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Create = () => {
   const classes = useStyles()
+  const { push } = useHistory()
+  const isLoading = databaseStore.getIsLoading()
   let initialValues = {
     name: '',
     displayName: '',
@@ -44,18 +53,26 @@ const Create = () => {
     displayName: Yup.string().required('Required!'),
     description: Yup.string().required('Required!'),
     databaseName: Yup.string()
-      .matches(
-        /^[a-z]*$/,
-        'Invalid databasename format(ex. order-items)'
-      )
-      .required('Required!'),
+      .required('Required!')
+      .when('provider', {
+        is: (provider) => provider === 'MONOXOR',
+        then: Yup.string()
+          .required('Required!')
+          .matches(
+            /^[a-z]*$/,
+            'Invalid databasename format, only small letters allowed'
+          )
+      }),
     provider: Yup.string().oneOf(['MONOXOR', 'EXTERNAL']).required('Required!'),
-    dialect: Yup.string().when('provider', {
-      is: (provider) => provider === 'EXTERNAL',
-      then: Yup.string()
-        .oneOf(['mysql', 'postgres', 'mariadb', 'mongodb'])
-        .required('Required!')
-    }),
+    dialect: Yup.string()
+      .oneOf(['postgres'])
+      .required('Required!')
+      .when('provider', {
+        is: (provider) => provider === 'EXTERNAL',
+        then: Yup.string()
+          .oneOf(['mysql', 'postgres', 'mariadb', 'mongodb'])
+          .required('Required!')
+      }),
     host: Yup.string().when('provider', {
       is: (provider) => provider === 'EXTERNAL',
       then: Yup.string().required('Required!')
@@ -74,14 +91,80 @@ const Create = () => {
     })
   }
 
+  const createDb = async (values) => {
+    databaseStore.setIsLoading(true)
+    try {
+      //Create Database
+      let data = {}
+      data.name = values.name
+      data.displayName = values.displayName
+      data.description = values.description
+      data.databaseName = values.databaseName
+      data.dialect = values.dialect
+      data.provider = values.provider
+      data.options = {}
+      if (values.provider === 'EXTERNAL') {
+        data.host = values.host
+        data.port = +values.port
+        data.username = values.username
+        data.password = values.password
+      }
+      const createDbResponse = await axiosMasterDataserviceInstance.post(
+        '/database/create',
+        data
+      )
+      if (createDbResponse && createDbResponse.data.databaseId) {
+        //Create entry on mxrdataservice database if last operation is success
+        const curOrg = userStore.getCurOrg()
+        const createMxrDataServiceQuery = `
+          mutation($mxrdataservice: MxrDataserviceInput!) {
+            createMxrDataservice(mxrdataservice: $mxrdataservice) {
+              id
+            }
+          }
+        `
+
+        const createMxrDataServiceVariables = {
+          mxrdataservice: {
+            DatabaseId: createDbResponse.data.databaseId,
+            OrgId: curOrg.id
+          }
+        }
+
+        const createMxrDataServiceResponse = await axiosMonoxorDataserviceInstance.post(
+          '',
+          {
+            query: createMxrDataServiceQuery,
+            variables: createMxrDataServiceVariables
+          }
+        )
+        if (
+          createMxrDataServiceResponse &&
+          createMxrDataServiceResponse.status === 200
+        ) {
+          push('/data-sources')
+        }
+        console.log(createMxrDataServiceResponse)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+    databaseStore.setIsLoading(false)
+  }
+
   const createDatabaseForm = useFormik({
     initialValues: initialValues,
     validationSchema: Yup.object({ ...validationSchema }),
     onSubmit: (values) => {
-      alert(JSON.stringify(values))
+      createDb(values)
     },
     enableReinitialize: true
   })
+
+  if (isLoading) {
+    return <Loader />
+  }
+
   return (
     <Container maxWidth='sm' style={{ marginLeft: 0 }}>
       <form onSubmit={createDatabaseForm.handleSubmit} autoComplete='off'>
@@ -169,6 +252,67 @@ const Create = () => {
           }
           className={classes.fields}
         />
+
+        {createDatabaseForm.values.provider === 'MONOXOR' ? (
+          <FormControl
+            fullWidth
+            variant='filled'
+            size='small'
+            error={
+              createDatabaseForm.errors.dialect &&
+              Boolean(createDatabaseForm.touched.dialect)
+            }
+            helperText={
+              createDatabaseForm.touched.dialect &&
+              createDatabaseForm.errors.dialect
+            }
+            className={classes.fields}
+          >
+            <InputLabel id='label-dialect-id'>Type</InputLabel>
+            <Select
+              labelId='label-dialect-id'
+              id='dialect'
+              label='Type'
+              name='dialect'
+              value={createDatabaseForm.values.dialect}
+              onChange={createDatabaseForm.handleChange}
+              onBlur={createDatabaseForm.handleBlur}
+            >
+              <MenuItem value='postgres'>PostgreSQL</MenuItem>
+            </Select>
+          </FormControl>
+        ) : (
+          <FormControl
+            fullWidth
+            variant='filled'
+            size='small'
+            error={
+              createDatabaseForm.errors.dialect &&
+              Boolean(createDatabaseForm.touched.dialect)
+            }
+            helperText={
+              createDatabaseForm.touched.dialect &&
+              createDatabaseForm.errors.dialect
+            }
+            className={classes.fields}
+          >
+            <InputLabel id='label-dialect-id'>Type</InputLabel>
+            <Select
+              labelId='label-dialect-id'
+              id='dialect'
+              label='Type'
+              name='dialect'
+              value={createDatabaseForm.values.dialect}
+              onChange={createDatabaseForm.handleChange}
+              onBlur={createDatabaseForm.handleBlur}
+            >
+              <MenuItem value='postgres'>PostgreSQL</MenuItem>
+              <MenuItem value='mysql'>MySQL</MenuItem>
+              <MenuItem value='mariadb'>MariaDB</MenuItem>
+              <MenuItem value='mongodb'>MongoDB</MenuItem>
+            </Select>
+          </FormControl>
+        )}
         <FormControlLabel
           control={
             <Checkbox
@@ -188,35 +332,6 @@ const Create = () => {
         />
         {createDatabaseForm.values.provider === 'EXTERNAL' ? (
           <Fragment>
-            <FormControl
-              fullWidth
-              variant='filled'
-              size='small'
-              error={
-                createDatabaseForm.errors.dialect &&
-                Boolean(createDatabaseForm.touched.dialect)
-              }
-              helperText={
-                createDatabaseForm.touched.dialect &&
-                createDatabaseForm.errors.dialect
-              }
-            >
-              <InputLabel id='label-dialect-id'>Type</InputLabel>
-              <Select
-                labelId='label-dialect-id'
-                id='dialect'
-                label='Type'
-                name='dialect'
-                value={createDatabaseForm.values.dialect}
-                onChange={createDatabaseForm.handleChange}
-                onBlur={createDatabaseForm.handleBlur}
-              >
-                <MenuItem value='mysql'>MySQL</MenuItem>
-                <MenuItem value='postgres'>PostgreSQL</MenuItem>
-                <MenuItem value='mariadb'>MariaDB</MenuItem>
-                <MenuItem value='mongodb'>MongoDB</MenuItem>
-              </Select>
-            </FormControl>
             <TextField
               fullWidth
               label='Host'
@@ -329,4 +444,4 @@ const Create = () => {
   )
 }
 
-export default Create
+export default observer(Create)
