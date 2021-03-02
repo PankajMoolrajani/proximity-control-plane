@@ -1,0 +1,186 @@
+import React, { useState, useEffect } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import Container from '@material-ui/core/Container'
+import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import AppBarTop from './components/AppBar.react'
+import Sidebar from './components/Sidebar.react'
+import { axiosMonoxorDataserviceInstance } from '../libs/axios/axios'
+import { useHistory } from 'react-router-dom'
+import { useAuth0 } from '@auth0/auth0-react'
+import userStore from '../store/user.store'
+import { observer } from 'mobx-react-lite'
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex'
+  },
+  appBarSpacer: theme.mixins.toolbar,
+  content: {
+    flexGrow: 1,
+    height: '100vh',
+    overflow: 'auto'
+  },
+  paper: {
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column'
+  },
+  fixedHeight: {
+    height: 240
+  }
+}))
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: '#2d9cdb'
+    },
+    secondary: {
+      main: '#ff0000'
+    },
+    text: {
+      primary: '#4f4f4f'
+    }
+  }
+})
+
+const Main = ({ children }) => {
+  const classes = useStyles()
+  const [open, setOpen] = useState(false)
+
+  const {
+    isAuthenticated,
+    loginWithRedirect,
+    isLoading,
+    error,
+    getAccessTokenSilently,
+    user
+  } = useAuth0()
+
+  const [isAppLoading, setIsAppLoading] = useState(false)
+  const { push } = useHistory()
+  useEffect(() => {
+    if (!isAuthenticated && !isLoading) {
+      loginWithRedirect()
+    }
+
+    if (isAuthenticated && !isLoading) {
+      setIsAppLoading(true)
+      getAccessTokenSilently().then(async (token) => {
+        userStore.setAccessToken(token)
+        console.log(token, user)
+        //Check if user Exist
+        const searchUserQuery = ` 
+          query($query: JSON!) {
+            users(query: $query) {
+              count
+              rows {
+                id
+                first_name
+                last_name
+                email
+                auth0UserId
+                defaultOrgId
+                orgs {
+                  id
+                  name
+                }
+              }
+            }
+          }
+        `
+        const userSearchResponse = await axiosMonoxorDataserviceInstance.post(
+          '',
+          {
+            query: searchUserQuery,
+            variables: {
+              query: {
+                where: {
+                  auth0UserId: user.sub
+                }
+              }
+            }
+          }
+        )
+
+        const foundUserResults = userSearchResponse.data.data.users
+
+        if (foundUserResults.count === 0) {
+          //if no create User
+          const userCreateQuery = `
+              mutation($user: UserInput!) {
+                createUser(user: $user) {
+                  id
+                  first_name
+                  last_name
+                  email
+                  auth0UserId
+                }
+              }
+          `
+          const userCreateResponse = await axiosMonoxorDataserviceInstance.post(
+            '',
+            {
+              query: userCreateQuery,
+              variables: {
+                user: {
+                  first_name: user.given_name || '',
+                  last_name: user.family_name || '',
+                  email: user.email,
+                  auth0UserId: user.sub,
+                  avatar: user.picture || ''
+                }
+              }
+            }
+          )
+          userStore.setUser(userCreateResponse.data.data.createUser)
+          push('/create-org')
+        } else {
+          const foundUser = foundUserResults.rows[0]
+          userStore.setUser(foundUser)
+          //Check if user has orgs
+          if (foundUser.orgs && foundUser.orgs.length > 0) {
+            foundUser.orgs.forEach((org) => {
+              if (foundUser.defaultOrgId === org.id) {
+                userStore.setCurOrg(org)
+              }
+            })
+          } else {
+            push('/create-org')
+          }
+        }
+        setIsAppLoading(false)
+      })
+    }
+  }, [isAuthenticated, isLoading])
+
+  if (isLoading || !isAuthenticated || isAppLoading) {
+    return <div>Loading..</div>
+  }
+
+  const handleDrawerOpen = () => {
+    setOpen(true)
+  }
+  const handleDrawerClose = () => {
+    setOpen(false)
+  }
+
+  return (
+    <ThemeProvider theme={theme}>
+      <div className={classes.root}>
+        <CssBaseline />
+        <AppBarTop open={open} handleDrawerOpen={handleDrawerOpen} />
+        <Sidebar open={open} handleDrawerClose={handleDrawerClose} />
+        <main className={classes.content}>
+          <div className={classes.appBarSpacer} />
+          <Container maxWidth={false} disableGutters>
+            {children}
+          </Container>
+        </main>
+      </div>
+    </ThemeProvider>
+  )
+}
+
+export default observer(Main)

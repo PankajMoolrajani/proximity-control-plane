@@ -1,0 +1,30 @@
+{
+  "name": "monoxor-apps",
+  "version": "1.0.0",
+  "description": "Monoxor Workspaces",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "nocode-dev": "cd ./apps/nocode && npm start",
+    "proximity-dev": "cd ./apps/proximity && npm start",
+    "nocode-build": "cd ./apps/nocode && npm run build && cd ../../ && mkdir ./dist/nocode && mv ./apps/nocode/build/* ./dist/nocode/",
+    "proximity-build": "cd ./apps/proximity && npm run build && cd ../../ && mkdir ./dist/proximity && mv ./apps/proximity/build/* ./dist/proximity/",
+    "clean": "rm -rf ./dist",
+    "start-dev": "concurrently \"npm run nocode-dev\"  \"npm run proximity-dev\"",
+    "start-build": "npm run clean && mkdir ./dist && concurrently \"npm run nocode-build\"  \"npm run proximity-build\"",
+    "start-prod": "http-server ./dist -p=8084"
+  },
+  "author": "monoxor",
+  "license": "ISC",
+  "workspaces": [
+    "./apps/nocode",
+    "./apps/proximity",
+    "./libs"
+  ],
+  "devDependencies": {
+    "concurrently": "^5.3.0",
+    "http-server": "^0.12.3"
+  },
+  "dependencies": {
+    "moment": "^2.29.1"
+  }
+}

@@ -1,0 +1,16 @@
+version: '3'
+services:
+  mxr-web:
+    build: .
+    image: mxr-web
+    container_name: mxr-web
+    ports:
+      - 8082:8082
+      - 8083:8083
+    volumes:
+      - ./mxr-web:/mxr-web
+    environment:
+      - NODE_ENV=/mxr-web
+      - NODE_PATH=/mxr-web
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    command: /bin/sleep 216000
