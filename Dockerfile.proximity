@@ -1,0 +1,12 @@
+FROM ubuntu
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install nginx -y
+RUN apt-get install nodejs -y
+RUN apt-get install npm -y
+COPY ./mxr-web/apps/proximity ./mxr-web/apps/proximity
+WORKDIR /mxr-web/apps/proximity
+RUN npm -v
+RUN npm install
+RUN npm run build
+RUN cp -r ./build/* /var/www/html
+CMD ["nginx","-g","daemon off;"]
