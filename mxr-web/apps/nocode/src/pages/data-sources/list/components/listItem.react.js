@@ -1,6 +1,8 @@
 import React from 'react'
 import moment from 'moment'
+import { observer } from 'mobx-react-lite'
 import { DiMongodb, DiMysql, DiPostgresql } from 'react-icons/di'
+import { useHistory } from 'react-router-dom'
 import { Paper, Typography, Button, Box } from '@material-ui/core'
 
 const dbTypes = [
@@ -18,6 +20,7 @@ const dbTypes = [
   }
 ]
 const ListItem = ({ database }) => {
+  const { push } = useHistory()
   return (
     <Paper
       style={{
@@ -31,7 +34,35 @@ const ListItem = ({ database }) => {
       </Typography>
       <Typography variant='body1'>Database Type: {database.dialect}</Typography>
       <Box my={2}>
-        <Button variant='contained' color='primary' size='medium'>
+        <Button
+          variant='outlined'
+          color='primary'
+          style={{ marginRight: 20 }}
+          onClick={() => {
+            push(`/data-sources/${database.id}/rest-api`)
+          }}
+        >
+          Rest API
+        </Button>
+        <Button
+          variant='outlined'
+          color='primary'
+          onClick={() => {
+            push(`/data-sources/${database.id}/graphql`)
+          }}
+        >
+          Graphql
+        </Button>
+      </Box>
+      <Box my={2}>
+        <Button
+          variant='contained'
+          color='primary'
+          size='medium'
+          onClick={() => {
+            push(`/data-sources/${database.id}/collections`)
+          }}
+        >
           Expolore
         </Button>
       </Box>
@@ -43,4 +74,4 @@ const ListItem = ({ database }) => {
   )
 }
 
-export default ListItem
+export default observer(ListItem)

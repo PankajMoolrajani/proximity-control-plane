@@ -77,24 +77,6 @@ const Sidebar = ({ handleDrawerClose, open }) => {
           </ListItemIcon>
           <ListItemText primary='Data Sources' />
         </ListItem>
-        <ListItem button onClick={() => push('/models')}>
-          <ListItemIcon>
-            <Database />
-          </ListItemIcon>
-          <ListItemText primary='Models' />
-        </ListItem>
-        <ListItem button onClick={() => push('/')}>
-          <ListItemIcon>
-            <Shuffle />
-          </ListItemIcon>
-          <ListItemText primary='Relations' />
-        </ListItem>
-        <ListItem button onClick={() => push('/')}>
-          <ListItemIcon>
-            <AccountTreeIcon />
-          </ListItemIcon>
-          <ListItemText primary='Explore' />
-        </ListItem>
         <ListItem button onClick={() => push('/pages')}>
           <ListItemIcon>
             <Pages />
