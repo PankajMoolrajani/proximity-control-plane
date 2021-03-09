@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const BASE_URL =
-  'https://kushal.parikh.sb.intern.monoxor.com:8080/data-services/crud/k8ti/proximity'
+const DATA_SERVICE_URL = process.env.DATA_SERVICE_URL
+const BASE_URL = `${DATA_SERVICE_URL}/crud/k8ti/proximity`
 
 const BASE_URL_SERVICES = 'https://graphql-prod.monoxor.com'
 
