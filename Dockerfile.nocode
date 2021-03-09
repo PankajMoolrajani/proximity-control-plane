@@ -2,8 +2,7 @@ FROM ubuntu
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install nginx -y
 RUN apt-get install nodejs -y
-RUN apt-get install npm -y
-ENV DATA_SERVICE_URL=https://dev.monoxor.com/data-services
+RUN apt-get install npm -y 
 COPY ./mxr-web/apps/nocode ./nocode
 WORKDIR /nocode
 RUN npm -v

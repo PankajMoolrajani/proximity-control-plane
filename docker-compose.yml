@@ -13,5 +13,4 @@ services:
       - NODE_ENV=/mxr-web
       - NODE_PATH=/mxr-web
       - NODE_TLS_REJECT_UNAUTHORIZED=0
-      - DATA_SERVICE_URL=https://dev.monoxor.com/data-services
     command: /bin/sleep 216000

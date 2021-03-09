@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const DATA_SERVICE_URL = process.env.DATA_SERVICE_URL
+const DATA_SERVICE_URL = 'https://dev.monoxor.com/data-services'
 const BASE_URL = `${DATA_SERVICE_URL}/crud/k8ti/proximity`
 
 const BASE_URL_SERVICES = 'https://graphql-prod.monoxor.com'
