@@ -1,7 +1,8 @@
 import axios from 'axios'
 import UserStore from '../../store/user.store'
 
-const DATA_SERVICE_URL = 'https://dev.monoxor.com/data-services'
+const DATA_SERVICE_URL =
+  'http://kushal.parikh.sb.intern.monoxor.com:8080/data-services'
 console.log(DATA_SERVICE_URL)
 const MONOXOR_DATASERVICE_PATH = '/graphql/3zx7/mxrdataservice'
 

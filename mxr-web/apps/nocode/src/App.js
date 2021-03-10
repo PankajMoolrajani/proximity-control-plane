@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom'
 import Dashboard from './pages/dashboard'
 import DataSources from './pages/data-sources'
-import Pages from './pages/pages'
+// import Pages from './pages/pages'
 import View from './pages/pages/view'
 import CreateOrg from './pages/createOrg'
 import { observer } from 'mobx-react-lite'
@@ -20,7 +20,7 @@ const App = () => {
           <View />
         </Route>
         <Main className='App'>
-          <Route path='/pages' component={Pages} />
+          {/* <Route path='/pages' component={Pages} /> */}
           <Route path='/data-sources' component={DataSources} />
           <Route path='/create-org' component={CreateOrg} />
           <Route exact path='/'>

@@ -55,6 +55,14 @@ class CollectionStore {
   getCollection() {
     return this.collection
   }
+
+  resetAllFields() {
+    this.setIsLoading(false)
+    this.setQuery(null)
+    this.setTotal(null)
+    this.setCollection(null)
+    this.setCollections([])
+  }
 }
 
 export default new CollectionStore()

@@ -16,7 +16,7 @@ import 'primeicons/primeicons.css'
 
 const App = () => {
   return (
-    <Router basename='proximity'>
+    <Router basename='/proximity'>
       <AdminLayout>
         <Switch>
           <Route path='/virtual-services' component={VirtualServices} />

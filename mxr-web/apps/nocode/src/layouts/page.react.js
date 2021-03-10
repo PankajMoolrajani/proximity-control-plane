@@ -6,16 +6,25 @@ import Button from '@material-ui/core/Button'
 import AddIcon from '@material-ui/icons/Add'
 import ListIcon from '@material-ui/icons/List'
 
-const Page = ({ title, icon, onCreate, onShowAll, children }) => {
+const Page = ({ title, subtitle, icon, onCreate, onShowAll, children }) => {
   return (
     <Papar>
       <Box>
         <Box px={2} py={1} display='flex' justifyContent='space-between'>
           <Box display='flex' alignItems='center'>
             {icon}
-            <Typography variant='h5' style={{ marginLeft: 10 }}>
-              {title}
-            </Typography>
+            <Box>
+              <Typography variant='h5' style={{ marginLeft: 10 }}>
+                {title}
+              </Typography>
+              {subtitle ? (
+                <Typography variant='body' style={{ marginLeft: 10 }}>
+                  {subtitle}
+                </Typography>
+              ) : (
+                ''
+              )}
+            </Box>
           </Box>
           <Box>
             {onCreate && (
