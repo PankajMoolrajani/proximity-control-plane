@@ -8,5 +8,6 @@ WORKDIR /mxr-web/apps/proximity
 RUN npm -v
 RUN npm install
 RUN npm run build
-RUN cp -r ./build/* /var/www/html
+RUN mkdir /var/www/html/proximity
+RUN cp -r ./build/* /var/www/html/proximity
 CMD ["nginx","-g","daemon off;"]
