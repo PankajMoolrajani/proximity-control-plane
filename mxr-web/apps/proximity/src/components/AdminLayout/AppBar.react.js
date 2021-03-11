@@ -84,7 +84,7 @@ const AppBarTop = () => {
         <IconButton
           onClick={() =>
             logout({
-              returnTo: window.location.origin
+              returnTo: `${window.location.origin}/proximity/`
             })
           }
           style={{
