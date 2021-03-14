@@ -10,7 +10,13 @@ const Page = ({ title, subtitle, icon, onCreate, onShowAll, children }) => {
   return (
     <Papar>
       <Box>
-        <Box px={2} py={1} display='flex' justifyContent='space-between'>
+        <Box
+          px={2}
+          py={1}
+          display='flex'
+          justifyContent='space-between'
+          alignItems='center'
+        >
           <Box display='flex' alignItems='center'>
             {icon}
             <Box>

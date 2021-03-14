@@ -10,13 +10,13 @@ import {
   FormControl,
   Select,
   Container,
-  Divider,
   Box,
   Button,
-  FormControlLabel,
   Checkbox,
   Typography,
-  IconButton
+  IconButton,
+  FormHelperText,
+  Grid
 } from '@material-ui/core'
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline'
 import { makeStyles } from '@material-ui/core/styles'
@@ -32,14 +32,21 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const CollectionCreate = () => {
+const CollectionCreate = ({ databaseId }) => {
   const isLoading = collectionStore.getIsLoading()
   const classes = useStyles()
+  const { push } = useHistory()
   const initialValues = {
     name: '',
     displayName: '',
     description: '',
-    schema: []
+    schema: [
+      {
+        allowNull: true,
+        name: '',
+        type: ''
+      }
+    ]
   }
 
   const validationSchema = {
@@ -49,21 +56,55 @@ const CollectionCreate = () => {
       .required('Required!'),
     displayName: Yup.string().required('Required!'),
     description: Yup.string(),
-    schema: Yup.array().required()
+    schema: Yup.array(
+      Yup.object({
+        name: Yup.string()
+          .matches(/^[a-zA-Z]*$/, 'Only alphabets are allowed!')
+          .required('Required!'),
+        type: Yup.string().required('Required!'),
+        allowNull: Yup.boolean().required()
+      })
+    ).min(1)
   }
 
   const createCollectionForm = useFormik({
     initialValues: initialValues,
     validationSchema: Yup.object({ ...validationSchema }),
-    onSubmit: (values) => {
-      alert(JSON.stringify(values))
+    onSubmit: async (values) => {
+      collectionStore.setIsLoading(true)
+      const transformedSchema = {}
+      values.schema.forEach((schemaObj) => {
+        transformedSchema[`${schemaObj.name}`] = {
+          ...schemaObj
+        }
+        delete transformedSchema[`${schemaObj.name}`]['name']
+      })
+
+      const transformedValues = {
+        ...values,
+        schema: transformedSchema,
+        databaseId: databaseId
+      }
+      try {
+        const response = await axiosMasterDataserviceInstance.post(
+          '/collection/create',
+          transformedValues
+        )
+        if (response && response.status === 200) {
+          createCollectionForm.resetForm()
+          push(`/data-sources/${databaseId}/collections`)
+        }
+        console.log(response)
+      } catch (error) {
+        console.log(error)
+        collectionStore.setIsLoading(false)
+      }
+      collectionStore.setIsLoading(false)
     }
   })
-
   if (isLoading) {
     return <Loader />
   }
-
   return (
     <Container maxWidth='sm' style={{ marginLeft: 0 }}>
       <form onSubmit={createCollectionForm.handleSubmit} autoComplete='off'>
@@ -77,11 +118,16 @@ const CollectionCreate = () => {
           name='name'
           value={createCollectionForm.values.name}
           onChange={createCollectionForm.handleChange}
-          onBlur={(e) => {
+          onBlur={async (e) => {
             const value = createCollectionForm.values.name
             const singularValue = singular(value)
             const singularCapitalize = capitalize(singularValue)
-            createCollectionForm.setFieldValue('name', singularCapitalize)
+            await createCollectionForm.setFieldValue('name', singularCapitalize)
+            createCollectionForm.setTouched({
+              ...createCollectionForm.touched,
+              name: true
+            })
+            createCollectionForm.handleChange('name')
             createCollectionForm.handleBlur('name')
           }}
           error={
@@ -137,7 +183,14 @@ const CollectionCreate = () => {
         />
 
         <Box mt={2}>
-          <Button type='submit' variant='contained' color='primary'>
+          <Button
+            type='submit'
+            variant='contained'
+            color='primary'
+            disabled={
+              createCollectionForm.dirty && !createCollectionForm.isValid
+            }
+          >
             Create
           </Button>
         </Box>
@@ -152,7 +205,7 @@ const CollectionCreate = () => {
           <Button
             variant='text'
             color='primary'
-            onClick={() => {
+            onClick={async () => {
               const existingSchema = createCollectionForm.values.schema
               const updatedSchema = [
                 ...existingSchema,
@@ -162,88 +215,180 @@ const CollectionCreate = () => {
                   allowNull: true
                 }
               ]
-              createCollectionForm.setFieldValue('schema', updatedSchema)
+              await createCollectionForm.setFieldValue('schema', updatedSchema)
             }}
           >
             Add new field
           </Button>
         </Box>
+
+        {createCollectionForm.errors.schema &&
+        typeof createCollectionForm.errors.schema !== 'object' ? (
+          <Box>
+            <FormHelperText>
+              {createCollectionForm.errors.schema}
+            </FormHelperText>
+          </Box>
+        ) : (
+          ''
+        )}
+
         <Typography>Required</Typography>
         {createCollectionForm.values.schema.map((schema, index) => {
           const currentSchemaField = createCollectionForm.values.schema[index]
           return (
-            <Box
-              display='flex'
-              key={index}
-              mt={2}
-              justifyContent='space-between'
-            >
-              <Box>
-                <Checkbox
-                  color='primary'
-                  checked={
-                    createCollectionForm.values.schema[index].allowNull
-                      ? false
-                      : true
-                  }
-                  onClick={(e) => {
-                    currentSchemaField.allowNull = !e.target.checked
-                    const updatedSchema = createCollectionForm.values.schema
-                    updatedSchema[index] = currentSchemaField
-                    createCollectionForm.setFieldValue('schema', updatedSchema)
-                  }}
-                />
-              </Box>
-              <Box flex={5} mx={2}>
-                <TextField
-                  fullWidth
-                  label='Collection field'
-                  labelId='label-collection-field-id'
-                  id='Collection Field'
-                  variant='filled'
-                  size='small'
-                  name='description'
-                  value={schema.name}
-                  onChange={(e) => {}}
-                />
-              </Box>
-              <Box flex={2} mx={2}>
-                <FormControl fullWidth variant='filled' size='small'>
-                  <InputLabel id='label-type-id'>Type</InputLabel>
-                  <Select
-                    labelId='label-dialect-id'
-                    id='dialect'
-                    label='Type'
-                    name='dialect'
-                    value={schema.type}
-                    onChange={() => {}}
+            <Box key={index}>
+              <Grid container spacing={2}>
+                <Grid item xs={1}>
+                  <Checkbox
+                    color='primary'
+                    checked={
+                      createCollectionForm.values.schema[index].allowNull
+                        ? false
+                        : true
+                    }
+                    onClick={async (e) => {
+                      currentSchemaField.allowNull = !e.target.checked
+                      const updatedSchema = createCollectionForm.values.schema
+                      updatedSchema[index] = currentSchemaField
+                      await createCollectionForm.setFieldValue(
+                        'schema',
+                        updatedSchema
+                      )
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={7}>
+                  <TextField
+                    fullWidth
+                    label='Collection field'
+                    labelId='label-collection-field-id'
+                    id='Collection Field'
+                    variant='filled'
+                    size='small'
+                    name='description'
+                    value={schema.name}
+                    onChange={async (e) => {
+                      currentSchemaField.name = e.target.value
+                      const updatedSchema = createCollectionForm.values.schema
+                      updatedSchema[index] = currentSchemaField
+                      await createCollectionForm.setFieldValue(
+                        'schema',
+                        updatedSchema
+                      )
+                    }}
+                    onBlur={async (e) => {
+                      currentSchemaField.name = singular(
+                        e.target.value.toLowerCase()
+                      )
+                      const updatedSchema = createCollectionForm.values.schema
+                      updatedSchema[index] = currentSchemaField
+                      await createCollectionForm.setFieldValue(
+                        'schema',
+                        updatedSchema
+                      )
+                      const touchedSchema = createCollectionForm.touched.schema
+                        ? createCollectionForm.touched.schema
+                        : []
+                      const updatedTouchedScema = touchedSchema
+                      updatedTouchedScema[index] = {
+                        ...updatedTouchedScema[index],
+                        name: true
+                      }
+                      createCollectionForm.setTouched({
+                        ...createCollectionForm.touched,
+                        schema: updatedTouchedScema
+                      })
+                      createCollectionForm.handleBlur('schema')
+                    }}
+                    helperText={
+                      createCollectionForm.errors.schema &&
+                      createCollectionForm.touched.schema &&
+                      createCollectionForm.errors.schema[index] &&
+                      createCollectionForm.touched.schema[index] &&
+                      createCollectionForm.errors.schema[index]['name'] &&
+                      createCollectionForm.touched.schema[index]['name']
+                        ? createCollectionForm.errors.schema[index]['name']
+                        : ''
+                    }
+                  />
+                </Grid>
+                <Grid item xs={3}>
+                  <FormControl fullWidth variant='filled' size='small'>
+                    <InputLabel id='label-type-id'>Type</InputLabel>
+                    <Select
+                      labelId='label-type-id'
+                      id='type'
+                      name='type'
+                      value={schema.type}
+                      onChange={async (e) => {
+                        currentSchemaField.type = e.target.value
+                        const updatedSchema = createCollectionForm.values.schema
+                        updatedSchema[index] = currentSchemaField
+                        await createCollectionForm.setFieldValue(
+                          'schema',
+                          updatedSchema
+                        )
+                      }}
+                      onBlur={(e) => {
+                        const touchedSchema = createCollectionForm.touched
+                          .schema
+                          ? createCollectionForm.touched.schema
+                          : []
+                        const updatedTouchedScema = touchedSchema
+                        updatedTouchedScema[index] = {
+                          ...updatedTouchedScema[index],
+                          type: true
+                        }
+                        createCollectionForm.setTouched({
+                          ...createCollectionForm.touched,
+                          schema: updatedTouchedScema
+                        })
+                        createCollectionForm.handleBlur('schema')
+                      }}
+                    >
+                      <MenuItem value='uuid'>UUID</MenuItem>
+                      <MenuItem value='string'>String</MenuItem>
+                      <MenuItem value='text'>Text</MenuItem>
+                      <MenuItem value='integer'>Integer</MenuItem>
+                      <MenuItem value='big-integer'>Big Integer</MenuItem>
+                      <MenuItem value='double'>Double</MenuItem>
+                      <MenuItem value='datetime'>DateTime</MenuItem>
+                      <MenuItem value='date'>Date</MenuItem>
+                      <MenuItem value='boolean'>Boolean</MenuItem>
+                      <MenuItem value='json'>JSON</MenuItem>
+                    </Select>
+                    {createCollectionForm.errors.schema &&
+                    createCollectionForm.touched.schema &&
+                    createCollectionForm.errors.schema[index] &&
+                    createCollectionForm.touched.schema[index] &&
+                    createCollectionForm.errors.schema[index]['type'] &&
+                    createCollectionForm.touched.schema[index]['type'] ? (
+                      <FormHelperText>
+                        {createCollectionForm.errors.schema[index]['type']}
+                      </FormHelperText>
+                    ) : (
+                      ''
+                    )}
+                  </FormControl>
+                </Grid>
+                <Grid item xs={1} style={{ color: 'red' }}>
+                  <IconButton
+                    color='inherit'
+                    onClick={async () => {
+                      const existingSchema = createCollectionForm.values.schema
+                      const updatedSchema = existingSchema
+                      updatedSchema.splice(index, 1)
+                      await createCollectionForm.setFieldValue(
+                        'schema',
+                        updatedSchema
+                      )
+                    }}
                   >
-                    <MenuItem value='uuid'>UUID</MenuItem>
-                    <MenuItem value='string'>String</MenuItem>
-                    <MenuItem value='text'>Text</MenuItem>
-                    <MenuItem value='integer'>Integer</MenuItem>
-                    <MenuItem value='big-integer'>Big Integer</MenuItem>
-                    <MenuItem value='double'>Double</MenuItem>
-                    <MenuItem value='datetime'>DateTime</MenuItem>
-                    <MenuItem value='date'>Date</MenuItem>
-                    <MenuItem value='boolean'>Boolean</MenuItem>
-                    <MenuItem value='json'>JSON</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
-              <Box color='red'>
-                <IconButton
-                  color='inherit'
-                  onClick={() => {
-                    const existingSchema = createCollectionForm.values.schema
-                    const updatedSchema = existingSchema
-                    updatedSchema.splice(index, 1)
-                    createCollectionForm.setFieldValue('schema', updatedSchema)
-                  }}
-                >
-                  <RemoveCircleOutlineIcon />
-                </IconButton>
-              </Box>
+                    <RemoveCircleOutlineIcon />
+                  </IconButton>
+                </Grid>
+              </Grid>
             </Box>
           )
         })}
