@@ -63,7 +63,18 @@ const ListItem = ({ database }) => {
             push(`/data-sources/${database.id}/collections`)
           }}
         >
-          Expolore
+          Collections
+        </Button>
+        <Button
+          variant='contained'
+          color='primary'
+          size='medium'
+          onClick={() => {
+            push(`/data-sources/${database.id}/relations`)
+          }}
+          style={{ marginLeft: 5 }}
+        >
+          Relations
         </Button>
       </Box>
       <Typography variant='body2' align='right'>

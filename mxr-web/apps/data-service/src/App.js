@@ -14,7 +14,7 @@ import { observer } from 'mobx-react-lite'
 
 const App = () => {
   return (
-    <Router basename='nocode'>
+    <Router basename='data-services'>
       <Switch>
         <Route path='/view/:dbName/:id'>
           <View />
