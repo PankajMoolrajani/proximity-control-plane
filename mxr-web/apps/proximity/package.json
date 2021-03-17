@@ -4,6 +4,7 @@
   "homepage": "./",
   "private": true,
   "dependencies": {
+    "@auth0/auth0-react": "^1.3.0",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
@@ -33,6 +34,7 @@
     "react-hot-loader": "^4.13.0",
     "react-json-pretty": "^2.2.0",
     "react-reveal": "^1.2.2",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.2",
     "uuid": "^8.3.2",
     "web-vitals": "^1.1.0"
