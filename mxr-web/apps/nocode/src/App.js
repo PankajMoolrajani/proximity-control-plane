@@ -7,7 +7,6 @@ import {
 } from 'react-router-dom'
 import Dashboard from './pages/dashboard'
 import DataSources from './pages/data-sources'
-import Models from './pages/models'
 import Pages from './pages/pages'
 import View from './pages/pages/view'
 import CreateOrg from './pages/createOrg'
@@ -21,18 +20,9 @@ const App = () => {
           <View />
         </Route>
         <Main className='App'>
-          <Route path='/pages'>
-            <Pages />
-          </Route>
-          <Route path='/models'>
-            <Models />
-          </Route>
-          <Route path='/data-sources'>
-            <DataSources />
-          </Route>
-          <Route path='/create-org'>
-            <CreateOrg />
-          </Route>
+          <Route path='/pages' component={Pages} />
+          <Route path='/data-sources' component={DataSources} />
+          <Route path='/create-org' component={CreateOrg} />
           <Route exact path='/'>
             <Redirect to='/' />
             <Dashboard />

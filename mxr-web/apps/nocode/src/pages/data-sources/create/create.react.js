@@ -19,11 +19,13 @@ import {
   FormControlLabel,
   Checkbox
 } from '@material-ui/core'
+import Page from '../../../layouts/page.react'
 import Loader from '../../../components/Loader'
 import { makeStyles } from '@material-ui/core/styles'
 import * as Yup from 'yup'
 import userStore from '../../../store/user.store'
 import databaseStore from '../../../store/database.store'
+import { ReactComponent as DatabaseIcon } from '../../../assets/icons/database.svg'
 
 const useStyles = makeStyles((theme) => ({
   fields: {
@@ -166,281 +168,291 @@ const Create = () => {
   }
 
   return (
-    <Container maxWidth='sm' style={{ marginLeft: 0 }}>
-      <form onSubmit={createDatabaseForm.handleSubmit} autoComplete='off'>
-        <TextField
-          fullWidth
-          label='Name'
-          labelId='label-name-id'
-          id='name'
-          variant='filled'
-          size='small'
-          name='name'
-          value={createDatabaseForm.values.name}
-          onChange={createDatabaseForm.handleChange}
-          onBlur={createDatabaseForm.handleBlur}
-          error={
-            createDatabaseForm.errors.name &&
-            Boolean(createDatabaseForm.touched.name)
-          }
-          helperText={
-            createDatabaseForm.touched.name && createDatabaseForm.errors.name
-          }
-        />
-        <TextField
-          fullWidth
-          label='Display Name'
-          labelId='label-display-name-id'
-          id='displayName'
-          variant='filled'
-          size='small'
-          name='displayName'
-          value={createDatabaseForm.values.displayName}
-          onChange={createDatabaseForm.handleChange}
-          onBlur={createDatabaseForm.handleBlur}
-          error={
-            createDatabaseForm.errors.displayName &&
-            Boolean(createDatabaseForm.touched.displayName)
-          }
-          helperText={
-            createDatabaseForm.touched.displayName &&
-            createDatabaseForm.errors.displayName
-          }
-          className={classes.fields}
-        />
-        <TextField
-          fullWidth
-          label='Description'
-          labelId='label-description-id'
-          id='description'
-          variant='filled'
-          size='small'
-          name='description'
-          value={createDatabaseForm.values.description}
-          onChange={createDatabaseForm.handleChange}
-          onBlur={createDatabaseForm.handleBlur}
-          error={
-            createDatabaseForm.errors.description &&
-            Boolean(createDatabaseForm.touched.description)
-          }
-          helperText={
-            createDatabaseForm.touched.description &&
-            createDatabaseForm.errors.description
-          }
-          multiline
-          rowsMax={2}
-          className={classes.fields}
-        />
-        <TextField
-          fullWidth
-          label='Database Name'
-          labelId='label-database-name-id'
-          id='databaseName'
-          variant='filled'
-          size='small'
-          name='databaseName'
-          value={createDatabaseForm.values.databaseName}
-          onChange={createDatabaseForm.handleChange}
-          onBlur={createDatabaseForm.handleBlur}
-          error={
-            createDatabaseForm.errors.databaseName &&
-            Boolean(createDatabaseForm.touched.databaseName)
-          }
-          helperText={
-            createDatabaseForm.touched.databaseName &&
-            createDatabaseForm.errors.databaseName
-          }
-          className={classes.fields}
-        />
-
-        {createDatabaseForm.values.provider === 'MONOXOR' ? (
-          <FormControl
+    <Page
+      icon={<DatabaseIcon />}
+      title='Data Sources'
+      onShowAll={() => push('data-sources')}
+    >
+      <Container maxWidth='sm' style={{ marginLeft: 0 }}>
+        <form onSubmit={createDatabaseForm.handleSubmit} autoComplete='off'>
+          <TextField
             fullWidth
+            label='Name'
+            labelId='label-name-id'
+            id='name'
             variant='filled'
             size='small'
+            name='name'
+            value={createDatabaseForm.values.name}
+            onChange={createDatabaseForm.handleChange}
+            onBlur={createDatabaseForm.handleBlur}
             error={
-              createDatabaseForm.errors.dialect &&
-              Boolean(createDatabaseForm.touched.dialect)
+              createDatabaseForm.errors.name &&
+              Boolean(createDatabaseForm.touched.name)
             }
             helperText={
-              createDatabaseForm.touched.dialect &&
-              createDatabaseForm.errors.dialect
+              createDatabaseForm.touched.name && createDatabaseForm.errors.name
             }
-            className={classes.fields}
-          >
-            <InputLabel id='label-dialect-id'>Type</InputLabel>
-            <Select
-              labelId='label-dialect-id'
-              id='dialect'
-              label='Type'
-              name='dialect'
-              value={createDatabaseForm.values.dialect}
-              onChange={createDatabaseForm.handleChange}
-              onBlur={createDatabaseForm.handleBlur}
-            >
-              <MenuItem value='postgres'>PostgreSQL</MenuItem>
-            </Select>
-          </FormControl>
-        ) : (
-          <FormControl
+          />
+          <TextField
             fullWidth
+            label='Display Name'
+            labelId='label-display-name-id'
+            id='displayName'
             variant='filled'
             size='small'
+            name='displayName'
+            value={createDatabaseForm.values.displayName}
+            onChange={createDatabaseForm.handleChange}
+            onBlur={createDatabaseForm.handleBlur}
             error={
-              createDatabaseForm.errors.dialect &&
-              Boolean(createDatabaseForm.touched.dialect)
+              createDatabaseForm.errors.displayName &&
+              Boolean(createDatabaseForm.touched.displayName)
             }
             helperText={
-              createDatabaseForm.touched.dialect &&
-              createDatabaseForm.errors.dialect
+              createDatabaseForm.touched.displayName &&
+              createDatabaseForm.errors.displayName
             }
             className={classes.fields}
-          >
-            <InputLabel id='label-dialect-id'>Type</InputLabel>
-            <Select
-              labelId='label-dialect-id'
-              id='dialect'
-              label='Type'
-              name='dialect'
-              value={createDatabaseForm.values.dialect}
-              onChange={createDatabaseForm.handleChange}
-              onBlur={createDatabaseForm.handleBlur}
-            >
-              <MenuItem value='postgres'>PostgreSQL</MenuItem>
-              <MenuItem value='mysql'>MySQL</MenuItem>
-              <MenuItem value='mariadb'>MariaDB</MenuItem>
-              <MenuItem value='mongodb'>MongoDB</MenuItem>
-            </Select>
-          </FormControl>
-        )}
-        <FormControlLabel
-          control={
-            <Checkbox
-              color='primary'
-              checked={
-                createDatabaseForm.values.provider === 'EXTERNAL' ? true : false
-              }
-              onChange={(e) => {
-                const formikProvider = e.target.checked ? 'EXTERNAL' : 'MONOXOR'
-                createDatabaseForm.setFieldValue('provider', formikProvider)
-              }}
-              name='provider'
-            />
-          }
-          label='Use remote database'
-          className={classes.fields}
-        />
-        {createDatabaseForm.values.provider === 'EXTERNAL' ? (
-          <Fragment>
-            <TextField
-              fullWidth
-              label='Host'
-              labelId='label-host-id'
-              id='host'
-              variant='filled'
-              size='small'
-              name='host'
-              value={createDatabaseForm.values.host}
-              onChange={createDatabaseForm.handleChange}
-              onBlur={createDatabaseForm.handleBlur}
-              error={
-                createDatabaseForm.errors.host &&
-                Boolean(createDatabaseForm.touched.host)
-              }
-              helperText={
-                createDatabaseForm.touched.host &&
-                createDatabaseForm.errors.host
-              }
-              className={classes.fields}
-            />
-            <TextField
-              fullWidth
-              label='Port'
-              labelId='label-port-id'
-              id='port'
-              variant='filled'
-              size='small'
-              name='port'
-              value={createDatabaseForm.values.port}
-              onChange={createDatabaseForm.handleChange}
-              onBlur={createDatabaseForm.handleBlur}
-              error={
-                createDatabaseForm.errors.port &&
-                Boolean(createDatabaseForm.touched.port)
-              }
-              helperText={
-                createDatabaseForm.touched.port &&
-                createDatabaseForm.errors.port
-              }
-              className={classes.fields}
-            />
-            <TextField
-              fullWidth
-              label='User Name'
-              labelId='label-username-id'
-              id='username'
-              variant='filled'
-              size='small'
-              name='username'
-              value={createDatabaseForm.values.username}
-              onChange={createDatabaseForm.handleChange}
-              onBlur={createDatabaseForm.handleBlur}
-              error={
-                createDatabaseForm.errors.username &&
-                Boolean(createDatabaseForm.touched.username)
-              }
-              helperText={
-                createDatabaseForm.touched.username &&
-                createDatabaseForm.errors.username
-              }
-              className={classes.fields}
-            />
-            <TextField
-              fullWidth
-              label='Password'
-              labelId='label-password-id'
-              id='password'
-              variant='filled'
-              size='small'
-              name='password'
-              type='password'
-              value={createDatabaseForm.values.password}
-              onChange={createDatabaseForm.handleChange}
-              onBlur={createDatabaseForm.handleBlur}
-              error={
-                createDatabaseForm.errors.password &&
-                Boolean(createDatabaseForm.touched.password)
-              }
-              helperText={
-                createDatabaseForm.touched.password &&
-                createDatabaseForm.errors.password
-              }
-              className={classes.fields}
-            />
-          </Fragment>
-        ) : (
-          ''
-        )}
+          />
+          <TextField
+            fullWidth
+            label='Description'
+            labelId='label-description-id'
+            id='description'
+            variant='filled'
+            size='small'
+            name='description'
+            value={createDatabaseForm.values.description}
+            onChange={createDatabaseForm.handleChange}
+            onBlur={createDatabaseForm.handleBlur}
+            error={
+              createDatabaseForm.errors.description &&
+              Boolean(createDatabaseForm.touched.description)
+            }
+            helperText={
+              createDatabaseForm.touched.description &&
+              createDatabaseForm.errors.description
+            }
+            multiline
+            rowsMax={2}
+            className={classes.fields}
+          />
+          <TextField
+            fullWidth
+            label='Database Name'
+            labelId='label-database-name-id'
+            id='databaseName'
+            variant='filled'
+            size='small'
+            name='databaseName'
+            value={createDatabaseForm.values.databaseName}
+            onChange={createDatabaseForm.handleChange}
+            onBlur={createDatabaseForm.handleBlur}
+            error={
+              createDatabaseForm.errors.databaseName &&
+              Boolean(createDatabaseForm.touched.databaseName)
+            }
+            helperText={
+              createDatabaseForm.touched.databaseName &&
+              createDatabaseForm.errors.databaseName
+            }
+            className={classes.fields}
+          />
 
-        <Divider style={{ margin: '20px 0' }} />
-        <Box>
-          <Button
-            color='primary'
-            variant='contained'
-            style={{ marginRight: 8 }}
-            type='submit'
-            disabled={!createDatabaseForm.isValid}
-          >
-            Create
-          </Button>
+          {createDatabaseForm.values.provider === 'MONOXOR' ? (
+            <FormControl
+              fullWidth
+              variant='filled'
+              size='small'
+              error={
+                createDatabaseForm.errors.dialect &&
+                Boolean(createDatabaseForm.touched.dialect)
+              }
+              helperText={
+                createDatabaseForm.touched.dialect &&
+                createDatabaseForm.errors.dialect
+              }
+              className={classes.fields}
+            >
+              <InputLabel id='label-dialect-id'>Type</InputLabel>
+              <Select
+                labelId='label-dialect-id'
+                id='dialect'
+                label='Type'
+                name='dialect'
+                value={createDatabaseForm.values.dialect}
+                onChange={createDatabaseForm.handleChange}
+                onBlur={createDatabaseForm.handleBlur}
+              >
+                <MenuItem value='postgres'>PostgreSQL</MenuItem>
+              </Select>
+            </FormControl>
+          ) : (
+            <FormControl
+              fullWidth
+              variant='filled'
+              size='small'
+              error={
+                createDatabaseForm.errors.dialect &&
+                Boolean(createDatabaseForm.touched.dialect)
+              }
+              helperText={
+                createDatabaseForm.touched.dialect &&
+                createDatabaseForm.errors.dialect
+              }
+              className={classes.fields}
+            >
+              <InputLabel id='label-dialect-id'>Type</InputLabel>
+              <Select
+                labelId='label-dialect-id'
+                id='dialect'
+                label='Type'
+                name='dialect'
+                value={createDatabaseForm.values.dialect}
+                onChange={createDatabaseForm.handleChange}
+                onBlur={createDatabaseForm.handleBlur}
+              >
+                <MenuItem value='postgres'>PostgreSQL</MenuItem>
+                <MenuItem value='mysql'>MySQL</MenuItem>
+                <MenuItem value='mariadb'>MariaDB</MenuItem>
+                <MenuItem value='mongodb'>MongoDB</MenuItem>
+              </Select>
+            </FormControl>
+          )}
+          <FormControlLabel
+            control={
+              <Checkbox
+                color='primary'
+                checked={
+                  createDatabaseForm.values.provider === 'EXTERNAL'
+                    ? true
+                    : false
+                }
+                onChange={(e) => {
+                  const formikProvider = e.target.checked
+                    ? 'EXTERNAL'
+                    : 'MONOXOR'
+                  createDatabaseForm.setFieldValue('provider', formikProvider)
+                }}
+                name='provider'
+              />
+            }
+            label='Use remote database'
+            className={classes.fields}
+          />
           {createDatabaseForm.values.provider === 'EXTERNAL' ? (
-            <Button color='primary' variant='outlined'>
-              Test Connection
+            <Fragment>
+              <TextField
+                fullWidth
+                label='Host'
+                labelId='label-host-id'
+                id='host'
+                variant='filled'
+                size='small'
+                name='host'
+                value={createDatabaseForm.values.host}
+                onChange={createDatabaseForm.handleChange}
+                onBlur={createDatabaseForm.handleBlur}
+                error={
+                  createDatabaseForm.errors.host &&
+                  Boolean(createDatabaseForm.touched.host)
+                }
+                helperText={
+                  createDatabaseForm.touched.host &&
+                  createDatabaseForm.errors.host
+                }
+                className={classes.fields}
+              />
+              <TextField
+                fullWidth
+                label='Port'
+                labelId='label-port-id'
+                id='port'
+                variant='filled'
+                size='small'
+                name='port'
+                value={createDatabaseForm.values.port}
+                onChange={createDatabaseForm.handleChange}
+                onBlur={createDatabaseForm.handleBlur}
+                error={
+                  createDatabaseForm.errors.port &&
+                  Boolean(createDatabaseForm.touched.port)
+                }
+                helperText={
+                  createDatabaseForm.touched.port &&
+                  createDatabaseForm.errors.port
+                }
+                className={classes.fields}
+              />
+              <TextField
+                fullWidth
+                label='User Name'
+                labelId='label-username-id'
+                id='username'
+                variant='filled'
+                size='small'
+                name='username'
+                value={createDatabaseForm.values.username}
+                onChange={createDatabaseForm.handleChange}
+                onBlur={createDatabaseForm.handleBlur}
+                error={
+                  createDatabaseForm.errors.username &&
+                  Boolean(createDatabaseForm.touched.username)
+                }
+                helperText={
+                  createDatabaseForm.touched.username &&
+                  createDatabaseForm.errors.username
+                }
+                className={classes.fields}
+              />
+              <TextField
+                fullWidth
+                label='Password'
+                labelId='label-password-id'
+                id='password'
+                variant='filled'
+                size='small'
+                name='password'
+                type='password'
+                value={createDatabaseForm.values.password}
+                onChange={createDatabaseForm.handleChange}
+                onBlur={createDatabaseForm.handleBlur}
+                error={
+                  createDatabaseForm.errors.password &&
+                  Boolean(createDatabaseForm.touched.password)
+                }
+                helperText={
+                  createDatabaseForm.touched.password &&
+                  createDatabaseForm.errors.password
+                }
+                className={classes.fields}
+              />
+            </Fragment>
+          ) : (
+            ''
+          )}
+
+          <Divider style={{ margin: '20px 0' }} />
+          <Box>
+            <Button
+              color='primary'
+              variant='contained'
+              style={{ marginRight: 8 }}
+              type='submit'
+              disabled={!createDatabaseForm.isValid}
+            >
+              Create
             </Button>
-          ) : null}
-        </Box>
-      </form>
-    </Container>
+            {createDatabaseForm.values.provider === 'EXTERNAL' ? (
+              <Button color='primary' variant='outlined'>
+                Test Connection
+              </Button>
+            ) : null}
+          </Box>
+        </form>
+      </Container>
+    </Page>
   )
 }
 
