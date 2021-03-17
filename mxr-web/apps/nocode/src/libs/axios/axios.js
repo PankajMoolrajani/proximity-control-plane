@@ -1,27 +1,18 @@
 import axios from 'axios'
 import UserStore from '../../store/user.store'
 
-const BASE_URL =
-  'https://kushal.parikh.sb.intern.monoxor.com:8080/data-services'
-
+const DATA_SERVICE_URL = 'https://dev.monoxor.com/data-services'
+console.log(DATA_SERVICE_URL)
 const MONOXOR_DATASERVICE_PATH = '/graphql/3zx7/mxrdataservice'
-
-// const axiosSecureInstance = axios.create()
-// axiosSecureInstance.defaults.baseURL = BASE_URL
-// axiosSecureInstance.interceptors.request.use((config) => {
-//   const token = UserStore.getAccessToken()
-//   config.headers.Authorization = token ? `Bearer ${token}` : ''
-//   return config
-// })
 
 const axiosMonoxorDataserviceInstance = axios.create()
 axiosMonoxorDataserviceInstance.defaults.baseURL =
-  BASE_URL + MONOXOR_DATASERVICE_PATH
+  DATA_SERVICE_URL + MONOXOR_DATASERVICE_PATH
 axiosMonoxorDataserviceInstance.defaults.headers.common[
   'Access-Control-Allow-Origin'
 ] = '*'
 
 const axiosMasterDataserviceInstance = axios.create()
-axiosMasterDataserviceInstance.defaults.baseURL = BASE_URL
+axiosMasterDataserviceInstance.defaults.baseURL = DATA_SERVICE_URL
 
 export { axiosMonoxorDataserviceInstance, axiosMasterDataserviceInstance }
