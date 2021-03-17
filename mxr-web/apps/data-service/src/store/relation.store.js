@@ -1,11 +1,11 @@
 import { makeAutoObservable } from 'mobx'
 
-class CollectionStore {
+class RelationStore {
   isLoading = null
   query = {}
   total = null
-  collections = []
-  collection = {}
+  relations = []
+  relation = {}
 
   constructor() {
     makeAutoObservable(this)
@@ -38,23 +38,31 @@ class CollectionStore {
     return this.total
   }
 
-  setCollections(collections) {
-    this.collections = collections
-    return this.collections
+  setRelations(relations) {
+    this.relations = relations
+    return this.relations
   }
 
-  getCollections() {
-    return this.collections
+  getRelations() {
+    return this.relations
   }
 
-  setCollection(collection) {
-    this.collection = collection
-    return this.collection
+  setRelation(relation) {
+    this.relation = relation
+    return this.relation
   }
 
-  getCollection() {
-    return this.collection
+  getRelation() {
+    return this.relation
+  }
+
+  resetAllFields() {
+    this.setIsLoading(false)
+    this.setQuery(null)
+    this.setTotal(null)
+    this.setRelation(null)
+    this.setRelations([])
   }
 }
 
-export default new CollectionStore()
+export default new RelationStore()

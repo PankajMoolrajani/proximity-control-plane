@@ -7,20 +7,20 @@ import {
 } from 'react-router-dom'
 import Dashboard from './pages/dashboard'
 import DataSources from './pages/data-sources'
-import Pages from './pages/pages'
+// import Pages from './pages/pages'
 import View from './pages/pages/view'
 import CreateOrg from './pages/createOrg'
 import { observer } from 'mobx-react-lite'
 
 const App = () => {
   return (
-    <Router basename='nocode'>
+    <Router basename='data-services'>
       <Switch>
         <Route path='/view/:dbName/:id'>
           <View />
         </Route>
         <Main className='App'>
-          <Route path='/pages' component={Pages} />
+          {/* <Route path='/pages' component={Pages} /> */}
           <Route path='/data-sources' component={DataSources} />
           <Route path='/create-org' component={CreateOrg} />
           <Route exact path='/'>

@@ -38,18 +38,20 @@ const GraphqlDoc = () => {
     return <Box>No Content</Box>
   }
   return (
-    <Box style={{
-      height: '95vh'
-    }}>
-    <GraphiQL 
-      fetcher={async (graphQLParams) => {
-        const response = await axiosMasterDataserviceInstance.post(
-          `/graphql/${database.shortId}/${database.databaseName}`,
-          { ...graphQLParams }
-        )
-        return response.data
+    <Box
+      style={{
+        height: '95vh'
       }}
-    />
+    >
+      <GraphiQL
+        fetcher={async (graphQLParams) => {
+          const response = await axiosMasterDataserviceInstance.post(
+            `/graphql/${database.shortId}/${database.databaseName}`,
+            { ...graphQLParams }
+          )
+          return response.data
+        }}
+      />
     </Box>
   )
 }

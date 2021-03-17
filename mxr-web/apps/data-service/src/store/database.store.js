@@ -35,6 +35,12 @@ class DatabaseStore {
   getDatabase() {
     return this.database
   }
+
+  resetAllFields() {
+    this.setIsLoading(false)
+    this.setDatabase(null)
+    this.setDatabases([])
+  }
 }
 
 export default new DatabaseStore()
