@@ -1,4 +1,4 @@
-import React from 'react'
+import { Fragment, useEffect } from 'react'
 import { useFormik } from 'formik'
 import { observer } from 'mobx-react-lite'
 import { useHistory } from 'react-router-dom'
@@ -21,10 +21,11 @@ import {
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline'
 import { makeStyles } from '@material-ui/core/styles'
 import * as Yup from 'yup'
-import { singular } from 'pluralize'
+import { plural, singular } from 'pluralize'
 import Loader from '../../../components/Loader'
 import { capitalize } from '../../../libs/helpers/helper.lib'
 import collectionStore from '../../../store/collection.store'
+import relationStore from '../../../store/relation.store'
 
 const useStyles = makeStyles((theme) => ({
   fields: {
@@ -33,9 +34,33 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const CollectionCreate = ({ databaseId }) => {
-  const isLoading = collectionStore.getIsLoading()
+  const isCollectionLoading = collectionStore.getIsLoading()
+  const isRelationLoading = relationStore.getIsLoading()
+  const collections = collectionStore.getCollections()
   const classes = useStyles()
   const { push } = useHistory()
+
+  const fetchRealtionsAndCollections = async () => {
+    const response = await axiosMasterDataserviceInstance.post(
+      '/collection/search',
+      {
+        query: {
+          limit: 100,
+          offset: 0,
+          where: {
+            DatabaseId: databaseId
+          }
+        },
+        databaseId: databaseId
+      }
+    )
+    collectionStore.setCollections(response.data.rows)
+  }
+
+  useEffect(() => {
+    fetchRealtionsAndCollections()
+  }, [databaseId])
+
   const initialValues = {
     name: '',
     displayName: '',
@@ -44,7 +69,9 @@ const CollectionCreate = ({ databaseId }) => {
       {
         allowNull: true,
         name: '',
-        type: ''
+        type: '',
+        targetCollection: '',
+        relationType: ''
       }
     ]
   }
@@ -62,7 +89,9 @@ const CollectionCreate = ({ databaseId }) => {
           .matches(/^[a-zA-Z]*$/, 'Only alphabets are allowed!')
           .required('Required!'),
         type: Yup.string().required('Required!'),
-        allowNull: Yup.boolean().required()
+        allowNull: Yup.boolean().required(),
+        targetCollection: Yup.string(),
+        relationType: Yup.string()
       })
     ).min(1)
   }
@@ -73,28 +102,47 @@ const CollectionCreate = ({ databaseId }) => {
     onSubmit: async (values) => {
       collectionStore.setIsLoading(true)
       const transformedSchema = {}
+      const relationShipSchema = {}
       values.schema.forEach((schemaObj) => {
-        transformedSchema[`${schemaObj.name}`] = {
-          ...schemaObj
+        if (schemaObj.relationType.length === 0) {
+          transformedSchema[`${schemaObj.name}`] = {
+            ...schemaObj
+          }
+          delete transformedSchema[`${schemaObj.name}`]['name']
+          delete transformedSchema[`${schemaObj.name}`]['relationType']
+          delete transformedSchema[`${schemaObj.name}`]['targetCollection']
+        } else {
+          relationShipSchema.sourceCollection = createCollectionForm.values.name
+          relationShipSchema.targetCollection = schemaObj.targetCollection
+          relationShipSchema.type = schemaObj.relationType
+          relationShipSchema.databaseId = databaseId
+          relationShipSchema.name = `${relationShipSchema.sourceCollection} ${relationShipSchema.type} ${relationShipSchema.targetCollection}`
         }
-        delete transformedSchema[`${schemaObj.name}`]['name']
       })
-
       const transformedValues = {
         ...values,
         schema: transformedSchema,
         databaseId: databaseId
       }
       try {
-        const response = await axiosMasterDataserviceInstance.post(
+        //Create Collection
+        const collectionResponse = await axiosMasterDataserviceInstance.post(
           '/collection/create',
           transformedValues
         )
-        if (response && response.status === 200) {
-          createCollectionForm.resetForm()
-          push(`/data-sources/${databaseId}/collections`)
+
+        if (collectionResponse && collectionResponse.status === 200) {
+          //Create Relation
+          const relationResponse = await axiosMasterDataserviceInstance.post(
+            '/collection/relation/create',
+            relationShipSchema
+          )
+
+          if (relationResponse && relationResponse.status === 200) {
+            createCollectionForm.resetForm()
+            push(`/data-sources/${databaseId}/collections`)
+          }
         }
-        console.log(response)
       } catch (error) {
         console.log(error)
         collectionStore.setIsLoading(false)
@@ -102,9 +150,11 @@ const CollectionCreate = ({ databaseId }) => {
       collectionStore.setIsLoading(false)
     }
   })
-  if (isLoading) {
+
+  if (isCollectionLoading || isRelationLoading) {
     return <Loader />
   }
+
   return (
     <Container maxWidth='sm' style={{ marginLeft: 0 }}>
       <form onSubmit={createCollectionForm.handleSubmit} autoComplete='off'>
@@ -210,9 +260,11 @@ const CollectionCreate = ({ databaseId }) => {
               const updatedSchema = [
                 ...existingSchema,
                 {
+                  allowNull: true,
                   name: '',
                   type: '',
-                  allowNull: true
+                  targetCollection: '',
+                  relationType: ''
                 }
               ]
               await createCollectionForm.setFieldValue('schema', updatedSchema)
@@ -242,6 +294,7 @@ const CollectionCreate = ({ databaseId }) => {
                 <Grid item xs={1}>
                   <Checkbox
                     color='primary'
+                    disabled={schema.type === 'relation'}
                     checked={
                       createCollectionForm.values.schema[index].allowNull
                         ? false
@@ -267,6 +320,7 @@ const CollectionCreate = ({ databaseId }) => {
                     variant='filled'
                     size='small'
                     name='description'
+                    disabled={schema.type === 'relation'}
                     value={schema.name}
                     onChange={async (e) => {
                       currentSchemaField.name = e.target.value
@@ -357,6 +411,7 @@ const CollectionCreate = ({ databaseId }) => {
                       <MenuItem value='date'>Date</MenuItem>
                       <MenuItem value='boolean'>Boolean</MenuItem>
                       <MenuItem value='json'>JSON</MenuItem>
+                      <MenuItem value='relation'>Relation</MenuItem>
                     </Select>
                     {createCollectionForm.errors.schema &&
                     createCollectionForm.touched.schema &&
@@ -389,6 +444,175 @@ const CollectionCreate = ({ databaseId }) => {
                   </IconButton>
                 </Grid>
               </Grid>
+
+              {currentSchemaField.type === 'relation' ? (
+                <Grid container spacing={2}>
+                  <Grid item xs={1}></Grid>
+                  <Grid item xs={7}>
+                    <FormControl fullWidth variant='filled' size='small'>
+                      <InputLabel id='label-targetCollection-id'>
+                        Target Collection
+                      </InputLabel>
+                      <Select
+                        labelId='label-targetCollection-id'
+                        id='targetCollection'
+                        name='targetCollection'
+                        value={currentSchemaField.targetCollection.name}
+                        onChange={async (e) => {
+                          currentSchemaField.targetCollection = e.target.value
+                          currentSchemaField.relationType = ''
+                          currentSchemaField.name = ''
+                          const updatedSchema =
+                            createCollectionForm.values.schema
+                          updatedSchema[index] = currentSchemaField
+                          await createCollectionForm.setFieldValue(
+                            'schema',
+                            updatedSchema
+                          )
+                        }}
+                        onBlur={(e) => {
+                          const touchedSchema = createCollectionForm.touched
+                            .schema
+                            ? createCollectionForm.touched.schema
+                            : []
+                          const updatedTouchedScema = touchedSchema
+                          updatedTouchedScema[index] = {
+                            ...updatedTouchedScema[index],
+                            targetCollection: true
+                          }
+                          createCollectionForm.setTouched({
+                            ...createCollectionForm.touched,
+                            schema: updatedTouchedScema
+                          })
+                          createCollectionForm.handleBlur('schema')
+                        }}
+                      >
+                        {collections.map((collection) => (
+                          <MenuItem value={collection.name}>
+                            {collection.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      {createCollectionForm.errors.schema &&
+                      createCollectionForm.touched.schema &&
+                      createCollectionForm.errors.schema[index] &&
+                      createCollectionForm.touched.schema[index] &&
+                      createCollectionForm.errors.schema[index][
+                        'targetCollection'
+                      ] &&
+                      createCollectionForm.touched.schema[index][
+                        'targetCollection'
+                      ] ? (
+                        <FormHelperText>
+                          {
+                            createCollectionForm.errors.schema[index][
+                              'targetCollection'
+                            ]
+                          }
+                        </FormHelperText>
+                      ) : (
+                        ''
+                      )}
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <FormControl fullWidth variant='filled' size='small'>
+                      <InputLabel id='label-relationType-id'>
+                        Relation type
+                      </InputLabel>
+                      <Select
+                        labelId='label-relationType-id'
+                        id='relationType'
+                        name='relationType'
+                        value={currentSchemaField.relationType}
+                        onChange={async (e) => {
+                          currentSchemaField.relationType = e.target.value
+                          const updatedSchema =
+                            createCollectionForm.values.schema
+                          updatedSchema[index] = currentSchemaField
+                          await createCollectionForm.setFieldValue(
+                            'schema',
+                            updatedSchema
+                          )
+                          createCollectionForm.handleBlur('schema')
+                          //Set Collection field name
+                          if (
+                            ['hasOne', 'belongsTo'].includes(
+                              currentSchemaField.relationType
+                            )
+                          ) {
+                            currentSchemaField.name =
+                              currentSchemaField.targetCollection
+                          }
+
+                          if (
+                            ['hasMany', 'manyToMany'].includes(
+                              currentSchemaField.relationType
+                            )
+                          ) {
+                            currentSchemaField.name = plural(
+                              currentSchemaField.targetCollection
+                            )
+                          }
+
+                          const updatedSchemaName =
+                            createCollectionForm.values.schema
+                          updatedSchemaName[index] = currentSchemaField
+                          await createCollectionForm.setFieldValue(
+                            'schema',
+                            updatedSchemaName
+                          )
+                          createCollectionForm.handleBlur('schema')
+                        }}
+                        onBlur={(e) => {
+                          const touchedSchema = createCollectionForm.touched
+                            .schema
+                            ? createCollectionForm.touched.schema
+                            : []
+                          const updatedTouchedScema = touchedSchema
+                          updatedTouchedScema[index] = {
+                            ...updatedTouchedScema[index],
+                            relationType: true
+                          }
+                          createCollectionForm.setTouched({
+                            ...createCollectionForm.touched,
+                            schema: updatedTouchedScema
+                          })
+                          createCollectionForm.handleBlur('schema')
+                        }}
+                      >
+                        <MenuItem value='hasOne'>Has One</MenuItem>
+                        <MenuItem value='hasMany'>Has Many</MenuItem>
+                        <MenuItem value='belongsTo'>Belongs to</MenuItem>
+                        <MenuItem value='manyToMany'>Many to many</MenuItem>
+                      </Select>
+                      {createCollectionForm.errors.schema &&
+                      createCollectionForm.touched.schema &&
+                      createCollectionForm.errors.schema[index] &&
+                      createCollectionForm.touched.schema[index] &&
+                      createCollectionForm.errors.schema[index][
+                        'targetCollection'
+                      ] &&
+                      createCollectionForm.touched.schema[index][
+                        'targetCollection'
+                      ] ? (
+                        <FormHelperText>
+                          {
+                            createCollectionForm.errors.schema[index][
+                              'targetCollection'
+                            ]
+                          }
+                        </FormHelperText>
+                      ) : (
+                        ''
+                      )}
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={1}></Grid>
+                </Grid>
+              ) : (
+                ''
+              )}
             </Box>
           )
         })}
