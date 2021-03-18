@@ -1,149 +1,181 @@
-import React, { Component } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { observer } from 'mobx-react'
 import { v4 as uuid } from 'uuid'
-import Box from '@material-ui/core/Box'
-import TextField from '@material-ui/core/TextField'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import IconButton from '@material-ui/core/IconButton'
+import { useHistory, useParams } from 'react-router-dom'
+import { Box, TextField, InputAdornment, IconButton } from '@material-ui/core'
+import PlatformLoaderCard from '../../../components/platform/PlatformLoaderCard.react'
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import VpnKeyIcon from '@material-ui/icons/VpnKey'
-import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+import stores from '../../../stores/proximity.store'
 const { virtualServiceStore } = stores
-export class VirtualServiceDetailsCard extends Component {
-  state = {
-    showSecret: false
+
+const VirtualServiceDetailsCard = ({ virtualServiceId }) => {
+  const [showSecret, setShowSecret] = useState(false)
+  const { push } = useHistory()
+  const formFields = virtualServiceStore.getFormFields()
+  const virtualService = virtualServiceStore.getSelectedObject()
+  const viewMode = virtualServiceId ? 'UPDATE' : 'CREATE'
+  const showLoader = virtualServiceStore.getShowProcessCard()
+  const fetchVirtualSeviceById = async () => {
+    virtualServiceStore.setShowProcessCard(true)
+    try {
+      const virtualService = await virtualServiceStore.objectQueryById(
+        virtualServiceId
+      )
+      if (virtualService) {
+        virtualServiceStore.setSelectedObject(virtualService)
+        virtualServiceStore.setFormFields({
+          id: virtualService.id,
+          displayName: virtualService.displayName,
+          proximityUrl: virtualService.proximityUrl,
+          targetUrl: virtualService.targetUrl,
+          authKey: virtualService.authKey
+        })
+      }
+    } catch (error) {
+      virtualServiceStore.setShowProcessCard(false)
+      console.log(error)
+    }
+    virtualServiceStore.setShowProcessCard(false)
   }
 
-  render() {
-    const formFields = virtualServiceStore.getFormFields()
-    const virtualService = virtualServiceStore.getSelectedObject()
-    const viewMode = virtualServiceStore.getShowObjectViewMode()
-    let virtualServiceName
-    if (viewMode === 'CREATE') {
-      virtualServiceName = formFields.name ? formFields.name : ''
+  useEffect(() => {
+    if (virtualServiceId) {
+      fetchVirtualSeviceById()
+    } else {
+      virtualServiceStore.setFormFields({
+        name: '',
+        displayName: '',
+        proximityUrl: '',
+        targetUrl: '',
+        authKey: ''
+      })
     }
+  }, [virtualServiceId])
 
-    if (viewMode === 'UPDATE') {
-      virtualServiceName = virtualService.name ? virtualService.name : ''
-    }
+  if (showLoader && (virtualService || formFields)) {
     return (
-      <Box style={{ maxWidth: 700, padding: 24 }}>
-        <Box>
-          <TextField
-            fullWidth
-            label='Name'
-            variant='outlined'
-            size='small'
-            value={virtualServiceName ? virtualServiceName : ''}
-            onChange={(event) => {
-              if (viewMode !== 'CREATE') {
-                return
-              }
-              virtualServiceStore.setFormFields({
-                ...formFields,
-                name: event.target.value
-              })
-            }}
-          />
-        </Box>
-        <Box style={{ marginTop: 20 }}>
-          <TextField
-            fullWidth
-            label='Display Name'
-            variant='outlined'
-            size='small'
-            value={formFields.displayName ? formFields.displayName : ''}
-            onChange={(event) => {
-              virtualServiceStore.setFormFields({
-                ...formFields,
-                displayName: event.target.value
-              })
-            }}
-          />
-        </Box>
-        <Box style={{ marginTop: 20 }}>
-          <TextField
-            fullWidth
-            label='Proximity Url'
-            variant='outlined'
-            size='small'
-            value={formFields.proximityUrl ? formFields.proximityUrl : ''}
-            onChange={(event) => {
-              virtualServiceStore.setFormFields({
-                ...formFields,
-                proximityUrl: event.target.value
-              })
-            }}
-          />
-        </Box>
-        <Box style={{ marginTop: 20 }}>
-          <TextField
-            fullWidth
-            label='Target Url'
-            variant='outlined'
-            size='small'
-            value={formFields.targetUrl ? formFields.targetUrl : ''}
-            onChange={(event) => {
-              virtualServiceStore.setFormFields({
-                ...formFields,
-                targetUrl: event.target.value
-              })
-            }}
-          />
-        </Box>
-        <Box style={{ marginTop: 20 }}>
-          <TextField
-            fullWidth
-            type={this.state.showSecret ? 'text' : 'password'}
-            label='Auth Key'
-            variant='outlined'
-            size='small'
-            value={formFields.authKey ? formFields.authKey : ''}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment>
-                  <IconButton
-                    onClick={() => {
-                      virtualServiceStore.setFormFields({
-                        ...formFields,
-                        authKey: uuid().replaceAll('-', '')
-                      })
-                    }}
-                  >
-                    <VpnKeyIcon />
-                  </IconButton>
-                  <IconButton
-                    onClick={() =>
-                      this.setState((prevState) => ({
-                        showSecret: !prevState.showSecret
-                      }))
-                    }
-                  >
-                    {this.state.showSecret ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
-          />
-        </Box>
-        {viewMode === 'UPDATE' ? (
-          <React.Fragment>
-            <Box style={{ marginTop: 20 }}>
-              <TextField
-                fullWidth
-                label='Service Id'
-                variant='outlined'
-                size='small'
-                value={formFields.id ? formFields.id : ''}
-              />
-            </Box>
-          </React.Fragment>
-        ) : null}
-        {this.props.actionButtons}
+      <Box style={{ margin: 50 }}>
+        <PlatformLoaderCard />
       </Box>
     )
   }
+
+  return (
+    <Box style={{ maxWidth: 700, padding: 24 }}>
+      <Box>
+        <TextField
+          fullWidth
+          label='Name'
+          variant='outlined'
+          size='small'
+          value={virtualService ? virtualService.name : ''}
+          onChange={(event) => {
+            if (viewMode !== 'CREATE') {
+              return
+            }
+            virtualServiceStore.setFormFields({
+              ...formFields,
+              name: event.target.value
+            })
+          }}
+        />
+      </Box>
+      <Box style={{ marginTop: 20 }}>
+        <TextField
+          fullWidth
+          label='Display Name'
+          variant='outlined'
+          size='small'
+          value={formFields ? formFields.displayName : ''}
+          onChange={(event) => {
+            virtualServiceStore.setFormFields({
+              ...formFields,
+              displayName: event.target.value
+            })
+          }}
+        />
+      </Box>
+      <Box style={{ marginTop: 20 }}>
+        <TextField
+          fullWidth
+          label='Proximity Url'
+          variant='outlined'
+          size='small'
+          value={formFields ? formFields.proximityUrl : ''}
+          onChange={(event) => {
+            virtualServiceStore.setFormFields({
+              ...formFields,
+              proximityUrl: event.target.value
+            })
+          }}
+        />
+      </Box>
+      <Box style={{ marginTop: 20 }}>
+        <TextField
+          fullWidth
+          label='Target Url'
+          variant='outlined'
+          size='small'
+          value={formFields ? formFields.targetUrl : ''}
+          onChange={(event) => {
+            virtualServiceStore.setFormFields({
+              ...formFields,
+              targetUrl: event.target.value
+            })
+          }}
+        />
+      </Box>
+      <Box style={{ marginTop: 20 }}>
+        <TextField
+          fullWidth
+          type={showSecret ? 'text' : 'password'}
+          label='Auth Key'
+          variant='outlined'
+          size='small'
+          value={formFields ? formFields.authKey : ''}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment>
+                <IconButton
+                  onClick={() => {
+                    virtualServiceStore.setFormFields({
+                      ...formFields,
+                      authKey: uuid().replaceAll('-', '')
+                    })
+                  }}
+                >
+                  <VpnKeyIcon />
+                </IconButton>
+                <IconButton
+                  onClick={() =>
+                    showSecret((prevShowSecret) => !prevShowSecret)
+                  }
+                >
+                  {showSecret ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
+        />
+      </Box>
+      {viewMode === 'UPDATE' ? (
+        <Fragment>
+          <Box style={{ marginTop: 20 }}>
+            <TextField
+              fullWidth
+              label='Service Id'
+              variant='outlined'
+              size='small'
+              value={formFields ? formFields.id : ''}
+            />
+          </Box>
+        </Fragment>
+      ) : null}
+      {/* {this.props.actionButtons} */}
+    </Box>
+  )
 }
 
 export default observer(VirtualServiceDetailsCard)
