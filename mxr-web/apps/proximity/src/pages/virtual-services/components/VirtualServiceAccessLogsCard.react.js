@@ -13,7 +13,7 @@ import {
 } from '../../../libs/helpers/helper.lib'
 const { virtualServiceStore, logStore } = stores
 
-const VirtualServiceDecisionLogs = ({ virtualServiceId }) => {
+const VirtualServiceAccessLogsCard = ({ virtualServiceId }) => {
   const [expandedRows, setExpandedRows] = useState(false)
 
   const handleFetch = async () => {
@@ -25,7 +25,7 @@ const VirtualServiceDecisionLogs = ({ virtualServiceId }) => {
     try {
       logStore.setSearchQuery({
         VirtualServiceId: virtualService.id,
-        type: 'PROXIMITY_DECISION_LOG'
+        type: 'PROXIMITY_ACCESS_LOG'
       })
       const logs = await logStore.objectQuery()
       logStore.setSearchResultsObjectCount(logs.count)
@@ -60,7 +60,6 @@ const VirtualServiceDecisionLogs = ({ virtualServiceId }) => {
       await handleFetch()
     }
     initFetch()
-
     return () => {
       logStore.resetAllFields()
     }
@@ -99,7 +98,6 @@ const VirtualServiceDecisionLogs = ({ virtualServiceId }) => {
     return <Box style={{ textAlign: 'center' }}>No Content</Box>
   }
   let sortQueryTransformed = transformSortQuery(sortQuery)
-
   return (
     <DataTable
       className='p-datatable-striped p-datatable-hovered'
@@ -135,38 +133,8 @@ const VirtualServiceDecisionLogs = ({ virtualServiceId }) => {
       paginator
     >
       <Column expander style={{ width: '3em' }} />
-      <Column
-        field='policyName'
-        header='Policy'
-        body={(log) =>
-          log.data.policyName ? log.data.policyName : 'Decision Log'
-        }
-      ></Column>
-      <Column
-        field='type'
-        header='Type'
-        body={(log) => (log.data.type ? log.data.type : '')}
-      ></Column>
-      <Column
-        field='revision'
-        header='Revision'
-        body={(log) =>
-          log.PolicyRevisionId
-            ? `rev-${log.PolicyRevisionId.split('-').reverse()[0]}`
-            : ''
-        }
-      ></Column>
-      <Column
-        field='decision'
-        header='Decision'
-        body={(log) =>
-          log.data.decision
-            ? log.data.decision.allow
-              ? 'ALLOWED'
-              : 'DEINED'
-            : 'NA'
-        }
-      ></Column>
+      <Column field='log' header='Log' body={(log) => 'Access Log'}></Column>
+
       <Column
         field='createdAt'
         header='Time Stamp'
@@ -177,4 +145,4 @@ const VirtualServiceDecisionLogs = ({ virtualServiceId }) => {
   )
 }
 
-export default observer(VirtualServiceDecisionLogs)
+export default observer(VirtualServiceAccessLogsCard)

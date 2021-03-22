@@ -2,7 +2,13 @@ import { Fragment, useState, useEffect } from 'react'
 import { observer } from 'mobx-react'
 import { v4 as uuid } from 'uuid'
 import { useHistory, useParams } from 'react-router-dom'
-import { Box, TextField, InputAdornment, IconButton } from '@material-ui/core'
+import {
+  Box,
+  TextField,
+  InputAdornment,
+  IconButton,
+  Button
+} from '@material-ui/core'
 import PlatformLoaderCard from '../../../components/platform/PlatformLoaderCard.react'
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
@@ -27,6 +33,7 @@ const VirtualServiceDetailsCard = ({ virtualServiceId }) => {
         virtualServiceStore.setSelectedObject(virtualService)
         virtualServiceStore.setFormFields({
           id: virtualService.id,
+          name: virtualService.name,
           displayName: virtualService.displayName,
           proximityUrl: virtualService.proximityUrl,
           targetUrl: virtualService.targetUrl,
@@ -51,6 +58,7 @@ const VirtualServiceDetailsCard = ({ virtualServiceId }) => {
         targetUrl: '',
         authKey: ''
       })
+      virtualServiceStore.setSelectedObject(null)
     }
   }, [virtualServiceId])
 
@@ -62,6 +70,60 @@ const VirtualServiceDetailsCard = ({ virtualServiceId }) => {
     )
   }
 
+  const _renderCreateButton = () => {
+    return (
+      <Button
+        variant='contained'
+        color='primary'
+        style={{ marginTop: 20 }}
+        onClick={async () => {
+          virtualServiceStore.setShowProcessCard(true)
+          try {
+            await virtualServiceStore.objectCreate()
+            virtualServiceStore.resetAllFields()
+            push('/virtual-services')
+          } catch (error) {
+            virtualServiceStore.setShowProcessCard(false)
+            console.log(error)
+          }
+          virtualServiceStore.setShowProcessCard(false)
+        }}
+      >
+        Create
+      </Button>
+    )
+  }
+
+  const _renderUpdateButton = () => {
+    return (
+      <Button
+        variant='contained'
+        color='primary'
+        style={{ marginTop: 20 }}
+        onClick={async () => {
+          virtualServiceStore.setShowProcessCard(true)
+          try {
+            const updatedVirtualService = await virtualServiceStore.objectUpdate()
+            virtualServiceStore.setFormFields({
+              id: updatedVirtualService.id,
+              name: updatedVirtualService.name,
+              displayName: updatedVirtualService.displayName,
+              proximityUrl: updatedVirtualService.proximityUrl,
+              targetUrl: updatedVirtualService.targetUrl,
+              authKey: updatedVirtualService.authKey
+            })
+          } catch (error) {
+            virtualServiceStore.setShowProcessCard(false)
+            console.log(error)
+          }
+          virtualServiceStore.setShowProcessCard(false)
+        }}
+      >
+        Update
+      </Button>
+    )
+  }
+
   return (
     <Box style={{ maxWidth: 700, padding: 24 }}>
       <Box>
@@ -70,7 +132,7 @@ const VirtualServiceDetailsCard = ({ virtualServiceId }) => {
           label='Name'
           variant='outlined'
           size='small'
-          value={virtualService ? virtualService.name : ''}
+          value={formFields ? formFields.name : ''}
           onChange={(event) => {
             if (viewMode !== 'CREATE') {
               return
@@ -150,7 +212,7 @@ const VirtualServiceDetailsCard = ({ virtualServiceId }) => {
                 </IconButton>
                 <IconButton
                   onClick={() =>
-                    showSecret((prevShowSecret) => !prevShowSecret)
+                    setShowSecret((prevShowSecret) => !prevShowSecret)
                   }
                 >
                   {showSecret ? <VisibilityOff /> : <Visibility />}
@@ -173,7 +235,7 @@ const VirtualServiceDetailsCard = ({ virtualServiceId }) => {
           </Box>
         </Fragment>
       ) : null}
-      {/* {this.props.actionButtons} */}
+      {viewMode === 'CREATE' ? _renderCreateButton() : _renderUpdateButton()}
     </Box>
   )
 }

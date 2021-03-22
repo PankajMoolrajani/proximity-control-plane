@@ -9,6 +9,7 @@ import ListIcon from '@material-ui/icons/List'
 import PageLayout from '../../components/PageLayout'
 import VirtualServiceListCard from '../virtual-services/components/VirtualServiceListCard.react'
 import VirtualServiceSingle from '../virtual-services/components/VirtualServiceSingle.react'
+import VirtualServiceDetailsCard from '../virtual-services/components/VirtualServiceDetailsCard.react'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { policyStore, virtualServiceStore, logStore } = stores
 
@@ -64,7 +65,8 @@ const VirtualServices = () => {
   }
 
   const _renderObjectHeader = () => {
-    const viewMode = virtualServiceStore.getShowObjectViewMode()
+    const selectedObject = virtualServiceStore.getSelectedObject()
+    const viewMode = selectedObject ? 'UPDATE' : 'CREAT'
     return (
       <Box>
         {viewMode === 'UPDATE' ? _renderSelectedObjectTitle() : _renderTitle()}
@@ -100,6 +102,7 @@ const VirtualServices = () => {
   return (
     <PageLayout title={_renderObjectHeader()} actionButtons={_renderButtons()}>
       <Switch>
+        <Route path={`${path}/create`} component={VirtualServiceDetailsCard} />
         <Route path={`${path}/:id`} component={VirtualServiceSingle} />
         <Route path={path} component={VirtualServiceListCard} />
       </Switch>
