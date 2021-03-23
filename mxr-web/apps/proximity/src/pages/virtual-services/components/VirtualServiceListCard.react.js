@@ -72,17 +72,7 @@ const VirtualServiceListCard = () => {
       rowsPerPageOptions={[10, 20, 50, 1000]}
       onSelectionChange={(e) => {
         const virtualService = e.value
-        push(`${path}/${virtualService.id}`)
-        // virtualServiceStore.setSelectedObject(virtualService)
-        // virtualServiceStore.setFormFields({
-        //   id: virtualService.id,
-        //   displayName: virtualService.displayName,
-        //   proximityUrl: virtualService.proximityUrl,
-        //   targetUrl: virtualService.targetUrl,
-        //   authKey: virtualService.authKey
-        // })
-        // virtualServiceStore.setShowObjectViewMode('UPDATE')
-        // virtualServiceStore.setShowObjectViewModeSecondary('DETAILS')
+        push(`${path}/${virtualService.id}`) 
       }}
       onPage={async (e) => {
         virtualServiceStore.setSearchPageNum(e.page)

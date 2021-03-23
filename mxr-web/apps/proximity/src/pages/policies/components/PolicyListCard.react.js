@@ -1,31 +1,24 @@
-import React, { Component } from 'react'
-import { observer } from 'mobx-react'
-import { withStyles } from '@material-ui/styles'
+import { useEffect } from 'react'
+import { observer } from 'mobx-react' 
+import { useHistory, useRouteMatch } from 'react-router-dom'
 import moment from 'moment'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import Box from '@material-ui/core/Box'
-import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
+import { Box } from '@material-ui/core'
+import PlatformLoaderCard from '../../../components/platform/PlatformLoaderCard.react'
 import {
   transformSortQuery,
   onSortQuery
-} from '/mxr-web/apps/proximity/src/libs/helpers/helper.lib'
-import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+} from '../../../libs/helpers/helper.lib'
+import stores from '../../../stores/proximity.store'
 const { policyStore } = stores
 
-const classes = {
-  tableHeadCell: {
-    fontSize: 16,
-    fontWeight: 700
-  },
-  tableCell: {
-    fontSize: 16,
-    fontWeight: 400
-  }
-}
+ 
+const PolicyListCard = () => { 
+  const { push } = useHistory()
+  const { path } = useRouteMatch()
 
-class PolicyListCard extends Component {
-  handleFetch = async () => {
+  const handleFetch = async () => {
     policyStore.setShowProcessCard(true)
     try {
       const policies = await policyStore.objectQuery([
@@ -41,13 +34,15 @@ class PolicyListCard extends Component {
     policyStore.setShowProcessCard(false)
   }
 
-  async componentDidMount() {
+  useEffect(() => {
     policyStore.setSearchPageObjectCount(10)
     policyStore.setSearchPageNum(0)
-    await this.handleFetch()
-  }
+    policyStore.setSelectedObject(null)
+    policyStore.setFormFields(null)
+    handleFetch()
+  }, []) 
 
-  render() {
+ 
     const showLoader = policyStore.getShowProcessCard()
     const policies = policyStore.getObjects()
     const sortQuery = policyStore.getSortQuery()
@@ -85,16 +80,7 @@ class PolicyListCard extends Component {
           rowsPerPageOptions={[10, 20, 50, 1000]}
           onSelectionChange={(e) => {
             const policy = e.value
-            policyStore.setSelectedObject(policy)
-            policyStore.setFormFields({
-              id: policy.id,
-              name: policy.name,
-              displayName: policy.displayName,
-              type: policy.type,
-              rules: policy.rules
-            })
-            policyStore.setShowObjectViewMode('UPDATE')
-            policyStore.setShowObjectViewModeSecondary('DETAILS')
+            push(`${path}/${policy.id}`)
           }}
           onPage={async (e) => {
             policyStore.setSearchPageNum(e.page)
@@ -132,8 +118,7 @@ class PolicyListCard extends Component {
           ></Column>
         </DataTable>
       </Box>
-    )
-  }
+    ) 
 }
 
-export default withStyles(classes)(observer(PolicyListCard))
+export default observer(PolicyListCard)

@@ -18,7 +18,6 @@ import VpnKeyIcon from '@material-ui/icons/VpnKey'
 import stores from '../../../stores/proximity.store'
 const { virtualServiceStore } = stores
 
-
 const VirtualServiceSingle = () => {
   const { path } = useRouteMatch()
   const { push } = useHistory()
@@ -26,11 +25,10 @@ const VirtualServiceSingle = () => {
   const viewMode = virtualServiceId ? 'UPDATE' : 'CREATE'
 
   useEffect(() => {
-
     return () => {
       virtualServiceStore.resetAllFields()
     }
-  },[])
+  }, [])
   return (
     <Box>
       {viewMode === 'UPDATE' ? (

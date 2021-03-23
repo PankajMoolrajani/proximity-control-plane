@@ -1,30 +1,34 @@
-import React, { Component } from 'react'
+import { useEffect, useState, Fragment } from 'react'
 import { observer } from 'mobx-react'
-import { withStyles } from '@material-ui/styles'
 import { v4 as uuid } from 'uuid'
 import {
   axiosInstance,
   axiosServiceInstance
-} from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
+} from '../../../libs/axios/axios.lib'
 import JSONPretty from 'react-json-pretty'
-import Box from '@material-ui/core/Box'
-import TextField from '@material-ui/core/TextField'
-import FormControl from '@material-ui/core/FormControl'
-import InputLabel from '@material-ui/core/InputLabel'
-import Select from '@material-ui/core/Select'
-import MenuItem from '@material-ui/core/MenuItem'
-import Button from '@material-ui/core/Button'
-import Grid from '@material-ui/core/Grid'
-import Divider from '@material-ui/core/Divider'
-import ButtonGroup from '@material-ui/core/ButtonGroup'
-import Switch from '@material-ui/core/Switch'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import IconButton from '@material-ui/core/IconButton'
+import {
+  Box,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Button,
+  Grid,
+  Divider,
+  Switch,
+  IconButton,
+  ButtonGroup
+} from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
 import VpnKeyIcon from '@material-ui/icons/VpnKey'
 import { Controlled as CodeMirror } from 'react-codemirror2'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
-import PolicyImpactAnalysisCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyImpactAnalysisCard.react'
-import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+import PlatformLoaderCard from '../../../components/platform/PlatformLoaderCard.react'
+import PlatformSuccessCard from '../../../components/platform/PlatformSuccessCard.react'
+import PolicyImpactAnalysisCard from './PolicyImpactAnalysisCard.react'
+import stores from '../../../stores/proximity.store'
+
 import 'codemirror-rego/mode'
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/addon/comment/comment'
@@ -32,9 +36,9 @@ import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror-rego/key-map'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/idea.css'
-import { toJS } from 'mobx'
-const { policyStore, virtualServiceStore } = stores
-const classes = {
+
+const { policyStore, virtualServiceStore, policyRevisionStore } = stores
+const useStyles = makeStyles((theme) => ({
   codeMirrorFull: {
     height: '500px',
     '& .CodeMirror': {
@@ -53,24 +57,77 @@ const classes = {
     fontSize: 18,
     fontWeight: 700
   }
-}
+}))
 
-export class PolicyDetailsCard extends Component {
-  state = {
-    opaInput: '',
-    opaOutput: '',
-    showEvaluateCard: true,
-    showImpactAnalysisCard: false,
-    selectedServices: []
+const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
+  const [opaInput, setOpaInput] = useState('')
+  const [opaOutput, setOpaOutput] = useState('')
+  const [showEvaluateCard, setShowEvaluateCard] = useState(true)
+  const [showImpactAnalysisCard, setShowImactAnalysisCard] = useState(false)
+  const [selectedServices, setSelectedServices] = useState([])
+  const classes = useStyles()
+  const showSuccess = policyStore.getShowSuccessCard()
+  const showLoader = policyStore.getShowProcessCard()
+  const formFields = policyStore.getFormFields()
+  const policy = policyStore.getSelectedObject()
+
+  const fetchPolicyById = async () => {
+    policyStore.setShowProcessCard(true)
+    try {
+      const policy = await policyStore.objectQueryById(policyId)
+      if (policy) {
+        policyStore.setSelectedObject(policy)
+        policyStore.setFormFields({
+          id: policy.id,
+          name: policy.name,
+          displayName: policy.displayName,
+          type: policy.type,
+          rules: policy.rules
+        })
+      }
+    } catch (error) {
+      policyStore.setShowProcessCard(false)
+      console.log(error)
+    }
+    policyStore.setShowProcessCard(false)
   }
 
-  handleEvaluate = async () => {
+  useEffect(() => {
+    if (policyId) {
+      fetchPolicyById()
+    } else {
+      policyStore.setFormFields({
+        name: '',
+        displayName: '',
+        type: '',
+        rules: ''
+      })
+      policyStore.setSelectedObject(null)
+    }
+  }, [policyId])
+
+  if (showSuccess) {
+    return (
+      <Box style={{ margin: 50 }}>
+        <PlatformSuccessCard iconColor='green' msg='Success !' />
+      </Box>
+    )
+  }
+  if (showLoader && (policy || formFields)) {
+    return (
+      <Box style={{ margin: 50 }}>
+        <PlatformLoaderCard />
+      </Box>
+    )
+  }
+
+  const handleEvaluate = async () => {
     const policy = policyStore.getFormFields()
     const response = await axiosServiceInstance.post(
       'opa/eval',
       {
         rules: policy.rules,
-        input: JSON.parse(this.state.opaInput)
+        input: JSON.parse(opaInput)
       },
       {
         headers: {
@@ -79,11 +136,11 @@ export class PolicyDetailsCard extends Component {
       }
     )
     if (response.status === 200) {
-      this.setState({ opaOutput: JSON.stringify(response.data) })
+      setOpaOutput(JSON.stringify(response.data))
     }
   }
 
-  isJson = (str) => {
+  const isJson = (str) => {
     try {
       JSON.parse(str)
     } catch (e) {
@@ -92,9 +149,9 @@ export class PolicyDetailsCard extends Component {
     return true
   }
 
-  _renderIOCard() {
+  const _renderIOCard = () => {
     return (
-      <React.Fragment>
+      <Fragment>
         <Box>
           <Box
             style={{
@@ -103,20 +160,20 @@ export class PolicyDetailsCard extends Component {
               alignItems: 'center'
             }}
           >
-            <Box className={this.props.classes.codeMirrorTitle}>Input</Box>
+            <Box className={classes.codeMirrorTitle}>Input</Box>
             <Button
               variant='contained'
               color='primary'
               startIcon={<PlayArrowIcon />}
               size='small'
-              onClick={this.handleEvaluate}
+              onClick={handleEvaluate}
             >
               Evaluate
             </Button>
           </Box>
           <CodeMirror
-            className={this.props.classes.codeMirrorHalf}
-            value={this.state.opaInput}
+            className={classes.codeMirrorHalf}
+            value={opaInput}
             options={{
               theme: 'idea',
               lineNumbers: true,
@@ -124,44 +181,42 @@ export class PolicyDetailsCard extends Component {
               mode: 'application/json'
             }}
             onBeforeChange={(editor, data, value) => {
-              this.setState({ opaInput: value })
+              setOpaInput(value)
             }}
             onChange={(editor, value) => {}}
           />
         </Box>
         <Box>
-          <Box className={this.props.classes.codeMirrorTitle}>Output</Box>
+          <Box className={classes.codeMirrorTitle}>Output</Box>
           <JSONPretty
             className='hideScroll'
             style={{ maxHeight: 200, overflowY: 'auto' }}
-            data={this.state.opaOutput}
+            data={opaOutput}
           ></JSONPretty>
         </Box>
-      </React.Fragment>
+      </Fragment>
     )
   }
 
-  _renderTabs() {
+  const _renderTabs = () => {
     return (
       <Box>
         <ButtonGroup size='medium' variant='text'>
           <Button
             style={{
-              fontWeight: this.state.showEvaluateCard ? 700 : 400,
+              fontWeight: showEvaluateCard ? 700 : 400,
               padding: '6px 15px'
             }}
             onClick={() => {
-              this.setState({
-                showEvaluateCard: true,
-                showImpactAnalysisCard: false
-              })
+              setShowEvaluateCard(true)
+              setShowImactAnalysisCard(false)
             }}
           >
             Evaluate
           </Button>
           <Button
             style={{
-              fontWeight: this.state.showImpactAnalysisCard ? 700 : 400,
+              fontWeight: showImpactAnalysisCard ? 700 : 400,
               padding: '6px 15px'
             }}
             onClick={() => {
@@ -169,10 +224,8 @@ export class PolicyDetailsCard extends Component {
               if (!policy.id) {
                 return
               }
-              this.setState({
-                showEvaluateCard: false,
-                showImpactAnalysisCard: true
-              })
+              setShowEvaluateCard(false)
+              setShowImactAnalysisCard(true)
             }}
           >
             Impact Analytsis
@@ -182,7 +235,7 @@ export class PolicyDetailsCard extends Component {
     )
   }
 
-  _renderPlayGround = () => {
+  const _renderPlayGround = () => {
     const formFields = policyStore.getFormFields()
     if (formFields.type !== 'AUTHZ') {
       return <Box></Box>
@@ -193,7 +246,7 @@ export class PolicyDetailsCard extends Component {
           <Grid item xs={6}>
             <Box>
               <CodeMirror
-                className={this.props.classes.codeMirrorFull}
+                className={classes.codeMirrorFull}
                 value={formFields.rules}
                 options={{
                   theme: 'idea',
@@ -220,12 +273,10 @@ export class PolicyDetailsCard extends Component {
             item
             xs={6}
           >
-            {this._renderTabs()}
+            {_renderTabs()}
             <Divider />
-            {this.state.showEvaluateCard ? this._renderIOCard() : null}
-            {this.state.showImpactAnalysisCard ? (
-              <PolicyImpactAnalysisCard />
-            ) : null}
+            {showEvaluateCard ? _renderIOCard() : null}
+            {showImpactAnalysisCard ? <PolicyImpactAnalysisCard /> : null}
           </Grid>
         </Grid>
         <Divider />
@@ -233,7 +284,7 @@ export class PolicyDetailsCard extends Component {
     )
   }
 
-  _renderWAFOps = () => {
+  const _renderWAFOps = () => {
     const formFields = policyStore.getFormFields()
     if (formFields.type !== 'WAF') {
       return <Box></Box>
@@ -374,7 +425,7 @@ export class PolicyDetailsCard extends Component {
     )
   }
 
-  _renderDynamicDefence = () => {
+  const _renderDynamicDefence = () => {
     const formFields = policyStore.getFormFields()
     if (formFields.type !== 'DYNAMIC') {
       return <Box></Box>
@@ -414,7 +465,7 @@ export class PolicyDetailsCard extends Component {
     )
   }
 
-  generateKey = async () => {
+  const generateKey = async () => {
     const formFields = policyStore.getFormFields()
     policyStore.setFormFields({
       ...formFields,
@@ -428,7 +479,7 @@ export class PolicyDetailsCard extends Component {
     })
   }
 
-  _renderAuthNConfig = () => {
+  const _renderAuthNConfig = () => {
     const formFields = policyStore.getFormFields()
     const type = JSON.parse(formFields.rules).type
     if (!type) {
@@ -525,8 +576,8 @@ export class PolicyDetailsCard extends Component {
                   endAdornment: (
                     <IconButton
                       aria-label='generate api key'
-                      onClick={this.generateKey}
-                      onMouseDown={this.generateKey}
+                      onClick={generateKey}
+                      onMouseDown={generateKey}
                     >
                       <VpnKeyIcon />
                     </IconButton>
@@ -545,7 +596,7 @@ export class PolicyDetailsCard extends Component {
     }
   }
 
-  _renderAuthN = () => {
+  const _renderAuthN = () => {
     const formFields = policyStore.getFormFields()
     if (formFields.type !== 'AUTHN') {
       return <Box></Box>
@@ -616,127 +667,203 @@ export class PolicyDetailsCard extends Component {
             </FormControl>
           </Box>
           <Box style={{ maxWidth: 700, marginTop: 20 }}>
-            {this._renderAuthNConfig()}
+            {_renderAuthNConfig()}
           </Box>
         </Box>
       </Box>
     )
   }
 
-  render() {
-    const formFields = policyStore.getFormFields()
-    const policy = policyStore.getSelectedObject()
-    const viewMode = policyStore.getShowObjectViewMode()
-    let policyName
-    if (viewMode === 'CREATE') {
-      policyName = formFields.name ? formFields.name : ''
-    }
-
-    if (viewMode === 'UPDATE') {
-      policyName = policy.name ? policy.name : ''
-    }
-
+  const _renderCreateButton = () => {
     return (
-      <Box
+      <Button
+        variant='contained'
+        color='primary'
         style={{
-          padding: 24,
-          marginBottom: 40
+          marginRight: 20
+        }}
+        onClick={async () => {
+          policyStore.setShowProcessCard(true)
+          try {
+            const createdPolicy = await policyStore.objectCreate()
+            policyRevisionStore.setFormFields({
+              name: createdPolicy.name,
+              displayName: createdPolicy.displayName,
+              type: createdPolicy.type,
+              rules: createdPolicy.rules,
+              PolicyId: createdPolicy.id
+            })
+            const createdPolicyRevision = await policyRevisionStore.objectCreate()
+            policyStore.setShowProcessCard(false)
+            policyStore.setShowSuccessCard(true)
+            await new Promise((res) => setTimeout(res, 2000))
+            policyStore.setShowSuccessCard(false)
+            policyStore.resetAllFields()
+            policyRevisionStore.resetAllFields()
+          } catch (error) {
+            console.log('Error: Creating Policy', error)
+          }
+          policyStore.setShowProcessCard(false)
         }}
       >
-        <Box style={{ maxWidth: 700 }}>
-          <TextField
-            fullWidth
-            label='Name'
-            variant='outlined'
-            size='small'
-            value={policyName ? policyName : ''}
+        Create
+      </Button>
+    )
+  }
+
+  const _renderUdateButton = () => {
+    return (
+      <Button
+        variant='contained'
+        color='primary'
+        style={{
+          marginRight: 20
+        }}
+        onClick={async () => {
+          policyStore.setShowProcessCard(true)
+          try {
+            const updatedPolicy = await policyStore.objectUpdate()
+            policyRevisionStore.setFormFields({
+              name: updatedPolicy.name,
+              displayName: updatedPolicy.displayName,
+              type: updatedPolicy.type,
+              rules: updatedPolicy.rules,
+              PolicyId: updatedPolicy.id
+            })
+            const createdPolicyRevision = await policyRevisionStore.objectCreate()
+            policyStore.setSelectedObject(updatedPolicy)
+            policyStore.setShowProcessCard(false)
+            policyStore.setShowSuccessCard(true)
+            await new Promise((res) => setTimeout(res, 2000))
+            policyStore.setShowSuccessCard(false)
+          } catch (error) {
+            console.log('Error: Updating Policy', error)
+          }
+          policyStore.setShowProcessCard(false)
+        }}
+      >
+        Update
+      </Button>
+    )
+  }
+  console.log(policy, formFields)
+  const viewMode = policy.id ? 'CREATE' : 'UPDATE'
+  let policyName
+  if (viewMode === 'CREATE') {
+    policyName = formFields.name ? formFields.name : ''
+  }
+
+  if (viewMode === 'UPDATE') {
+    policyName = policy.name ? policy.name : ''
+  }
+
+  return (
+    <Box
+      style={{
+        padding: 24,
+        marginBottom: 40
+      }}
+    >
+      <Box style={{ maxWidth: 700 }}>
+        <TextField
+          fullWidth
+          label='Name'
+          variant='outlined'
+          size='small'
+          value={policyName ? policyName : ''}
+          onChange={(event) => {
+            if (viewMode !== 'CREATE') {
+              return
+            }
+            policyStore.setFormFields({
+              ...formFields,
+              name: event.target.value
+            })
+          }}
+        />
+      </Box>
+      <Box style={{ maxWidth: 700, marginTop: 20 }}>
+        <TextField
+          fullWidth
+          label='Display name'
+          variant='outlined'
+          size='small'
+          value={formFields.displayName ? formFields.displayName : ''}
+          onChange={(event) => {
+            policyStore.setFormFields({
+              ...formFields,
+              displayName: event.target.value
+            })
+          }}
+        />
+      </Box>
+      <Box style={{ maxWidth: 700, marginTop: 20 }}>
+        <FormControl fullWidth variant='outlined' size='small'>
+          <InputLabel id='policy-lable-id'>Type</InputLabel>
+          <Select
+            ref={null}
+            labelId='policy-lable-id'
+            label='Type'
+            value={formFields.type ? formFields.type : ''}
             onChange={(event) => {
-              if (viewMode !== 'CREATE') {
-                return
+              let rules
+              switch (event.target.value) {
+                case 'AUTHN':
+                  rules = JSON.stringify({
+                    type: 'BASIC',
+                    authData: {
+                      key: ''
+                    }
+                  })
+                  break
+                case 'AUTHZ':
+                  rules = ''
+                  break
+                case 'WAF':
+                  rules = JSON.stringify({
+                    sql_injection_enabled: true,
+                    local_file_inclusion: true,
+                    shell_injection_enabled: true,
+                    shell_shock_enabled: true
+                  })
+                  break
+                case 'DYNAMIC':
+                  rules = JSON.stringify({
+                    dynamic_defence_enabled: true
+                  })
+                  break
+                default:
+                  rules = ''
               }
               policyStore.setFormFields({
                 ...formFields,
-                name: event.target.value
+                type: event.target.value,
+                rules: rules
               })
             }}
-          />
-        </Box>
-        <Box style={{ maxWidth: 700, marginTop: 20 }}>
-          <TextField
-            fullWidth
-            label='Display name'
-            variant='outlined'
-            size='small'
-            value={formFields.displayName ? formFields.displayName : ''}
-            onChange={(event) => {
-              policyStore.setFormFields({
-                ...formFields,
-                displayName: event.target.value
-              })
-            }}
-          />
-        </Box>
-        <Box style={{ maxWidth: 700, marginTop: 20 }}>
-          <FormControl fullWidth variant='outlined' size='small'>
-            <InputLabel id='policy-lable-id'>Type</InputLabel>
-            <Select
-              ref={null}
-              labelId='policy-lable-id'
-              label='Type'
-              value={formFields.type ? formFields.type : ''}
-              onChange={(event) => {
-                let rules
-                switch (event.target.value) {
-                  case 'AUTHN':
-                    rules = JSON.stringify({
-                      type: 'BASIC',
-                      authData: {
-                        key: ''
-                      }
-                    })
-                    break
-                  case 'AUTHZ':
-                    rules = ''
-                    break
-                  case 'WAF':
-                    rules = JSON.stringify({
-                      sql_injection_enabled: true,
-                      local_file_inclusion: true,
-                      shell_injection_enabled: true,
-                      shell_shock_enabled: true
-                    })
-                    break
-                  case 'DYNAMIC':
-                    rules = JSON.stringify({
-                      dynamic_defence_enabled: true
-                    })
-                    break
-                  default:
-                    rules = ''
-                }
-                policyStore.setFormFields({
-                  ...formFields,
-                  type: event.target.value,
-                  rules: rules
-                })
-              }}
-            >
-              <MenuItem value='AUTHN'>AUTHN</MenuItem>
-              <MenuItem value='AUTHZ'>AUTHZ</MenuItem>
-              <MenuItem value='WAF'>WAF</MenuItem>
-              <MenuItem value='DYNAMIC'>DYNAMIC</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-        {this.props.actionButtons}
-        <Divider style={{ marginTop: 20 }} />
-        {this._renderAuthN()}
-        {this._renderPlayGround()}
-        {this._renderWAFOps()}
-        {this._renderDynamicDefence()}
+          >
+            <MenuItem value='AUTHN'>AUTHN</MenuItem>
+            <MenuItem value='AUTHZ'>AUTHZ</MenuItem>
+            <MenuItem value='WAF'>WAF</MenuItem>
+            <MenuItem value='DYNAMIC'>DYNAMIC</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
-    )
-  }
+      {!hideOpsButton ? (
+        <Fragment>
+          {viewMode === 'CREATE' ? _renderCreateButton() : _renderUdateButton()}
+        </Fragment>
+      ) : (
+        ''
+      )}
+
+      <Divider style={{ marginTop: 20 }} />
+      {_renderAuthN()}
+      {_renderPlayGround()}
+      {_renderWAFOps()}
+      {_renderDynamicDefence()}
+    </Box>
+  )
 }
 
-export default withStyles(classes)(observer(PolicyDetailsCard))
+export default observer(PolicyDetailsCard)
