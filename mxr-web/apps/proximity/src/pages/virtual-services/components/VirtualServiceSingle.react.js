@@ -5,7 +5,8 @@ import {
   Route,
   useRouteMatch,
   useParams,
-  useHistory
+  useHistory,
+  useLocation
 } from 'react-router-dom'
 import { Box, Button, Divider } from '@material-ui/core'
 import VirtualServiceDetailsCard from './VirtualServiceDetailsCard.react'
@@ -22,6 +23,7 @@ const VirtualServiceSingle = () => {
   const { path } = useRouteMatch()
   const { push } = useHistory()
   const { id: virtualServiceId } = useParams()
+  const { pathname } = useLocation()
   const viewMode = virtualServiceId ? 'UPDATE' : 'CREATE'
 
   useEffect(() => {
@@ -42,7 +44,10 @@ const VirtualServiceSingle = () => {
             <Button
               onClick={() => push(`/virtual-services/${virtualServiceId}`)}
               style={{
-                fontWeight: 400,
+                fontWeight:
+                  path.replace(':id', virtualServiceId) === pathname
+                    ? 600
+                    : 400,
                 marginRight: 10,
                 paddingLeft: 0
               }}
@@ -54,7 +59,7 @@ const VirtualServiceSingle = () => {
                 push(`/virtual-services/${virtualServiceId}/deploy`)
               }
               style={{
-                fontWeight: 400,
+                fontWeight: pathname.includes('deploy') ? 600 : 400,
                 marginRight: 10,
                 paddingLeft: 0
               }}
@@ -66,7 +71,7 @@ const VirtualServiceSingle = () => {
                 push(`/virtual-services/${virtualServiceId}/policies`)
               }
               style={{
-                fontWeight: 400,
+                fontWeight: pathname.includes('policies') ? 600 : 400,
                 marginRight: 10,
                 paddingLeft: 0
               }}
@@ -78,7 +83,7 @@ const VirtualServiceSingle = () => {
                 push(`/virtual-services/${virtualServiceId}/access-logs`)
               }
               style={{
-                fontWeight: 400,
+                fontWeight: pathname.includes('access-logs') ? 600 : 400,
                 marginRight: 10,
                 paddingLeft: 0
               }}
@@ -90,7 +95,7 @@ const VirtualServiceSingle = () => {
                 push(`/virtual-services/${virtualServiceId}/decision-logs`)
               }
               style={{
-                fontWeight: 400,
+                fontWeight: pathname.includes('decision-logs') ? 600 : 400,
                 marginRight: 10,
                 paddingLeft: 0
               }}
@@ -102,7 +107,7 @@ const VirtualServiceSingle = () => {
                 push(`/virtual-services/${virtualServiceId}/health-monitor`)
               }
               style={{
-                fontWeight: 400,
+                fontWeight: pathname.includes('health-monitor') ? 600 : 400,
                 marginRight: 10,
                 paddingLeft: 0
               }}

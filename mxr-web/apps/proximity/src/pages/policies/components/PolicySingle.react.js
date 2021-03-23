@@ -5,11 +5,13 @@ import {
   Route,
   useRouteMatch,
   useParams,
-  useHistory
+  useHistory,
+  useLocation
 } from 'react-router-dom'
-import { Box, Button, Divider } from '@material-ui/core' 
-import VpnKeyIcon from '@material-ui/icons/VpnKey'
+import { Box, Button, Divider } from '@material-ui/core'
 import PolicyDetailsCard from './PolicyDetailsCard.react'
+import PolicyRevisionsCard from './PolicyRevisionsCard.react'
+import PolicyDecisionLogsCard from './PolicyDecisionLogsCard.react'
 import stores from '../../../stores/proximity.store'
 const { policyStore } = stores
 
@@ -17,6 +19,7 @@ const PolicySingle = () => {
   const { path } = useRouteMatch()
   const { push } = useHistory()
   const { id: policyId } = useParams()
+  const { pathname } = useLocation()
   const viewMode = policyId ? 'UPDATE' : 'CREATE'
 
   useEffect(() => {
@@ -38,7 +41,8 @@ const PolicySingle = () => {
             <Button
               onClick={() => push(`/policies/${policyId}`)}
               style={{
-                fontWeight: 400,
+                fontWeight:
+                  path.replace(':id', policyId) === pathname ? 600 : 400,
                 marginRight: 10,
                 paddingLeft: 0
               }}
@@ -46,11 +50,9 @@ const PolicySingle = () => {
               Details
             </Button>
             <Button
-              onClick={() =>
-                push(`/policies/${policyId}/revisions`)
-              }
+              onClick={() => push(`/policies/${policyId}/revisions`)}
               style={{
-                fontWeight: 400,
+                fontWeight: pathname.includes('revisions') ? 600 : 400,
                 marginRight: 10,
                 paddingLeft: 0
               }}
@@ -58,22 +60,26 @@ const PolicySingle = () => {
               Revisions
             </Button>
             <Button
-              onClick={() =>
-                push(`/policies/${policyId}/decision-logs`)
-              }
+              onClick={() => push(`/policies/${policyId}/decision-logs`)}
               style={{
-                fontWeight: 400,
+                fontWeight: pathname.includes('decision-logs') ? 600 : 400,
                 marginRight: 10,
                 paddingLeft: 0
               }}
             >
               Decision Logs
-            </Button> 
+            </Button>
           </Box>
           <Divider />
         </Fragment>
       ) : null}
-      <Switch> 
+      <Switch>
+        <Route path={`${path}/decision-logs`}>
+          <PolicyDecisionLogsCard policyId={policyId} />
+        </Route>
+        <Route path={`${path}/revisions`}>
+          <PolicyRevisionsCard policyId={policyId} />
+        </Route>
         <Route path={path}>
           <PolicyDetailsCard policyId={policyId} />
         </Route>

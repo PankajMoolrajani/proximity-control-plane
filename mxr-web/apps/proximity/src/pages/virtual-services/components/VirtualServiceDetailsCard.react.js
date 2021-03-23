@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from 'react'
 import { observer } from 'mobx-react'
 import { v4 as uuid } from 'uuid'
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import {
   Box,
   TextField,
@@ -23,6 +23,7 @@ const VirtualServiceDetailsCard = ({ virtualServiceId }) => {
   const virtualService = virtualServiceStore.getSelectedObject()
   const viewMode = virtualServiceId ? 'UPDATE' : 'CREATE'
   const showLoader = virtualServiceStore.getShowProcessCard()
+
   const fetchVirtualSeviceById = async () => {
     virtualServiceStore.setShowProcessCard(true)
     try {
@@ -62,7 +63,7 @@ const VirtualServiceDetailsCard = ({ virtualServiceId }) => {
     }
   }, [virtualServiceId])
 
-  if (showLoader && (virtualService || formFields)) {
+  if (showLoader && (!virtualService || !formFields)) {
     return (
       <Box style={{ margin: 50 }}>
         <PlatformLoaderCard />

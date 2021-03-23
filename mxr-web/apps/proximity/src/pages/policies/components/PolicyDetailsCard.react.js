@@ -5,6 +5,7 @@ import {
   axiosInstance,
   axiosServiceInstance
 } from '../../../libs/axios/axios.lib'
+import { useHistory } from 'react-router-dom'
 import JSONPretty from 'react-json-pretty'
 import {
   Box,
@@ -38,6 +39,7 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/idea.css'
 
 const { policyStore, virtualServiceStore, policyRevisionStore } = stores
+
 const useStyles = makeStyles((theme) => ({
   codeMirrorFull: {
     height: '500px',
@@ -64,17 +66,23 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
   const [opaOutput, setOpaOutput] = useState('')
   const [showEvaluateCard, setShowEvaluateCard] = useState(true)
   const [showImpactAnalysisCard, setShowImactAnalysisCard] = useState(false)
+  const { push } = useHistory()
   const [selectedServices, setSelectedServices] = useState([])
   const classes = useStyles()
   const showSuccess = policyStore.getShowSuccessCard()
   const showLoader = policyStore.getShowProcessCard()
   const formFields = policyStore.getFormFields()
   const policy = policyStore.getSelectedObject()
+  const viewMode = policyId ? 'UPDATE' : 'CREATE'
 
   const fetchPolicyById = async () => {
     policyStore.setShowProcessCard(true)
     try {
-      const policy = await policyStore.objectQueryById(policyId)
+      const policy = await policyStore.objectQueryById(policyId, [
+        {
+          model: 'PolicyRevision'
+        }
+      ])
       if (policy) {
         policyStore.setSelectedObject(policy)
         policyStore.setFormFields({
@@ -113,12 +121,21 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
       </Box>
     )
   }
-  if (showLoader && (policy || formFields)) {
+  if (showLoader || (!policy && !formFields)) {
     return (
       <Box style={{ margin: 50 }}>
         <PlatformLoaderCard />
       </Box>
     )
+  }
+
+  let policyName
+  if (viewMode === 'CREATE') {
+    policyName = formFields ? formFields.name : ''
+  }
+
+  if (viewMode === 'UPDATE') {
+    policyName = policy ? policy.name : ''
   }
 
   const handleEvaluate = async () => {
@@ -320,7 +337,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
             color='primary'
             checked={
               formFields.rules &&
-              this.isJson(formFields.rules) &&
+              isJson(formFields.rules) &&
               JSON.parse(formFields.rules).sql_injection_enabled
                 ? JSON.parse(formFields.rules).sql_injection_enabled
                 : false
@@ -348,7 +365,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
             color='primary'
             checked={
               formFields.rules &&
-              this.isJson(formFields.rules) &&
+              isJson(formFields.rules) &&
               JSON.parse(formFields.rules).local_file_inclusion
                 ? JSON.parse(formFields.rules).local_file_inclusion
                 : false
@@ -376,7 +393,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
             color='primary'
             checked={
               formFields.rules &&
-              this.isJson(formFields.rules) &&
+              isJson(formFields.rules) &&
               JSON.parse(formFields.rules).shell_injection_enabled
                 ? JSON.parse(formFields.rules).shell_injection_enabled
                 : false
@@ -404,7 +421,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
             color='primary'
             checked={
               formFields.rules &&
-              this.isJson(formFields.rules) &&
+              isJson(formFields.rules) &&
               JSON.parse(formFields.rules).shell_shock_enabled
                 ? JSON.parse(formFields.rules).shell_shock_enabled
                 : false
@@ -444,7 +461,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
             color='primary'
             checked={
               formFields.rules &&
-              this.isJson(formFields.rules) &&
+              isJson(formFields.rules) &&
               JSON.parse(formFields.rules).dynamic_defence_enabled
                 ? JSON.parse(formFields.rules).dynamic_defence_enabled
                 : false
@@ -498,7 +515,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
                 size='small'
                 value={
                   formFields.rules &&
-                  this.isJson(formFields.rules) &&
+                  isJson(formFields.rules) &&
                   JSON.parse(formFields.rules).authData &&
                   JSON.parse(formFields.rules).authData.username
                     ? JSON.parse(formFields.rules).authData.username
@@ -531,7 +548,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
                 type='password'
                 value={
                   formFields.rules &&
-                  this.isJson(formFields.rules) &&
+                  isJson(formFields.rules) &&
                   JSON.parse(formFields.rules).authData &&
                   JSON.parse(formFields.rules).authData.password
                     ? JSON.parse(formFields.rules).authData.password
@@ -565,7 +582,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
                 size='small'
                 value={
                   formFields.rules &&
-                  this.isJson(formFields.rules) &&
+                  isJson(formFields.rules) &&
                   JSON.parse(formFields.rules).authData &&
                   JSON.parse(formFields.rules).authData.apiKey
                     ? JSON.parse(formFields.rules).authData.apiKey
@@ -619,7 +636,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
                 label='Auth Type'
                 value={
                   formFields.rules &&
-                  this.isJson(formFields.rules) &&
+                  isJson(formFields.rules) &&
                   JSON.parse(formFields.rules).type
                     ? JSON.parse(formFields.rules).type
                     : ''
@@ -700,6 +717,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
             policyStore.setShowSuccessCard(false)
             policyStore.resetAllFields()
             policyRevisionStore.resetAllFields()
+            push('/policies')
           } catch (error) {
             console.log('Error: Creating Policy', error)
           }
@@ -731,7 +749,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
               PolicyId: updatedPolicy.id
             })
             const createdPolicyRevision = await policyRevisionStore.objectCreate()
-            policyStore.setSelectedObject(updatedPolicy)
+            await fetchPolicyById()
             policyStore.setShowProcessCard(false)
             policyStore.setShowSuccessCard(true)
             await new Promise((res) => setTimeout(res, 2000))
@@ -745,16 +763,6 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
         Update
       </Button>
     )
-  }
-  console.log(policy, formFields)
-  const viewMode = policy.id ? 'CREATE' : 'UPDATE'
-  let policyName
-  if (viewMode === 'CREATE') {
-    policyName = formFields.name ? formFields.name : ''
-  }
-
-  if (viewMode === 'UPDATE') {
-    policyName = policy.name ? policy.name : ''
   }
 
   return (
@@ -788,7 +796,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
           label='Display name'
           variant='outlined'
           size='small'
-          value={formFields.displayName ? formFields.displayName : ''}
+          value={formFields ? formFields.displayName : ''}
           onChange={(event) => {
             policyStore.setFormFields({
               ...formFields,
@@ -804,7 +812,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
             ref={null}
             labelId='policy-lable-id'
             label='Type'
-            value={formFields.type ? formFields.type : ''}
+            value={formFields ? formFields.type : ''}
             onChange={(event) => {
               let rules
               switch (event.target.value) {
@@ -850,9 +858,9 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
         </FormControl>
       </Box>
       {!hideOpsButton ? (
-        <Fragment>
+        <Box my={2}>
           {viewMode === 'CREATE' ? _renderCreateButton() : _renderUdateButton()}
-        </Fragment>
+        </Box>
       ) : (
         ''
       )}

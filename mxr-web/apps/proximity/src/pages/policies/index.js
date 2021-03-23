@@ -6,9 +6,10 @@ import AddIcon from '@material-ui/icons/Add'
 import PolicyIcon from '@material-ui/icons/Policy'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import ListIcon from '@material-ui/icons/List'
-import PageLayout from '../../components/PageLayout' 
+import PageLayout from '../../components/PageLayout'
 import PolicyListCard from './components/PolicyListCard.react'
 import PolicySingle from './components/PolicySingle.react'
+import PolicyDetailsCard from './components/PolicyDetailsCard.react'
 import stores from '../../stores/proximity.store'
 const { policyStore, virtualServiceStore, logStore } = stores
 
@@ -41,6 +42,13 @@ const Policies = () => {
 
   const _renderSelectedObjectTitle = () => {
     const selectedObject = policyStore.getSelectedObject()
+    let lastPolicyRevision
+    if (selectedObject.PolicyRevisions) {
+      const policyRevisions = JSON.parse(
+        JSON.stringify(selectedObject.PolicyRevisions)
+      )
+      lastPolicyRevision = policyRevisions.reverse()[0]
+    }
     return (
       <Box
         style={{
@@ -58,6 +66,12 @@ const Policies = () => {
         </Box>
         <Box>
           <Box style={{ fontSize: 20 }}>{selectedObject.name}</Box>
+          <Box style={{ marginTop: 5, fontSize: 14 }}>
+            <b>REVISION:</b> rev-
+            {lastPolicyRevision
+              ? lastPolicyRevision.id.split('-').reverse()[0]
+              : ''}
+          </Box>
         </Box>
       </Box>
     )
@@ -101,7 +115,7 @@ const Policies = () => {
   return (
     <PageLayout title={_renderObjectHeader()} actionButtons={_renderButtons()}>
       <Switch>
-        <Route path={`${path}/create`} component={() => <div>Create</div>} />
+        <Route path={`${path}/create`} component={PolicyDetailsCard} />
         <Route path={`${path}/:id`} component={PolicySingle} />
         <Route path={path} component={PolicyListCard} />
       </Switch>

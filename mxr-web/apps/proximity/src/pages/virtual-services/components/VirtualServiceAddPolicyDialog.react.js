@@ -13,7 +13,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 import CloseIcon from '@material-ui/icons/Close'
 // import { createPolicyProximityDp } from '../../../libs/helpers/helper.lib'
-// import PolicyStdObjCard from '../../policies/components/PolicyStdObjCard.react'
+import PolicyDetailsCard from '../../policies/components/PolicyDetailsCard.react'
 import stores from '../../../stores/proximity.store'
 const {
   virtualServiceStore,
@@ -148,7 +148,7 @@ const VirtualServiceAddPolicyDialog = (props) => {
           </Button>
         </Toolbar>
       </AppBar>
-      <Box>{/* <PolicyStdObjCard hideOpsButton hideTabs /> */}</Box>
+      <Box>{<PolicyDetailsCard hideOpsButton hideTabs />}</Box>
     </Dialog>
   )
 }

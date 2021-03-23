@@ -72,7 +72,7 @@ const VirtualServiceListCard = () => {
       rowsPerPageOptions={[10, 20, 50, 1000]}
       onSelectionChange={(e) => {
         const virtualService = e.value
-        push(`${path}/${virtualService.id}`) 
+        push(`${path}/${virtualService.id}`)
       }}
       onPage={async (e) => {
         virtualServiceStore.setSearchPageNum(e.page)
