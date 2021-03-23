@@ -63,7 +63,7 @@ const VirtualServiceDetailsCard = ({ virtualServiceId }) => {
     }
   }, [virtualServiceId])
 
-  if (showLoader && (!virtualService || !formFields)) {
+  if (showLoader || (!virtualService && !formFields)) {
     return (
       <Box style={{ margin: 50 }}>
         <PlatformLoaderCard />

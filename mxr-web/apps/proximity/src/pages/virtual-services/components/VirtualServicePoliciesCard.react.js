@@ -225,9 +225,9 @@ const VirtualServicePoliciesCard = ({ virtualServiceId }) => {
                       try {
                         const selectedPolicy = policyStore.getSelectedObject()
                         const createdVirtualServicePolicyRevision = await virtualServicePolicyRevisionStore.objectCreate()
-                        // await createPolicyProximityDp(
-                        //   createdVirtualServicePolicyRevision.PolicyRevisionId
-                        // )
+                        await createPolicyProximityDp(
+                          createdVirtualServicePolicyRevision.PolicyRevisionId
+                        )
                         virtualServiceStore.setShowProcessCard(false)
                         virtualServiceStore.setShowSuccessCard(true)
                         await new Promise((res) => setTimeout(res, 2000))

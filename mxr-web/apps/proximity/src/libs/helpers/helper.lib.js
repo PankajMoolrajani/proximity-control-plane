@@ -38,7 +38,7 @@ export const onSortQuery = (sortQuery, e) => {
 export const createPolicyProximityDp = async (policyRevisionId) => {
   const selectedVirtualService = virtualServiceStore.getSelectedObject()
   const virtualServiceBaseUrl = new URL(selectedVirtualService.proximityUrl)
-    .origin
+    .href
 
   //Check if service is deployed
   const healthCheckResponse = await axios.get(`${virtualServiceBaseUrl}/health`)
@@ -59,7 +59,7 @@ export const createPolicyProximityDp = async (policyRevisionId) => {
       }
     }
     const createdPolicyProximityDp = await axios.post(
-      `${virtualServiceBaseUrl}/policy/create-policy`,
+      `${virtualServiceBaseUrl}/create-policy`,
       policyRevisionDp
     )
   }

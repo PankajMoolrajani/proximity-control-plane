@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import CloseIcon from '@material-ui/icons/Close'
-// import { createPolicyProximityDp } from '../../../libs/helpers/helper.lib'
+import { createPolicyProximityDp } from '../../../libs/helpers/helper.lib'
 import PolicyDetailsCard from '../../policies/components/PolicyDetailsCard.react'
 import stores from '../../../stores/proximity.store'
 const {
@@ -118,7 +118,7 @@ const VirtualServiceAddPolicyDialog = (props) => {
                     enforcementMode: existingVSPolicymap.enforcementMode
                   })
                   await virtualServicePolicyRevisionStore.objectUpdate()
-                  // await createPolicyProximityDp(createdPolicyRevision.id)
+                  await createPolicyProximityDp(createdPolicyRevision.id)
                 }
                 policyStore.setShowSuccessCard(true)
                 await new Promise((res) => setTimeout(res, 2000))
@@ -148,7 +148,9 @@ const VirtualServiceAddPolicyDialog = (props) => {
           </Button>
         </Toolbar>
       </AppBar>
-      <Box>{<PolicyDetailsCard hideOpsButton hideTabs />}</Box>
+      <Box>
+        {<PolicyDetailsCard hideOpsButton hideTabs policyId={formFields.id} />}
+      </Box>
     </Dialog>
   )
 }
