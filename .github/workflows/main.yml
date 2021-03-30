@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Push mxr-web image to registry.digitalocean.com
+name: Push mxr-web image to mxr registry.digitalocean.com
 
 # Controls when the action will run. 
 on:
