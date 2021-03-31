@@ -11,21 +11,21 @@ import {
   transformSortQuery,
   onSortQuery
 } from '../../../libs/helpers/helper.lib'
-const { policyStore, logStore } = stores
+const { virtualServiceStore, logStore } = stores
 
-const PolicyDecisionLogs = ({ policyId }) => {
+const VirtualServiceAccessLogsCard = ({ virtualServiceId }) => {
   const [expandedRows, setExpandedRows] = useState(false)
 
   const handleFetch = async () => {
-    const policy = policyStore.getSelectedObject()
-    if (!policy) {
+    const virtualService = virtualServiceStore.getSelectedObject()
+    if (!virtualService) {
       return
     }
     logStore.setShowProcessCard(true)
     try {
       logStore.setSearchQuery({
-        PolicyId: policy.id,
-        type: 'PROXIMITY_DECISION_LOG'
+        VirtualServiceId: virtualService.id,
+        type: 'PROXIMITY_ACCESS_LOG'
       })
       const logs = await logStore.objectQuery()
       logStore.setSearchResultsObjectCount(logs.count)
@@ -36,40 +36,30 @@ const PolicyDecisionLogs = ({ policyId }) => {
     logStore.setShowProcessCard(false)
   }
 
-  const fetchPolicyById = async () => {
-    policyStore.setShowProcessCard(true)
+  const fetchVirtualSeviceById = async () => {
+    virtualServiceStore.setShowProcessCard(true)
     try {
-      const policy = await policyStore.objectQueryById(policyId, [
-        {
-          model: 'PolicyRevision'
-        }
-      ])
-      if (policy) {
-        policyStore.setSelectedObject(policy)
-        policyStore.setFormFields({
-          id: policy.id,
-          name: policy.name,
-          displayName: policy.displayName,
-          type: policy.type,
-          rules: policy.rules
-        })
+      const virtualService = await virtualServiceStore.objectQueryById(
+        virtualServiceId
+      )
+      if (virtualService) {
+        virtualServiceStore.setSelectedObject(virtualService)
       }
     } catch (error) {
-      policyStore.setShowProcessCard(false)
+      virtualServiceStore.setShowProcessCard(false)
       console.log(error)
     }
-    policyStore.setShowProcessCard(false)
+    virtualServiceStore.setShowProcessCard(false)
   }
 
   useEffect(() => {
     const initFetch = async () => {
-      await fetchPolicyById()
+      await fetchVirtualSeviceById()
       logStore.setSearchPageObjectCount(10)
       logStore.setSearchPageNum(0)
       await handleFetch()
     }
     initFetch()
-
     return () => {
       logStore.resetAllFields()
     }
@@ -108,7 +98,6 @@ const PolicyDecisionLogs = ({ policyId }) => {
     return <Box style={{ textAlign: 'center' }}>No Content</Box>
   }
   let sortQueryTransformed = transformSortQuery(sortQuery)
-
   return (
     <DataTable
       className='p-datatable-striped p-datatable-hovered'
@@ -144,38 +133,8 @@ const PolicyDecisionLogs = ({ policyId }) => {
       paginator
     >
       <Column expander style={{ width: '3em' }} />
-      <Column
-        field='policyName'
-        header='Policy'
-        body={(log) =>
-          log.data.policyName ? log.data.policyName : 'Decision Log'
-        }
-      ></Column>
-      <Column
-        field='type'
-        header='Type'
-        body={(log) => (log.data.type ? log.data.type : '')}
-      ></Column>
-      <Column
-        field='revision'
-        header='Revision'
-        body={(log) =>
-          log.PolicyRevisionId
-            ? `rev-${log.PolicyRevisionId.split('-').reverse()[0]}`
-            : ''
-        }
-      ></Column>
-      <Column
-        field='decision'
-        header='Decision'
-        body={(log) =>
-          log.data.decision
-            ? log.data.decision.allow
-              ? 'ALLOWED'
-              : 'DEINED'
-            : 'NA'
-        }
-      ></Column>
+      <Column field='log' header='Log' body={(log) => 'Access Log'}></Column>
+
       <Column
         field='createdAt'
         header='Time Stamp'
@@ -186,4 +145,4 @@ const PolicyDecisionLogs = ({ policyId }) => {
   )
 }
 
-export default observer(PolicyDecisionLogs)
+export default observer(VirtualServiceAccessLogsCard)

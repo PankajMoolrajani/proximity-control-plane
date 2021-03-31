@@ -1,25 +1,29 @@
-import React, { Component } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { observer } from 'mobx-react'
 import moment from 'moment'
-import { DataTable } from 'primereact/datatable'
-import { Column } from 'primereact/column'
-import Box from '@material-ui/core/Box'
-import Button from '@material-ui/core/Button'
-import Divider from '@material-ui/core/Divider'
-import Typography from '@material-ui/core/Typography'
-import TextField from '@material-ui/core/TextField'
-import FormControl from '@material-ui/core/FormControl'
-import InputLabel from '@material-ui/core/InputLabel'
-import Select from '@material-ui/core/Select'
-import MenuItem from '@material-ui/core/MenuItem'
+import {
+  Box,
+  Button,
+  Divider,
+  Typography,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  CircularProgress
+} from '@material-ui/core'
+
 import { Autocomplete } from '@material-ui/lab'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import AddIcon from '@material-ui/icons/Add'
 import PolicyIcon from '@material-ui/icons/Policy'
+import { DataTable } from 'primereact/datatable'
+import { Column } from 'primereact/column'
 import { createPolicyProximityDp } from '/mxr-web/apps/proximity/src/libs/helpers/helper.lib'
-import PlatfromPopUpCard from '/mxr-web/apps/proximity/src/components/platform/PlatfromPopUpCard.react'
-import VirtualServiceAddPolicyDialog from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceAddPolicyDialog.react'
-import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+import PlatfromPopUpCard from '../../../components/platform/PlatfromPopUpCard.react'
+import VirtualServiceAddPolicyDialog from '../components/VirtualServiceAddPolicyDialog.react'
+import PlatformLoaderCard from '../../../components/platform/PlatformLoaderCard.react'
+import stores from '../../../stores/proximity.store'
 const {
   virtualServiceStore,
   policyStore,
@@ -27,24 +31,41 @@ const {
   virtualServicePolicyRevisionStore
 } = stores
 
-export class VirtualServicePoliciesCard extends Component {
-  state = {
-    showAddPolicyPopUp: false
+const VirtualServicePoliciesCard = ({ virtualServiceId }) => {
+  const [showAddPolicyPopUp, setShowAddPolicyPopUp] = useState(false)
+  const showLoader = virtualServiceStore.getShowProcessCard()
+  const fetchVirtualServiceById = async () => {
+    virtualServiceStore.setShowProcessCard(true)
+    try {
+      const virtualService = await virtualServiceStore.objectQueryById(
+        virtualServiceId,
+        [
+          {
+            model: 'PolicyRevision'
+          }
+        ]
+      )
+      if (virtualService) {
+        virtualServiceStore.setSelectedObject(virtualService)
+      }
+    } catch (error) {
+      virtualServiceStore.setShowProcessCard(false)
+      console.log(error)
+    }
+    virtualServiceStore.setShowProcessCard(false)
   }
 
-  handleShowAddPolicyPopup = (showAddPolicyPopUp) => {
-    this.setState({
-      showAddPolicyPopUp: showAddPolicyPopUp
-    })
-  }
+  useEffect(() => {
+    fetchVirtualServiceById()
+  }, [])
 
-  _renderAddExistingPolicyDialogCard() {
+  const _renderAddExistingPolicyDialogCard = () => {
     const virtualServicePolicyRevision = virtualServicePolicyRevisionStore.getFormFields()
     const selectedPolicy = policyStore.getSelectedObject()
     return (
       <PlatfromPopUpCard
-        isOpen={this.state.showAddPolicyPopUp}
-        onClose={() => this.handleShowAddPolicyPopup(false)}
+        isOpen={showAddPolicyPopUp}
+        onClose={() => setShowAddPolicyPopUp(false)}
         title='Add Existing Policy'
       >
         <Box
@@ -117,12 +138,12 @@ export class VirtualServicePoliciesCard extends Component {
                     InputProps={{
                       ...params.InputProps,
                       endAdornment: (
-                        <React.Fragment>
+                        <Fragment>
                           {policyStore.getShowProcessCard() ? (
                             <CircularProgress color='inherit' size={20} />
                           ) : null}
                           {params.InputProps.endAdornment}
-                        </React.Fragment>
+                        </Fragment>
                       )
                     }}
                   />
@@ -130,7 +151,7 @@ export class VirtualServicePoliciesCard extends Component {
               />
             </Box>
             {selectedPolicy ? (
-              <React.Fragment>
+              <Fragment>
                 <Box style={{ marginTop: 20 }}>
                   <FormControl fullWidth variant='outlined' size='small'>
                     <InputLabel id='policy-revision-lable-id'>
@@ -218,15 +239,15 @@ export class VirtualServicePoliciesCard extends Component {
                         )
                       }
                       virtualServiceStore.setShowProcessCard(false)
-                      this.handleShowAddPolicyPopup(false)
+                      setShowAddPolicyPopUp(false)
                       virtualServicePolicyRevisionStore.resetAllFields()
-                      this.props.fetchPolicies()
+                      fetchVirtualServiceById()
                     }}
                   >
                     Add
                   </Button>
                 </Box>
-              </React.Fragment>
+              </Fragment>
             ) : null}
           </Box>
         </Box>
@@ -234,9 +255,12 @@ export class VirtualServicePoliciesCard extends Component {
     )
   }
 
-  _renderPoliciesListCard() {
+  const _renderPoliciesListCard = () => {
     const virtualService = virtualServiceStore.getSelectedObject()
-    const policyRevisions = virtualService.PolicyRevisions
+    const policyRevisions =
+      virtualService && virtualService.PolicyRevisions
+        ? virtualService.PolicyRevisions
+        : []
     return (
       <DataTable
         className='p-datatable-striped p-datatable-hovered'
@@ -306,79 +330,86 @@ export class VirtualServicePoliciesCard extends Component {
     )
   }
 
-  render() {
-    const showAddPolicyDialog = virtualServiceStore.getShowAddObjectDialog()
+  const showAddPolicyDialog = virtualServiceStore.getShowAddObjectDialog()
+  if (showLoader) {
     return (
-      <Box>
-        <Box
-          style={{
-            display: 'flex',
-            padding: '10px 24px',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}
-        >
-          <Box
-            style={{
-              display: 'flex',
-              alignItems: 'center'
-            }}
-          >
-            <Box style={{ marginRight: 20 }}>
-              <PolicyIcon />
-            </Box>
-            <Typography variant='h5'>Policies</Typography>
-          </Box>
-          <Box
-            style={{
-              display: 'flex',
-              alignItems: 'center'
-            }}
-          >
-            <Button
-              color='primary'
-              size='small'
-              startIcon={<AddIcon />}
-              style={{ marginRight: 10, fontWeight: 700 }}
-              onClick={() => {
-                policyStore.resetAllFields()
-                this.handleShowAddPolicyPopup(true)
-              }}
-            >
-              Add existing policy
-            </Button>
-            <Button
-              color='primary'
-              size='small'
-              startIcon={<AddIcon />}
-              style={{ fontWeight: 700 }}
-              onClick={() => {
-                policyStore.setFormFields({
-                  name: '',
-                  displayName: '',
-                  type: '',
-                  rules: ''
-                })
-                policyStore.setShowObjectViewMode('CREATE')
-                virtualServiceStore.setShowAddObjectDialog(true)
-              }}
-            >
-              Create new policy
-            </Button>
-          </Box>
-        </Box>
-        <Divider />
-        {this._renderPoliciesListCard()}
-        {this._renderAddExistingPolicyDialogCard()}
-        {showAddPolicyDialog ? (
-          <VirtualServiceAddPolicyDialog
-            handleShowAddExistingPolicyPopup={this.handleShowAddPolicyPopup}
-            fetchPolicies={this.props.fetchPolicies}
-          />
-        ) : null}
+      <Box style={{ margin: 50 }}>
+        <PlatformLoaderCard />
       </Box>
     )
   }
+  return (
+    <Box>
+      <Box
+        style={{
+          display: 'flex',
+          padding: '10px 24px',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
+        <Box
+          style={{
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          <Box style={{ marginRight: 20 }}>
+            <PolicyIcon />
+          </Box>
+          <Typography variant='h5'>Policies</Typography>
+        </Box>
+        <Box
+          style={{
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          <Button
+            color='primary'
+            size='small'
+            startIcon={<AddIcon />}
+            style={{ marginRight: 10, fontWeight: 700 }}
+            onClick={() => {
+              policyStore.resetAllFields()
+              setShowAddPolicyPopUp(true)
+            }}
+          >
+            Add existing policy
+          </Button>
+          <Button
+            color='primary'
+            size='small'
+            startIcon={<AddIcon />}
+            style={{ fontWeight: 700 }}
+            onClick={() => {
+              policyStore.setFormFields({
+                name: '',
+                displayName: '',
+                type: '',
+                rules: ''
+              })
+              policyStore.setShowObjectViewMode('CREATE')
+              virtualServiceStore.setShowAddObjectDialog(true)
+            }}
+          >
+            Create new policy
+          </Button>
+        </Box>
+      </Box>
+      <Divider />
+      {_renderPoliciesListCard()}
+      {_renderAddExistingPolicyDialogCard()}
+      {showAddPolicyDialog ? (
+        <VirtualServiceAddPolicyDialog
+          handleShowAddExistingPolicyPopup={(value) =>
+            setShowAddPolicyPopUp(value)
+          }
+          fetchPolicies={fetchVirtualServiceById}
+        />
+      ) : null}
+    </Box>
+  )
 }
 
 export default observer(VirtualServicePoliciesCard)
