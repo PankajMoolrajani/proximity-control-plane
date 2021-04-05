@@ -101,17 +101,22 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
   }
 
   useEffect(() => {
-    if (policyId) {
-      fetchPolicyById()
-    } else {
+    return () => {
       policyStore.setFormFields({
         name: '',
         displayName: '',
         type: '',
         rules: ''
       })
-      policyStore.setSelectedObject(null)
     }
+  },[])
+  
+  useEffect(() => {
+    if (policyId) {
+      fetchPolicyById()
+    } else { 
+      policyStore.setSelectedObject(null)
+    } 
   }, [policyId])
 
   if (showSuccess) {

@@ -15,6 +15,7 @@ import VirtualServiceAccessLogsCard from './VirtualServiceAccessLogsCard.react'
 import VirtualServiceDecisionLogsCard from './VirtualServiceDecisionLogs.react'
 import VirtualServiceMonitorCard from './VirtualServiceMonitorCard.react'
 import VirtualServicePoliciesCard from './VirtualServicePoliciesCard.react'
+import VirtualServicePolicyRecommendationCard from './VirtualServicePolicyRecommendationCard.react'
 import VpnKeyIcon from '@material-ui/icons/VpnKey'
 import stores from '../../../stores/proximity.store'
 const { virtualServiceStore } = stores
@@ -80,6 +81,18 @@ const VirtualServiceSingle = () => {
             </Button>
             <Button
               onClick={() =>
+                push(`/virtual-services/${virtualServiceId}/policy-recommendations`)
+              }
+              style={{
+                fontWeight: pathname.includes('policy-recommendations') ? 600 : 400,
+                marginRight: 10,
+                paddingLeft: 0
+              }}
+            >
+              Policy Recommendations
+            </Button>
+            <Button
+              onClick={() =>
                 push(`/virtual-services/${virtualServiceId}/access-logs`)
               }
               style={{
@@ -134,6 +147,9 @@ const VirtualServiceSingle = () => {
         <Route path={`${path}/policies`}>
           <VirtualServicePoliciesCard virtualServiceId={virtualServiceId} />
         </Route>
+        <Route path={`${path}/policy-recommendations`}>
+          <VirtualServicePolicyRecommendationCard virtualServiceId={virtualServiceId} />
+        </Route> 
         <Route path={path}>
           <VirtualServiceDetailsCard virtualServiceId={virtualServiceId} />
         </Route>
