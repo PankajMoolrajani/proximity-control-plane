@@ -22,9 +22,11 @@ import {
   ButtonGroup
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import { useAuth0 } from '@auth0/auth0-react'
 import VpnKeyIcon from '@material-ui/icons/VpnKey'
 import { Controlled as CodeMirror } from 'react-codemirror2'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
+import { createCrudLog } from '/mxr-web/apps/proximity/src/libs/logs/log.lib'
 import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
 import PlatformSuccessCard from '/mxr-web/apps/proximity/src/components/platform/PlatformSuccessCard.react'
 import PolicyImpactAnalysisCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyImpactAnalysisCard.react'
@@ -38,7 +40,7 @@ import 'codemirror-rego/key-map'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/idea.css'
 
-const { policyStore, virtualServiceStore, policyRevisionStore } = stores
+const { policyStore, policyRevisionStore } = stores
 
 const useStyles = makeStyles((theme) => ({
   codeMirrorFull: {
@@ -66,6 +68,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
   const [opaOutput, setOpaOutput] = useState('')
   const [showEvaluateCard, setShowEvaluateCard] = useState(true)
   const [showImpactAnalysisCard, setShowImactAnalysisCard] = useState(false)
+  const { user } = useAuth0()
   const { push } = useHistory()
   const [selectedServices, setSelectedServices] = useState([])
   const classes = useStyles()
@@ -722,6 +725,11 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
             policyStore.setShowSuccessCard(false)
             policyStore.resetAllFields()
             policyRevisionStore.resetAllFields()
+            createCrudLog(
+              `${user.name ? user.name : user.email} Created Policy - ${
+                createdPolicy.displayName
+              }`
+            )
             push('/policies')
           } catch (error) {
             console.log('Error: Creating Policy', error)
@@ -759,6 +767,11 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
             policyStore.setShowSuccessCard(true)
             await new Promise((res) => setTimeout(res, 2000))
             policyStore.setShowSuccessCard(false)
+            createCrudLog(
+              `${user.name ? user.name : user.email} Updated Policy - ${
+                updatedPolicy.displayName
+              }`
+            )
           } catch (error) {
             console.log('Error: Updating Policy', error)
           }

@@ -12,7 +12,9 @@ import {
   makeStyles
 } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
+import { useAuth0 } from '@auth0/auth0-react'
 import { createPolicyProximityDp } from '/mxr-web/apps/proximity/src/libs/helpers/helper.lib'
+import { createCrudLog } from '/mxr-web/apps/proximity/src/libs/logs/log.lib'
 import PolicyDetailsCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyDetailsCard.react'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const {
@@ -36,6 +38,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 })
 const VirtualServiceAddPolicyDialog = (props) => {
   const classes = useStyles()
+  const { user } = useAuth0()
   const showAddPolicyDialog = virtualServiceStore.getShowAddObjectDialog()
   const formFields = policyStore.getFormFields()
   return (
@@ -82,6 +85,11 @@ const VirtualServiceAddPolicyDialog = (props) => {
                     PolicyId: createdPolicy.id
                   })
                   const createdPolicyRevision = await policyRevisionStore.objectCreate()
+                  createCrudLog(
+                    `${user.name ? user.name : user.email} Created Policy - ${
+                      createdPolicy.displayName
+                    }`
+                  )
                 }
                 if (viewMode === 'UPDATE') {
                   const selectedPolicyRevision = policyStore.getFormFields()
@@ -101,7 +109,11 @@ const VirtualServiceAddPolicyDialog = (props) => {
                     PolicyId: updatedPolicy.id
                   })
                   const createdPolicyRevision = await policyRevisionStore.objectCreate()
-
+                  createCrudLog(
+                    `${user.name ? user.name : user.email} Updated Policy - ${
+                      updatedPolicy.displayName
+                    }`
+                  )
                   //Update virtual service policy mapping
                   virtualServicePolicyRevisionStore.setSearchQuery({
                     VirtualServiceId: selectedVirtualService.id,

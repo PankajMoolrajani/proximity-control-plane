@@ -25,11 +25,7 @@ class SideBar extends Component {
         </Typography>
         <Divider />
         <List style={{ width: 250 }}>
-          <ListItem
-            onClick={() => this.props.history.push('/proximity/')}
-            button
-            dense
-          >
+          <ListItem onClick={() => this.props.history.push('/')} button dense>
             <ListItemIcon>
               <HomeIcon />
             </ListItemIcon>

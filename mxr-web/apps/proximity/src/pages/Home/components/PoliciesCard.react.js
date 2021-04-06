@@ -1,108 +1,128 @@
-import React, { Component } from 'react'
+import { useState, useEffect } from 'react'
 import { observer } from 'mobx-react'
 import Box from '@material-ui/core/Box'
 import { Pie } from 'react-chartjs-2'
+import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { policyStore } = stores
 
-class PoliciesCard extends Component {
-  state = {
-    totalPolicies: 0,
-    policiesLast7days: 0,
-    wafPolicies: 0,
-    authnPolicies: 0,
-    authzPolicies: 0
-  }
+const PoliciesCard = () => {
+  const [totalPolicies, setTotalPolicies] = useState(0)
+  const [policiesLast7days, setPoliciesLast7days] = useState(0)
+  const [wafPolicies, setWafPolicies] = useState(0)
+  const [authnPolicies, setAuthnPolicies] = useState(0)
+  const [authzPolicies, setAuthzPolicies] = useState(0)
+  const [loading, setLoading] = useState(false)
 
-  async componentDidMount() {
-    policyStore.setSearchPageObjectCount(1000)
-    const policies = await policyStore.objectQuery()
-    this.setState({ totalPolicies: policies.count })
-    let last7Days = 0
-    policies.data.forEach((policy) => {
-      if (
-        new Date(policy.tsCreate) >
-        new Date().getTime() - 7 * 24 * 60 * 60 * 1000
-      ) {
-        last7Days++
-      }
-    })
-    this.setState({ policiesLast7days: last7Days })
-
-    this.setState({
-      wafPolicies: policies.data.filter(
-        (policy) => policy.currentRevision.policy.type === 'WAF'
-      ).length
-    })
-    this.setState({
-      authnPolicies: policies.data.filter(
-        (policy) => policy.currentRevision.policy.type === 'AUTHN'
-      ).length
-    })
-    this.setState({
-      authzPolicies: policies.data.filter(
-        (policy) => policy.currentRevision.policy.type === 'AUTHZ'
-      ).length
-    })
-  }
-
-  render() {
-    const details = {
-      labels: ['AUTHN', 'AUTHZ', 'WAF'],
-      datasets: [
-        {
-          label: 'Polices',
-          backgroundColor: ['#76BA1B', '#68BB59', '#ACDF87'],
-          data: [
-            this.state.authnPolicies,
-            this.state.authzPolicies,
-            this.state.wafPolicies
-          ]
+  const fetchData = async () => {
+    setLoading(true)
+    try {
+      policyStore.setSearchPageObjectCount(1000)
+      const policies = await policyStore.objectQuery()
+      setTotalPolicies(policies.count)
+      let last7Days = 0
+      policies.rows.forEach((policy) => {
+        if (
+          new Date(policy.createdAt).getTime() >
+          new Date().getTime() - 7 * 24 * 60 * 60 * 1000
+        ) {
+          last7Days++
         }
-      ]
+      })
+      setPoliciesLast7days(last7Days)
+      setWafPolicies(
+        policies.rows.filter((policy) => policy.type === 'WAF').length
+      )
+
+      setAuthnPolicies(
+        policies.rows.filter((policy) => policy.type === 'AUTHN').length
+      )
+
+      setAuthzPolicies(
+        policies.rows.filter((policy) => policy.type === 'AUTHZ').length
+      )
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
     }
-    return (
-      <Box
-        style={{
-          background: 'white',
-          padding: '10px',
-          borderRadius: 10,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}
-      >
-        <Box style={{ textAlign: 'center' }}>
-          <Box style={{ fontSize: 18 }}>Policies</Box>
-          <Box style={{ fontSize: 50, color: '#2D9CDB', margin: '10px 0' }}>
-            {this.state.totalPolicies}
-          </Box>
-          <Box>
-            <span style={{ color: '#00e300' }}>
-              +{this.state.policiesLast7days}{' '}
-            </span>
-            in last 7 days
-          </Box>
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const details = {
+    labels: ['AUTHN', 'AUTHZ', 'WAF'],
+    datasets: [
+      {
+        label: 'Polices',
+        backgroundColor: [
+          'rgb(255, 99, 132)',
+          'rgb(54, 162, 235)',
+          'rgb(255, 205, 86)'
+        ],
+        data: [authnPolicies, authzPolicies, wafPolicies]
+      }
+    ]
+  }
+  return (
+    <Box
+      style={{
+        background: 'white',
+        padding: '10px',
+        borderRadius: 10,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        position: 'relative',
+        opacity: loading ? 0.5 : 1
+      }}
+    >
+      {loading ? (
+        <Box
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <PlatformLoaderCard />
+        </Box>
+      ) : (
+        ''
+      )}
+      <Box style={{ textAlign: 'center' }}>
+        <Box style={{ fontSize: 18 }}>Policies</Box>
+        <Box style={{ fontSize: 50, color: '#2D9CDB', margin: '10px 0' }}>
+          {totalPolicies}
         </Box>
         <Box>
-          <Pie
-            width={200}
-            height={100}
-            data={details}
-            options={{
-              legend: {
-                position: 'right',
-                align: 'top',
-                labels: {
-                  boxWidth: 20
-                }
-              }
-            }}
-          />
+          <span style={{ color: '#00e300' }}>+{policiesLast7days} </span>
+          in last 7 days
         </Box>
       </Box>
-    )
-  }
+      <Box>
+        <Pie
+          width={200}
+          height={100}
+          data={details}
+          options={{
+            legend: {
+              position: 'right',
+              align: 'top',
+              labels: {
+                boxWidth: 20
+              }
+            }
+          }}
+        />
+      </Box>
+    </Box>
+  )
 }
 
 export default observer(PoliciesCard)

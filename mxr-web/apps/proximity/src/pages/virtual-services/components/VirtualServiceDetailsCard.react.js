@@ -2,6 +2,7 @@ import { Fragment, useState, useEffect } from 'react'
 import { observer } from 'mobx-react'
 import { v4 as uuid } from 'uuid'
 import { useHistory } from 'react-router-dom'
+import { useAuth0 } from '@auth0/auth0-react'
 import {
   Box,
   TextField,
@@ -12,12 +13,14 @@ import {
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import VpnKeyIcon from '@material-ui/icons/VpnKey'
+import { createCrudLog } from '/mxr-web/apps/proximity/src/libs/logs/log.lib'
 import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { virtualServiceStore } = stores
 
 const VirtualServiceDetailsCard = ({ virtualServiceId }) => {
   const [showSecret, setShowSecret] = useState(false)
+  const { user } = useAuth0()
   const { push } = useHistory()
   const formFields = virtualServiceStore.getFormFields()
   const virtualService = virtualServiceStore.getSelectedObject()
@@ -80,7 +83,12 @@ const VirtualServiceDetailsCard = ({ virtualServiceId }) => {
         onClick={async () => {
           virtualServiceStore.setShowProcessCard(true)
           try {
-            await virtualServiceStore.objectCreate()
+            const createdVirtualService = await virtualServiceStore.objectCreate()
+            createCrudLog(
+              `${
+                user.name ? user.name : user.email
+              } Created Virtual service - ${createdVirtualService.displayName}`
+            )
             virtualServiceStore.resetAllFields()
             push('/virtual-services')
           } catch (error) {
@@ -113,6 +121,11 @@ const VirtualServiceDetailsCard = ({ virtualServiceId }) => {
               targetUrl: updatedVirtualService.targetUrl,
               authKey: updatedVirtualService.authKey
             })
+            createCrudLog(
+              `${
+                user.name ? user.name : user.email
+              } Updated Virtual service - ${updatedVirtualService.displayName}`
+            )
           } catch (error) {
             virtualServiceStore.setShowProcessCard(false)
             console.log(error)
