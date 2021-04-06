@@ -7,8 +7,8 @@ import {
   AccordionDetails
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import PlatformLoaderCard from '../../../components/platform/PlatformLoaderCard.react'
-import stores from '../../../stores/proximity.store'
+import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { virtualServiceStore } = stores
 
 const VirtualServiceDeploymentCard = ({ virtualServiceId }) => {

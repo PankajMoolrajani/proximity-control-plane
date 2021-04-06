@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
 import { Slide } from 'react-reveal'
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Divider
+} from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
-import Box from '@material-ui/core/Box'
-import Dialog from '@material-ui/core/Dialog'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import Divider from '@material-ui/core/Divider'
 
 class PlatformPopUpCard extends Component {
   render() {

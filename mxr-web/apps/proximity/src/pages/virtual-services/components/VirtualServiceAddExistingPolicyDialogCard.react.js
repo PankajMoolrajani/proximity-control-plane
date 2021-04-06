@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 import { observer } from 'mobx-react'
-import stores from '../../../stores/proximity.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 import {
   Box,
   Button,
@@ -11,7 +11,7 @@ import {
   MenuItem,
   CircularProgress
 } from '@material-ui/core'
-import PlatfromPopUpCard from '../../../components/platform/PlatfromPopUpCard.react'
+import PlatfromPopUpCard from '/mxr-web/apps/proximity/src/components/platform/PlatfromPopUpCard.react'
 import { Autocomplete } from '@material-ui/lab'
 import { createPolicyProximityDp } from '/mxr-web/apps/proximity/src/libs/helpers/helper.lib'
 const {

@@ -7,12 +7,12 @@ import { UnControlled as CodeMirror } from 'react-codemirror2'
 import { Box, IconButton, Popover, Typography } from '@material-ui/core'
 import InfoIcon from '@material-ui/icons/Info'
 import VirtualServiceAddPolicyDialog from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceAddPolicyDialog.react'
-import PlatformLoaderCard from '../../../components/platform/PlatformLoaderCard.react'
-import VirtualServiceAddExistingPolicyDialogCard from './VirtualServiceAddExistingPolicyDialogCard.react'
+import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
+import VirtualServiceAddExistingPolicyDialogCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceAddExistingPolicyDialogCard.react'
 import {
   transformSortQuery,
   onSortQuery
-} from '../../../libs/helpers/helper.lib'
+} from '/mxr-web/apps/proximity/src/libs/helpers/helper.lib'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { virtualServiceStore, policyStore, policyRecommendationStore } = stores
 

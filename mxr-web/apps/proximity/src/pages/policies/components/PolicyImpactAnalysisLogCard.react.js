@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
+import {
+  Box,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails
+} from '@material-ui/core'
 import { axiosInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
 import JSONPretty from 'react-json-pretty'
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt'
-import Box from '@material-ui/core/Box'
-import Accordion from '@material-ui/core/Accordion'
-import AccordionSummary from '@material-ui/core/AccordionSummary'
-import AccordionDetails from '@material-ui/core/AccordionDetails'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 import 'react-json-pretty/themes/monikai.css'

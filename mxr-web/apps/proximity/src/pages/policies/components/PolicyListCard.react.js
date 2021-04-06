@@ -5,12 +5,12 @@ import moment from 'moment'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import { Box } from '@material-ui/core'
-import PlatformLoaderCard from '../../../components/platform/PlatformLoaderCard.react'
+import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
 import {
   transformSortQuery,
   onSortQuery
-} from '../../../libs/helpers/helper.lib'
-import stores from '../../../stores/proximity.store'
+} from '/mxr-web/apps/proximity/src/libs/helpers/helper.lib'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { policyStore } = stores
 
 const PolicyListCard = () => {

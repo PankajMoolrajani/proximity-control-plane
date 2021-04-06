@@ -9,10 +9,10 @@ import {
   useLocation
 } from 'react-router-dom'
 import { Box, Button, Divider } from '@material-ui/core'
-import PolicyDetailsCard from './PolicyDetailsCard.react'
-import PolicyRevisionsCard from './PolicyRevisionsCard.react'
-import PolicyDecisionLogsCard from './PolicyDecisionLogsCard.react'
-import stores from '../../../stores/proximity.store'
+import PolicyDetailsCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyDetailsCard.react'
+import PolicyRevisionsCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyRevisionsCard.react'
+import PolicyDecisionLogsCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyDecisionLogsCard.react'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { policyStore } = stores
 
 const PolicySingle = () => {

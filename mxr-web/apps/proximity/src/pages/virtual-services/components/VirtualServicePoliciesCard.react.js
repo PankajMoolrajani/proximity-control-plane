@@ -6,10 +6,10 @@ import AddIcon from '@material-ui/icons/Add'
 import PolicyIcon from '@material-ui/icons/Policy'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import VirtualServiceAddPolicyDialog from '../components/VirtualServiceAddPolicyDialog.react'
-import VirtualServiceAddExistingPolicyDialogCard from '../components/VirtualServiceAddExistingPolicyDialogCard.react'
-import PlatformLoaderCard from '../../../components/platform/PlatformLoaderCard.react'
-import stores from '../../../stores/proximity.store'
+import VirtualServiceAddPolicyDialog from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceAddPolicyDialog.react'
+import VirtualServiceAddExistingPolicyDialogCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceAddExistingPolicyDialogCard.react'
+import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { virtualServiceStore, policyStore } = stores
 
 const VirtualServicePoliciesCard = ({ virtualServiceId }) => {

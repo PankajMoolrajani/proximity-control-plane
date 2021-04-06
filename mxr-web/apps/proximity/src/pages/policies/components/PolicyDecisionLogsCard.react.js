@@ -5,12 +5,12 @@ import JSONPretty from 'react-json-pretty'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import { Box, Grid } from '@material-ui/core'
-import PlatformLoaderCard from '../../../components/platform/PlatformLoaderCard.react'
-import stores from '../../../stores/proximity.store'
+import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 import {
   transformSortQuery,
   onSortQuery
-} from '../../../libs/helpers/helper.lib'
+} from '/mxr-web/apps/proximity/src/libs/helpers/helper.lib'
 const { policyStore, logStore } = stores
 
 const PolicyDecisionLogs = ({ policyId }) => {

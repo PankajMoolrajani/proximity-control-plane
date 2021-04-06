@@ -6,11 +6,11 @@ import AddIcon from '@material-ui/icons/Add'
 import PolicyIcon from '@material-ui/icons/Policy'
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import ListIcon from '@material-ui/icons/List'
-import PageLayout from '../../components/PageLayout'
-import PolicyListCard from './components/PolicyListCard.react'
-import PolicySingle from './components/PolicySingle.react'
-import PolicyDetailsCard from './components/PolicyDetailsCard.react'
-import stores from '../../stores/proximity.store'
+import PageLayout from '/mxr-web/apps/proximity/src/components/PageLayout'
+import PolicyListCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyListCard.react'
+import PolicySingle from '/mxr-web/apps/proximity/src/pages/policies/components/PolicySingle.react'
+import PolicyDetailsCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyDetailsCard.react'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { policyStore, virtualServiceStore, logStore } = stores
 
 const Policies = () => {

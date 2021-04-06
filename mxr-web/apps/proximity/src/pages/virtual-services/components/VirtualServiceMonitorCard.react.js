@@ -3,8 +3,8 @@ import { observer } from 'mobx-react'
 import moment from 'moment'
 import { Box, Button, ButtonGroup } from '@material-ui/core'
 import { Line } from 'react-chartjs-2'
-import PlatformLoaderCard from '../../../components/platform/PlatformLoaderCard.react'
-import stores from '../../../stores/proximity.store'
+import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { virtualServiceStore, logStore } = stores
 
 const VirtualServiceMonitorCard = ({ virtualServiceId }) => {

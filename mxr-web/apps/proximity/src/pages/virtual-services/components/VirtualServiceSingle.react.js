@@ -9,15 +9,15 @@ import {
   useLocation
 } from 'react-router-dom'
 import { Box, Button, Divider } from '@material-ui/core'
-import VirtualServiceDetailsCard from './VirtualServiceDetailsCard.react'
-import VirtualServiceDeploymentCard from './VirtualServiceDeploymentCard.react'
-import VirtualServiceAccessLogsCard from './VirtualServiceAccessLogsCard.react'
-import VirtualServiceDecisionLogsCard from './VirtualServiceDecisionLogs.react'
-import VirtualServiceMonitorCard from './VirtualServiceMonitorCard.react'
-import VirtualServicePoliciesCard from './VirtualServicePoliciesCard.react'
-import VirtualServicePolicyRecommendationCard from './VirtualServicePolicyRecommendationCard.react'
 import VpnKeyIcon from '@material-ui/icons/VpnKey'
-import stores from '../../../stores/proximity.store'
+import VirtualServiceDetailsCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceDetailsCard.react'
+import VirtualServiceDeploymentCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceDeploymentCard.react'
+import VirtualServiceAccessLogsCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceAccessLogsCard.react'
+import VirtualServiceDecisionLogsCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceDecisionLogs.react'
+import VirtualServiceMonitorCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceMonitorCard.react'
+import VirtualServicePoliciesCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServicePoliciesCard.react'
+import VirtualServicePolicyRecommendationCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServicePolicyRecommendationCard.react'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { virtualServiceStore } = stores
 
 const VirtualServiceSingle = () => {
