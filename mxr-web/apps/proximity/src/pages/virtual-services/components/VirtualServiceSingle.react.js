@@ -81,10 +81,14 @@ const VirtualServiceSingle = () => {
             </Button>
             <Button
               onClick={() =>
-                push(`/virtual-services/${virtualServiceId}/policy-recommendations`)
+                push(
+                  `/virtual-services/${virtualServiceId}/policy-recommendations`
+                )
               }
               style={{
-                fontWeight: pathname.includes('policy-recommendations') ? 600 : 400,
+                fontWeight: pathname.includes('policy-recommendations')
+                  ? 600
+                  : 400,
                 marginRight: 10,
                 paddingLeft: 0
               }}
@@ -148,8 +152,10 @@ const VirtualServiceSingle = () => {
           <VirtualServicePoliciesCard virtualServiceId={virtualServiceId} />
         </Route>
         <Route path={`${path}/policy-recommendations`}>
-          <VirtualServicePolicyRecommendationCard virtualServiceId={virtualServiceId} />
-        </Route> 
+          <VirtualServicePolicyRecommendationCard
+            virtualServiceId={virtualServiceId}
+          />
+        </Route>
         <Route path={path}>
           <VirtualServiceDetailsCard virtualServiceId={virtualServiceId} />
         </Route>

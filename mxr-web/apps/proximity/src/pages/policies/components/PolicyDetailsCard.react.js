@@ -109,14 +109,14 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
         rules: ''
       })
     }
-  },[])
-  
+  }, [])
+
   useEffect(() => {
     if (policyId) {
       fetchPolicyById()
-    } else { 
+    } else {
       policyStore.setSelectedObject(null)
-    } 
+    }
   }, [policyId])
 
   if (showSuccess) {

@@ -90,6 +90,9 @@ const VirtualServiceAddExistingPolicyDialogCard = ({
                 policyStore.setSelectedObject(option)
               }}
               onInputChange={async (e) => {
+                if (!e) {
+                  return
+                }
                 if (e && !e.target.value) {
                   policyStore.resetAllFields()
                   return
@@ -205,7 +208,7 @@ const VirtualServiceAddExistingPolicyDialogCard = ({
                       VirtualServiceId: virtualService.id
                     })
                     virtualServiceStore.setShowProcessCard(true)
-                    try { 
+                    try {
                       const selectedPolicy = policyStore.getSelectedObject()
                       const createdVirtualServicePolicyRevision = await virtualServicePolicyRevisionStore.objectCreate()
                       await createPolicyProximityDp(
@@ -214,8 +217,7 @@ const VirtualServiceAddExistingPolicyDialogCard = ({
                       virtualServiceStore.setShowProcessCard(false)
                       virtualServiceStore.setShowSuccessCard(true)
                       await new Promise((res) => setTimeout(res, 2000))
-                      virtualServiceStore.setShowSuccessCard(false) 
-                      onClose()
+                      virtualServiceStore.setShowSuccessCard(false)
                     } catch (error) {
                       onOpen()
                       console.log(
@@ -223,7 +225,9 @@ const VirtualServiceAddExistingPolicyDialogCard = ({
                         error
                       )
                     }
-                    virtualServiceStore.setShowProcessCard(false) 
+                    virtualServiceStore.setShowProcessCard(false)
+                    console.log('Closing')
+                    onClose()
                     virtualServicePolicyRevisionStore.resetAllFields()
                     fetchVirtualServiceById()
                   }}

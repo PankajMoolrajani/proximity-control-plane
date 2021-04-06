@@ -128,13 +128,12 @@ const VirtualServicePolicyRecommendationCard = ({ virtualServiceId }) => {
 
   const sortQuery = policyRecommendationStore.getSortQuery()
   const showPRLoader = policyRecommendationStore.getShowProcessCard()
-  const showVsLoader =  virtualServiceStore.getShowProcessCard()
-  const showLoader = (showPRLoader || showVsLoader)
+  const showVsLoader = virtualServiceStore.getShowProcessCard()
+  const showLoader = showPRLoader || showVsLoader
   const poilcyRecommendations = policyRecommendationStore.getObjects()
   const showAddPolicyDialog = virtualServiceStore.getShowAddObjectDialog()
-  console.log(showLoader)
 
-  if (showLoader && !poilcyRecommendations) {
+  if (showLoader) {
     return (
       <Box style={{ margin: 50 }}>
         <PlatformLoaderCard />
