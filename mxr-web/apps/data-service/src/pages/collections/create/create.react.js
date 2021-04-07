@@ -78,7 +78,7 @@ const CollectionCreate = ({ databaseId }) => {
 
   const validationSchema = {
     name: Yup.string()
-      .max(15)
+      .max(50)
       .matches(/^[a-zA-Z]*$/, 'Only alphabets are allowed!')
       .required('Required!'),
     displayName: Yup.string().required('Required!'),
