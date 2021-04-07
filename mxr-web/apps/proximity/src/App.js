@@ -21,7 +21,7 @@ const App = () => {
         <Switch>
           <Route path='/virtual-services' component={VirtualServices} />
           <Route path='/policies' component={Policies} />
-          {/* <Route path='/' component={Home} /> */}
+          <Route path='/' component={Home} />
           <Redirect to='/virtual-services' from='/' />
         </Switch>
       </AdminLayout>

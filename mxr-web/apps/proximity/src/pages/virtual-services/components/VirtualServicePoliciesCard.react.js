@@ -188,6 +188,7 @@ const VirtualServicePoliciesCard = ({ virtualServiceId }) => {
         virtualServiceId={virtualServiceId}
         isOpen={showAddPolicyPopUp}
         onClose={() => setShowAddPolicyPopUp(false)}
+        onOpen={() => setShowAddPolicyPopUp(true)}
       />
       {showAddPolicyDialog ? (
         <VirtualServiceAddPolicyDialog
