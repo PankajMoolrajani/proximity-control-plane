@@ -9,11 +9,11 @@ import {
   IconButton,
   Button
 } from '@material-ui/core'
-import PlatformLoaderCard from '../../../components/platform/PlatformLoaderCard.react'
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import VpnKeyIcon from '@material-ui/icons/VpnKey'
-import stores from '../../../stores/proximity.store'
+import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { virtualServiceStore } = stores
 
 const VirtualServiceDetailsCard = ({ virtualServiceId }) => {

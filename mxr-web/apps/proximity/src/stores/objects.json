@@ -19,9 +19,9 @@
     "fields": "id name displayName type rules PolicyId",
     "relatedFields": "policy virtualService log"
   },
-  "policyRecommendation": {
+  "policyRecommendationStore": {
     "name": "policyRecommendation",
-    "fields": "id name rules",
+    "fields": "id rule",
     "relatedFields": ""
   },
   "logStore": {

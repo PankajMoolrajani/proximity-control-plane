@@ -9,14 +9,15 @@ import {
   useLocation
 } from 'react-router-dom'
 import { Box, Button, Divider } from '@material-ui/core'
-import VirtualServiceDetailsCard from './VirtualServiceDetailsCard.react'
-import VirtualServiceDeploymentCard from './VirtualServiceDeploymentCard.react'
-import VirtualServiceAccessLogsCard from './VirtualServiceAccessLogsCard.react'
-import VirtualServiceDecisionLogsCard from './VirtualServiceDecisionLogs.react'
-import VirtualServiceMonitorCard from './VirtualServiceMonitorCard.react'
-import VirtualServicePoliciesCard from './VirtualServicePoliciesCard.react'
 import VpnKeyIcon from '@material-ui/icons/VpnKey'
-import stores from '../../../stores/proximity.store'
+import VirtualServiceDetailsCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceDetailsCard.react'
+import VirtualServiceDeploymentCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceDeploymentCard.react'
+import VirtualServiceAccessLogsCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceAccessLogsCard.react'
+import VirtualServiceDecisionLogsCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceDecisionLogs.react'
+import VirtualServiceMonitorCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServiceMonitorCard.react'
+import VirtualServicePoliciesCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServicePoliciesCard.react'
+import VirtualServicePolicyRecommendationCard from '/mxr-web/apps/proximity/src/pages/virtual-services/components/VirtualServicePolicyRecommendationCard.react'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { virtualServiceStore } = stores
 
 const VirtualServiceSingle = () => {
@@ -80,6 +81,22 @@ const VirtualServiceSingle = () => {
             </Button>
             <Button
               onClick={() =>
+                push(
+                  `/virtual-services/${virtualServiceId}/policy-recommendations`
+                )
+              }
+              style={{
+                fontWeight: pathname.includes('policy-recommendations')
+                  ? 600
+                  : 400,
+                marginRight: 10,
+                paddingLeft: 0
+              }}
+            >
+              Policy Recommendations
+            </Button>
+            <Button
+              onClick={() =>
                 push(`/virtual-services/${virtualServiceId}/access-logs`)
               }
               style={{
@@ -133,6 +150,11 @@ const VirtualServiceSingle = () => {
         </Route>
         <Route path={`${path}/policies`}>
           <VirtualServicePoliciesCard virtualServiceId={virtualServiceId} />
+        </Route>
+        <Route path={`${path}/policy-recommendations`}>
+          <VirtualServicePolicyRecommendationCard
+            virtualServiceId={virtualServiceId}
+          />
         </Route>
         <Route path={path}>
           <VirtualServiceDetailsCard virtualServiceId={virtualServiceId} />

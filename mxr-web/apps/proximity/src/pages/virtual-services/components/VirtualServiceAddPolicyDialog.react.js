@@ -8,13 +8,13 @@ import {
   Dialog,
   AppBar,
   Toolbar,
-  Typography
+  Typography,
+  makeStyles
 } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
 import CloseIcon from '@material-ui/icons/Close'
-import { createPolicyProximityDp } from '../../../libs/helpers/helper.lib'
-import PolicyDetailsCard from '../../policies/components/PolicyDetailsCard.react'
-import stores from '../../../stores/proximity.store'
+import { createPolicyProximityDp } from '/mxr-web/apps/proximity/src/libs/helpers/helper.lib'
+import PolicyDetailsCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyDetailsCard.react'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const {
   virtualServiceStore,
   policyStore,

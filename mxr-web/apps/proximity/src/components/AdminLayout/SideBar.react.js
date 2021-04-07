@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { withRouter } from 'react-router'
-import Drawer from '@material-ui/core/Drawer'
-import List from '@material-ui/core/List'
-import Divider from '@material-ui/core/Divider'
-import ListItem from '@material-ui/core/ListItem'
-import Typography from '@material-ui/core/Typography'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
+import {
+  Drawer,
+  List,
+  Divider,
+  ListItem,
+  Typography,
+  ListItemIcon,
+  ListItemText
+} from '@material-ui/core'
 import HomeIcon from '@material-ui/icons/Home'
 import PolicyIcon from '@material-ui/icons/Policy'
 import CodeIcon from '@material-ui/icons/Code'

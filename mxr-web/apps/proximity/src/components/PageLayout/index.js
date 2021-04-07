@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import Grid from '@material-ui/core/Grid'
-import Box from '@material-ui/core/Box'
-import List from '@material-ui/core/List'
-import Divider from '@material-ui/core/Divider'
-import ListItem from '@material-ui/core/ListItem'
-import Typography from '@material-ui/core/Typography'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
+import {
+  Grid,
+  Box,
+  List,
+  Divider,
+  ListItem,
+  Typography,
+  ListItemIcon,
+  ListItemText
+} from '@material-ui/core'
 
 class PageLayout extends Component {
   render() {

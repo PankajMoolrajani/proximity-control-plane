@@ -4,9 +4,9 @@ import moment from 'moment'
 import { Box } from '@material-ui/core'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import PlatformLoaderCard from '../../../components/platform/PlatformLoaderCard.react'
+import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
 
-import stores from '../../../stores/proximity.store'
+import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 const { policyStore, policyRevisionStore } = stores
 
 const PolicyRevisionsCard = ({ policyId }) => {

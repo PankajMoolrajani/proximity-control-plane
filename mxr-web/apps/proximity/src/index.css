@@ -34,6 +34,9 @@ code {
   }
 }
 
+.CodeMirror {
+  height: auto;
+}
 .__json-pretty__ {
   background-color: #ffffff !important;
   padding: 10px !important;
