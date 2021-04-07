@@ -1,10 +1,6 @@
 import { useEffect, useState, Fragment } from 'react'
 import { observer } from 'mobx-react'
 import { v4 as uuid } from 'uuid'
-import {
-  axiosInstance,
-  axiosServiceInstance
-} from '../../../libs/axios/axios.lib'
 import { useHistory } from 'react-router-dom'
 import JSONPretty from 'react-json-pretty'
 import {
@@ -26,6 +22,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import VpnKeyIcon from '@material-ui/icons/VpnKey'
 import { Controlled as CodeMirror } from 'react-codemirror2'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
+import { axiosServiceInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
 import { createCrudLog } from '/mxr-web/apps/proximity/src/libs/logs/log.lib'
 import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
 import PlatformSuccessCard from '/mxr-web/apps/proximity/src/components/platform/PlatformSuccessCard.react'
@@ -40,7 +37,7 @@ import 'codemirror-rego/key-map'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/idea.css'
 
-const { policyStore, policyRevisionStore } = stores
+const { policyStore, policyRevisionStore, virtualServiceStore } = stores
 
 const useStyles = makeStyles((theme) => ({
   codeMirrorFull: {
@@ -149,7 +146,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
   const handleEvaluate = async () => {
     const policy = policyStore.getFormFields()
     const response = await axiosServiceInstance.post(
-      'opa/eval',
+      '/proximity/eval',
       {
         rules: policy.rules,
         input: JSON.parse(opaInput)
@@ -224,6 +221,7 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
   }
 
   const _renderTabs = () => {
+    const virtualService = virtualServiceStore.getSelectedObject()
     return (
       <Box>
         <ButtonGroup size='medium' variant='text'>
@@ -239,22 +237,26 @@ const PolicyDetailsCard = ({ policyId, hideOpsButton }) => {
           >
             Evaluate
           </Button>
-          <Button
-            style={{
-              fontWeight: showImpactAnalysisCard ? 700 : 400,
-              padding: '6px 15px'
-            }}
-            onClick={() => {
-              const policy = policyStore.getSelectedObject()
-              if (!policy.id) {
-                return
-              }
-              setShowEvaluateCard(false)
-              setShowImactAnalysisCard(true)
-            }}
-          >
-            Impact Analytsis
-          </Button>
+          {virtualService ? (
+            <Button
+              style={{
+                fontWeight: showImpactAnalysisCard ? 700 : 400,
+                padding: '6px 15px'
+              }}
+              onClick={() => {
+                const policy = policyStore.getSelectedObject()
+                if (!policy.id) {
+                  return
+                }
+                setShowEvaluateCard(false)
+                setShowImactAnalysisCard(true)
+              }}
+            >
+              Impact Analytsis
+            </Button>
+          ) : (
+            ''
+          )}
         </ButtonGroup>
       </Box>
     )
