@@ -1,14 +1,14 @@
-import React, { Component } from 'react'
+import { Fragment, useEffect, useState, useRef, useCallback } from 'react'
 import { observer } from 'mobx-react'
-import { withStyles } from '@material-ui/styles'
 import { Pie } from 'react-chartjs-2'
-import { Box, Button } from '@material-ui/core'
+import { Box, Button, makeStyles } from '@material-ui/core'
 import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
 import PolicyImpactAnalysisLogCard from '/mxr-web/apps/proximity/src/pages/policies/components/PolicyImpactAnalysisLogCard.react'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+import { toJS } from 'mobx'
 const { logStore, policyStore, virtualServiceStore } = stores
 
-const classes = {
+const useStyle = makeStyles((theme) => ({
   dashTitle: {
     fontSize: 20,
     marginBottom: 10
@@ -16,73 +16,67 @@ const classes = {
   dashNum: {
     fontSize: 32
   }
-}
+}))
 
-export class PolicyImpactAnalysisCard extends Component {
-  state = {
-    allowed: 0,
-    denied: 0,
-    decisionChanged: 0
-  }
-  chartRef = React.createRef()
+const PolicyImpactAnalysisCard = () => {
+  const [allowed, setAllowed] = useState(0)
+  const [denied, setDenied] = useState(0)
+  const [decisionChanged, setDecisionChanged] = useState(0)
+  const classes = useStyle()
+  const chartRef = useRef()
 
-  componentWillUnmount() {
-    logStore.resetAllFields()
-  }
+  useEffect(() => {
+    return () => {
+      logStore.resetAllFields()
+    }
+  }, [])
 
-  handleDecisionChanged = () => {
-    this.setState((prevState) => ({
-      decisionChanged: prevState.decisionChanged + 1
-    }))
-  }
-
-  handleAddAllowed = () => {
-    this.setState((prevState) => ({ allowed: prevState.allowed + 1 }))
-  }
-
-  handleAddDenied = () => {
-    this.setState((prevState) => ({ denied: prevState.denied + 1 }))
-  }
-
-  handleFetchLog = async () => {
-    this.setState({
-      allowed: 0,
-      denied: 0,
-      decisionChanged: 0
-    })
-    const policy = policyStore.getSelectedObject()
+  const handleFetchLog = async () => {
+    setAllowed(0)
+    setDenied(0)
+    setDecisionChanged(0)
     const virtualService = virtualServiceStore.getSelectedObject()
-    logStore.setShowProcessCard(true)
-    const searchQuery = {}
     if (virtualService) {
-      searchQuery['data.virtualServiceId'] = virtualService.id
+      const policy = policyStore.getSelectedObject()
+      const policyRevisions = virtualService.PolicyRevisions
+      const selectedPolicyRevision = policyRevisions.find(
+        (policyRevision) => policyRevision.PolicyId === policy.id
+      )
+      console.log(toJS(virtualService), toJS(selectedPolicyRevision))
+      logStore.setShowProcessCard(true)
+      const searchQuery = {
+        type: 'PROXIMITY_DECISION_LOG'
+      }
+      if (virtualService) {
+        searchQuery['VirtualServiceId'] = virtualService.id
+        searchQuery['PolicyRevisionId'] = selectedPolicyRevision.id
+      } else if (policy) {
+        searchQuery['PolicyId'] = policy.id
+      }
+      logStore.setSearchQuery(searchQuery)
+      logStore.setSearchPageObjectCount(100)
+      logStore.setSortQuery([['createdAt', 'DESC']])
+      try {
+        const logs = await logStore.objectQuery()
+        logStore.setSearchResultsObjectCount(logs.count)
+        logStore.setObjects(logs.rows)
+      } catch (error) {
+        console.log(`Error: Getting logs`)
+      }
+      logStore.setShowProcessCard(false)
     }
-    if (policy) {
-      searchQuery['data.policyId'] = policy.id
-    }
-    logStore.setSearchQuery(searchQuery)
-    logStore.setSearchPageObjectCount(100)
-    logStore.setSortQuery({ _id: -1 })
-    try {
-      const logs = await logStore.objectQuery()
-      logStore.setSearchResultsObjectCount(logs.count)
-      logStore.setObjects(logs.data)
-    } catch (error) {
-      console.log(`Error: Getting logs`)
-    }
-    logStore.setShowProcessCard(false)
   }
 
-  _renderLogs() {
+  const _renderLogs = () => {
     const logs = logStore.getObjects()
     const count = logs ? logs.length : 0
-    const percentageChanged = (100 * this.state.decisionChanged) / count
+    const percentageChanged = (100 * decisionChanged) / count
 
     if (!logs || logs.length === 0) {
       return <Box style={{ textAlign: 'center', marginTop: 20 }}>No Logs</Box>
     }
     return (
-      <React.Fragment>
+      <Fragment>
         <Box
           style={{
             display: 'flex',
@@ -93,21 +87,21 @@ export class PolicyImpactAnalysisCard extends Component {
           }}
         >
           <Box>
-            <Box className={this.props.classes.dashTitle}>Sample Requests</Box>
-            <Box className={this.props.classes.dashNum}>{count}</Box>
+            <Box className={classes.dashTitle}>Sample Requests</Box>
+            <Box className={classes.dashNum}>{count}</Box>
           </Box>
           <Box>
-            <Box className={this.props.classes.dashTitle}>Decision</Box>
+            <Box className={classes.dashTitle}>Decision</Box>
             <Box>
               <Pie
-                ref={this.chartRef}
+                ref={chartRef}
                 width={150}
                 height={75}
                 data={{
                   labels: ['ALLOW', 'DENY'],
                   datasets: [
                     {
-                      data: [this.state.allowed, this.state.denied],
+                      data: [allowed, denied],
                       backgroundColor: ['#6FCF97', '#E57372']
                     }
                   ],
@@ -128,8 +122,8 @@ export class PolicyImpactAnalysisCard extends Component {
             </Box>
           </Box>
           <Box>
-            <Box className={this.props.classes.dashTitle}>Decision Changed</Box>
-            <Box className={this.props.classes.dashNum}>
+            <Box className={classes.dashTitle}>Decision Changed</Box>
+            <Box className={classes.dashNum}>
               {percentageChanged.toFixed(2)} %
             </Box>
           </Box>
@@ -147,48 +141,46 @@ export class PolicyImpactAnalysisCard extends Component {
               key={log.id}
               log={log}
               count={index + 1}
-              addAllowed={this.handleAddAllowed}
-              addDenied={this.handleAddDenied}
-              decisionChanged={this.handleDecisionChanged}
+              addAllowed={() => setAllowed((value) => value + 1)}
+              addDenied={() => setDenied((value) => value + 1)}
+              decisionChanged={() => setDecisionChanged((value) => value + 1)}
             />
           ))}
         </Box>
-      </React.Fragment>
+      </Fragment>
     )
   }
 
-  render() {
-    const showLoader = logStore.getShowProcessCard()
-    if (showLoader) {
-      return (
-        <Box style={{ margin: 50 }}>
-          <PlatformLoaderCard />
-        </Box>
-      )
-    }
+  const showLoader = logStore.getShowProcessCard()
+  if (showLoader) {
     return (
-      <Box>
-        <Box
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            marginTop: 5
-          }}
-        >
-          <Button
-            variant='contained'
-            color='primary'
-            size='small'
-            onClick={this.handleFetchLog}
-          >
-            Run Impact Analysis
-          </Button>
-        </Box>
-        {this._renderLogs()}
+      <Box style={{ margin: 50 }}>
+        <PlatformLoaderCard />
       </Box>
     )
   }
+  return (
+    <Box>
+      <Box
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          marginTop: 5
+        }}
+      >
+        <Button
+          variant='contained'
+          color='primary'
+          size='small'
+          onClick={handleFetchLog}
+        >
+          Run Impact Analysis
+        </Button>
+      </Box>
+      {_renderLogs()}
+    </Box>
+  )
 }
 
-export default withStyles(classes)(observer(PolicyImpactAnalysisCard))
+export default observer(PolicyImpactAnalysisCard)
