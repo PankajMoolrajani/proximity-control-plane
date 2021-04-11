@@ -18,7 +18,7 @@ const useStyle = makeStyles((theme) => ({
   }
 }))
 
-const PolicyImpactAnalysisCard = () => {
+const PolicyImpactAnalysisCard = ({ rules }) => {
   const [allowed, setAllowed] = useState(0)
   const [denied, setDenied] = useState(0)
   const [decisionChanged, setDecisionChanged] = useState(0)
@@ -140,6 +140,7 @@ const PolicyImpactAnalysisCard = () => {
             <PolicyImpactAnalysisLogCard
               key={log.id}
               log={log}
+              rules={rules}
               count={index + 1}
               addAllowed={() => setAllowed((value) => value + 1)}
               addDenied={() => setDenied((value) => value + 1)}

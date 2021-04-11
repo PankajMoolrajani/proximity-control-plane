@@ -1,10 +1,11 @@
 import axios from 'axios'
 import https from 'https'
+import {
+  DATA_SERVICE_URL,
+  WORKFLOW_SERVICE_URL
+} from '/mxr-web/apps/proximity/src/config'
 
-const DATA_SERVICE_URL = 'https://dev.monoxor.com/data-services'
 const BASE_URL = `${DATA_SERVICE_URL}/crud/k8ti/proximity`
-
-const BASE_URL_SERVICES = 'https://kushal.parikh.sb.intern.monoxor.com:5006'
 
 const axiosInstance = axios.create()
 axiosInstance.defaults.baseURL = BASE_URL
@@ -16,6 +17,6 @@ const axiosServiceInstance = axios.create({
     rejectUnauthorized: false
   })
 })
-axiosServiceInstance.defaults.baseURL = BASE_URL_SERVICES
+axiosServiceInstance.defaults.baseURL = WORKFLOW_SERVICE_URL
 
 export { axiosInstance, axiosServiceInstance }

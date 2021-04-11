@@ -16,6 +16,7 @@ const { policyStore } = stores
 
 const PolicyImpactAnalysisLogCard = ({
   log,
+  rules,
   count,
   addAllowed,
   addDenied,
@@ -29,13 +30,13 @@ const PolicyImpactAnalysisLogCard = ({
     setIsLoading(true)
     try {
       const policy = policyStore.getFormFields()
-      if (!policy.rules.trim()) {
+      if (!rules.trim()) {
         return
       }
       const response = await axiosServiceInstance.post(
         'proximity/eval',
         {
-          rules: policy.rules,
+          rules: rules,
           input: policy.displayName.includes('EGRESS')
             ? { req: log.data.req, res: log.data.res }
             : { req: log.data.req }

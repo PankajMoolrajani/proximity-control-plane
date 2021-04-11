@@ -591,7 +591,9 @@ const PolicyDetailsCard = ({
             {_renderTabs()}
             <Divider />
             {showEvaluateCard ? _renderIOCard() : null}
-            {showImpactAnalysisCard ? <PolicyImpactAnalysisCard /> : null}
+            {showImpactAnalysisCard ? (
+              <PolicyImpactAnalysisCard rules={policyForm.values.authz_rules} />
+            ) : null}
           </Grid>
         </Grid>
         <Divider />
