@@ -67,101 +67,46 @@ const VirtualServiceAddPolicyDialog = (props) => {
           <Typography variant='h6' className={classes.title}>
             {formFields.id ? 'Update' : 'Create'} : Policy
           </Typography>
-          <Button
-            autoFocus
-            color='inherit'
-            onClick={async () => {
-              const viewMode = policyStore.getShowObjectViewMode()
-              policyStore.setShowProcessCard(true)
-              try {
-                if (viewMode === 'CREATE') {
-                  const createdPolicy = await policyStore.objectCreate()
-
-                  policyRevisionStore.setFormFields({
-                    name: createdPolicy.name,
-                    displayName: createdPolicy.displayName,
-                    type: createdPolicy.type,
-                    rules: createdPolicy.rules,
-                    PolicyId: createdPolicy.id
-                  })
-                  const createdPolicyRevision = await policyRevisionStore.objectCreate()
-                  createCrudLog(
-                    `${user.name ? user.name : user.email} Created Policy - ${
-                      createdPolicy.displayName
-                    }`
-                  )
-                }
-                if (viewMode === 'UPDATE') {
-                  const selectedPolicyRevision = policyStore.getFormFields()
-                  const selectedVirtualService = virtualServiceStore.getSelectedObject()
-                  const oldPolicyRevisinoId = selectedPolicyRevision.revisionId
-                  const updatedPolicyDraft = {
-                    ...selectedPolicyRevision
-                  }
-                  delete updatedPolicyDraft.revisionId
-                  policyStore.setFormFields(updatedPolicyDraft)
-                  const updatedPolicy = await policyStore.objectUpdate()
-                  policyRevisionStore.setFormFields({
-                    name: updatedPolicy.name,
-                    displayName: updatedPolicy.displayName,
-                    type: updatedPolicy.type,
-                    rules: updatedPolicy.rules,
-                    PolicyId: updatedPolicy.id
-                  })
-                  const createdPolicyRevision = await policyRevisionStore.objectCreate()
-                  createCrudLog(
-                    `${user.name ? user.name : user.email} Updated Policy - ${
-                      updatedPolicy.displayName
-                    }`
-                  )
-                  //Update virtual service policy mapping
-                  virtualServicePolicyRevisionStore.setSearchQuery({
-                    VirtualServiceId: selectedVirtualService.id,
-                    PolicyRevisionId: oldPolicyRevisinoId
-                  })
-                  const existingVSPolicymapResponse = await virtualServicePolicyRevisionStore.objectQuery()
-                  const existingVSPolicymap =
-                    existingVSPolicymapResponse.rows[0]
-                  console.log(existingVSPolicymap)
-                  virtualServicePolicyRevisionStore.setFormFields({
-                    id: existingVSPolicymap.id,
-                    VirtualServiceId: existingVSPolicymap.VirtualServiceId,
-                    PolicyRevisionId: createdPolicyRevision.id,
-                    enforcementMode: existingVSPolicymap.enforcementMode
-                  })
-                  await virtualServicePolicyRevisionStore.objectUpdate()
-                  await createPolicyProximityDp(createdPolicyRevision.id)
-                }
-                policyStore.setShowSuccessCard(true)
-                await new Promise((res) => setTimeout(res, 2000))
-                policyStore.setShowSuccessCard(false)
-                if (viewMode === 'UPDATE') {
-                  await props.fetchPolicies()
-                }
-                policyStore.setShowObjectViewMode(null)
-                if (viewMode === 'CREATE') {
-                  console.log('Show popup')
-                  props.handleShowAddExistingPolicyPopup(true)
-                }
-                policyStore.setShowProcessCard(false)
-              } catch (error) {
-                console.log('Error: Creating Policy', error)
-              }
-              policyStore.setShowProcessCard(false)
+        </Toolbar>
+      </AppBar>
+      <Box>
+        {
+          <PolicyDetailsCard
+            hideTabs
+            policyId={formFields.id}
+            createCallback={async () => {
+              props.handleShowAddExistingPolicyPopup(true)
+            }}
+            updateCallback={async () => {
+              //Update virtual service policy mapping
+              const selectedPolicyRevision = policyStore.getFormFields()
+              const oldPolicyRevisinoId = selectedPolicyRevision.revisionId
+              const selectedVirtualService = virtualServiceStore.getSelectedObject()
+              virtualServicePolicyRevisionStore.setSearchQuery({
+                VirtualServiceId: selectedVirtualService.id,
+                PolicyRevisionId: oldPolicyRevisinoId
+              })
+              const existingVSPolicymapResponse = await virtualServicePolicyRevisionStore.objectQuery()
+              const existingVSPolicymap = existingVSPolicymapResponse.rows[0]
+              console.log(existingVSPolicymap)
+              const createdPolicyRevision = policyRevisionStore.getFormFields()
+              virtualServicePolicyRevisionStore.setFormFields({
+                id: existingVSPolicymap.id,
+                VirtualServiceId: existingVSPolicymap.VirtualServiceId,
+                PolicyRevisionId: createdPolicyRevision.id,
+                enforcementMode: existingVSPolicymap.enforcementMode
+              })
+              await virtualServicePolicyRevisionStore.objectUpdate()
+              await createPolicyProximityDp(createdPolicyRevision.id)
+              await props.fetchPolicies()
+            }}
+            finalCallback={async () => {
               policyStore.resetAllFields()
               policyRevisionStore.resetAllFields()
               virtualServiceStore.setShowAddObjectDialog(false)
             }}
-            style={{
-              marginRight: 20
-            }}
-          >
-            save
-          </Button>
-        </Toolbar>
-      </AppBar>
-      <Box>
-        {<PolicyDetailsCard hideOpsButton hideTabs policyId={formFields.id} />}
+          />
+        }
       </Box>
     </Dialog>
   )
