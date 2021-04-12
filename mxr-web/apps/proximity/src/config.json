@@ -1,0 +1,4 @@
+{
+  "DATA_SERVICE_URL": "https://dev.monoxor.com/data-services",
+  "WORKFLOW_SERVICE_URL": "https://dev.monoxor.com/workflow-services"
+}
