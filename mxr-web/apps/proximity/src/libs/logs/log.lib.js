@@ -1,4 +1,6 @@
-import { axiosInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
+import { getAxiosInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
+
+const axiosInstance = getAxiosInstance()
 
 export const createCrudLog = async (data) => {
   try {

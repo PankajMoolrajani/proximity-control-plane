@@ -1,6 +1,5 @@
 import { makeAutoObservable, observable, toJS } from 'mobx'
-import { axiosInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
-import axios from 'axios'
+import { getAxiosInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
 import objects from './objects.json'
 
 class ProximityStore {
@@ -28,74 +27,97 @@ class ProximityStore {
   }
 
   async objectCreate() {
-    const data = this.getFormFields()
-    const response = await axiosInstance.post(`/${this.objectName}`, {
-      data: data
-    })
-    if (response.status === 200) {
-      return response.data
+    try {
+      const axiosInstance = getAxiosInstance()
+      const data = this.getFormFields()
+      const response = await axiosInstance.post(`/${this.objectName}`, {
+        data: data
+      })
+      if (response.status === 200) {
+        return response.data
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 
   async objectUpdate() {
-    const data = this.getFormFields()
-    const response = await axiosInstance.put(`/${this.objectName}/${data.id}`, {
-      data: data
-    })
-    if (response.status === 200) {
-      return response.data
+    try {
+      const axiosInstance = getAxiosInstance()
+      const data = this.getFormFields()
+      const response = await axiosInstance.put(
+        `/${this.objectName}/${data.id}`,
+        {
+          data: data
+        }
+      )
+      if (response.status === 200) {
+        return response.data
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 
   async objectQueryById(id, include) {
-    const response = await axiosInstance.get(`/${this.objectName}/${id}`, {
-      params: {
-        include: JSON.stringify(include)
+    try {
+      const axiosInstance = getAxiosInstance()
+      const response = await axiosInstance.get(`/${this.objectName}/${id}`, {
+        params: {
+          include: JSON.stringify(include)
+        }
+      })
+      if (response.status === 200) {
+        return response.data
       }
-    })
-    if (response.status === 200) {
-      return response.data
+    } catch (error) {
+      console.log(error)
     }
   }
 
   async objectQuery(include) {
-    let pageObjectCount = this.getSearchPageObjectCount()
-    if (!pageObjectCount) {
-      this.setSearchPageObjectCount(10)
-      pageObjectCount = this.getSearchPageObjectCount()
-    }
-    let pageNum = this.getSearchPageNum()
-    if (!pageNum) {
-      this.setSearchPageNum(0)
-      pageNum = this.getSearchPageNum()
-    }
-    let searchQuery = this.getSearchQuery()
-    if (!searchQuery) {
-      searchQuery = {}
-    }
+    try {
+      const axiosInstance = getAxiosInstance()
+      let pageObjectCount = this.getSearchPageObjectCount()
+      if (!pageObjectCount) {
+        this.setSearchPageObjectCount(10)
+        pageObjectCount = this.getSearchPageObjectCount()
+      }
+      let pageNum = this.getSearchPageNum()
+      if (!pageNum) {
+        this.setSearchPageNum(0)
+        pageNum = this.getSearchPageNum()
+      }
+      let searchQuery = this.getSearchQuery()
+      if (!searchQuery) {
+        searchQuery = {}
+      }
 
-    let sortQuery = this.getSortQuery()
-    if (!sortQuery) {
-      sortQuery = []
-    }
-    const CancelToken = axiosInstance.CancelToken
-    const cancelToken = CancelToken.source()
-    this.setCancelToken(cancelToken)
-    const response = await axiosInstance.post(
-      `/${this.objectName}/search`,
-      {
-        query: {
-          where: searchQuery,
-          limit: pageObjectCount,
-          offset: pageNum * pageObjectCount,
-          include: include,
-          order: sortQuery
-        }
-      },
-      { cancelToken: this.cancelToken.token }
-    )
-    if (response.status === 200) {
-      return response.data
+      let sortQuery = this.getSortQuery()
+      if (!sortQuery) {
+        sortQuery = []
+      }
+      const CancelToken = axiosInstance.CancelToken
+      const cancelToken = CancelToken.source()
+      this.setCancelToken(cancelToken)
+      const response = await axiosInstance.post(
+        `/${this.objectName}/search`,
+        {
+          query: {
+            where: searchQuery,
+            limit: pageObjectCount,
+            offset: pageNum * pageObjectCount,
+            include: include,
+            order: sortQuery
+          }
+        },
+        { cancelToken: this.cancelToken.token }
+      )
+      if (response.status === 200) {
+        return response.data
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 

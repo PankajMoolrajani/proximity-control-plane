@@ -4,9 +4,12 @@ import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import { useHistory } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import Box from '@material-ui/core/Box'
-import { axiosInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
+import { getAxiosPdsInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
 import AppBar from './AppBar.react'
 import SideBar from './SideBar.react'
+import orgStore from '/mxr-web/apps/proximity/src/stores/org.store'
+
+const axiosPdsInstance = getAxiosPdsInstance()
 
 const theme = createMuiTheme({
   palette: {
@@ -41,8 +44,45 @@ const AdminLayout = ({ children }) => {
 
     if (isAuthenticated && !isLoading) {
       setIsAppLoading(true)
-      getAccessTokenSilently().then((token) => {
-        console.log(token)
+      getAccessTokenSilently().then(async (token) => {
+        console.log(token, user)
+        //Check if user Exist
+        const userSearchResponse = await axiosPdsInstance.post('/user/search', {
+          query: {
+            where: {
+              auth0UserId: user.sub
+            },
+            include: [
+              {
+                model: 'Org'
+              }
+            ]
+          }
+        })
+        const foundUserResult = userSearchResponse.data
+        if (foundUserResult.count === 0) {
+          // if no create user
+          const userCreateResponse = await axiosPdsInstance.post('/user', {
+            data: {
+              auth0UserId: user.sub,
+              firstName: user.given_name || '',
+              lastName: user.family_name || '',
+              email: user.email,
+              avatar: user.picture || ''
+            }
+          })
+          setIsAppLoading(false)
+          push('/create-org')
+        } else {
+          const foundUser = foundUserResult.rows[0]
+          orgStore.setUserOrgs(foundUser)
+          //Check if user has orgs
+          if (foundUser.Orgs.length === 0) {
+            setIsAppLoading(false)
+            push('/create-org')
+          }
+        }
+
         setIsAppLoading(false)
       })
     }

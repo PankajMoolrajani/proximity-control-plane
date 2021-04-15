@@ -9,7 +9,7 @@ import {
 import JSONPretty from 'react-json-pretty'
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { axiosServiceInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
+import { getAxiosServiceInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
 import 'react-json-pretty/themes/monikai.css'
 const { policyStore } = stores
@@ -28,6 +28,7 @@ const PolicyImpactAnalysisLogCard = ({
 
   const handleEvaluate = async () => {
     setIsLoading(true)
+    const axiosServiceInstance = getAxiosServiceInstance()
     try {
       const policy = policyStore.getFormFields()
       if (!rules.trim()) {

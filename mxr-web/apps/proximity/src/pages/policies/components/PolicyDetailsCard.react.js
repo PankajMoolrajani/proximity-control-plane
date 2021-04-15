@@ -25,7 +25,7 @@ import { Controlled as CodeMirror } from 'react-codemirror2'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { axiosServiceInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
+import { getAxiosServiceInstance } from '/mxr-web/apps/proximity/src/libs/axios/axios.lib'
 import { createCrudLog } from '/mxr-web/apps/proximity/src/libs/logs/log.lib'
 import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
 import PlatformSuccessCard from '/mxr-web/apps/proximity/src/components/platform/PlatformSuccessCard.react'
@@ -435,6 +435,7 @@ const PolicyDetailsCard = ({
 
   const handleEvaluate = async () => {
     const policy = policyStore.getFormFields()
+    const axiosServiceInstance = getAxiosServiceInstance()
     const response = await axiosServiceInstance.post(
       '/proximity/eval',
       {
