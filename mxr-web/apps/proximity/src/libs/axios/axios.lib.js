@@ -43,7 +43,7 @@ const getAxiosServiceInstance = () => {
   })
   axiosServiceInstance.defaults.baseURL = WORKFLOW_SERVICE_URL
 
-  return getAxiosServiceInstance
+  return axiosServiceInstance
 }
 
 export { getAxiosInstance, getAxiosServiceInstance, getAxiosPdsInstance }

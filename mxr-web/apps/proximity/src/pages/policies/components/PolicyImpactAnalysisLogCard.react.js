@@ -35,7 +35,7 @@ const PolicyImpactAnalysisLogCard = ({
         return
       }
       const response = await axiosServiceInstance.post(
-        'proximity/eval',
+        '/proximity/eval',
         {
           rules: rules,
           input: policy.displayName.includes('EGRESS')

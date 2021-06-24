@@ -42,7 +42,6 @@ const PolicyImpactAnalysisCard = ({ rules }) => {
       const selectedPolicyRevision = policyRevisions.find(
         (policyRevision) => policyRevision.PolicyId === policy.id
       )
-      console.log(toJS(virtualService), toJS(selectedPolicyRevision))
       logStore.setShowProcessCard(true)
       const searchQuery = {
         type: 'PROXIMITY_DECISION_LOG'
