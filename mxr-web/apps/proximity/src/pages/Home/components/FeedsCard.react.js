@@ -15,7 +15,7 @@ const FeedsCard = () => {
   const fetchData = async () => {
     setLoading(true)
     try {
-      logStore.setSearchPageObjectCount(1000000)
+      logStore.setSearchPageObjectCount(15)
       logStore.setSearchQuery({ type: 'PROXIMITY_CRUD_LOG' })
       logStore.setSortQuery([['createdAt', 'DESC']])
       const logs = await logStore.objectQuery()

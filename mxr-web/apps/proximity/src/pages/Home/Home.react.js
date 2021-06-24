@@ -1,4 +1,3 @@
-import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { Box, Typography, Grid } from '@material-ui/core'
 import DashboardIcon from '@material-ui/icons/Dashboard'
