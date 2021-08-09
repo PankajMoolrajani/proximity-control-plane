@@ -5,6 +5,7 @@ import { Box, Button, ButtonGroup } from '@material-ui/core'
 import { Line } from 'react-chartjs-2'
 import PlatformLoaderCard from '/mxr-web/apps/proximity/src/components/platform/PlatformLoaderCard.react'
 import stores from '/mxr-web/apps/proximity/src/stores/proximity.store'
+import { toJS } from 'mobx'
 const { virtualServiceStore, logStore } = stores
 
 const VirtualServiceMonitorCard = ({ virtualServiceId }) => {
@@ -36,6 +37,8 @@ const VirtualServiceMonitorCard = ({ virtualServiceId }) => {
         $lt: new Date()
       }
     })
+    logStore.setSearchPageObjectCount(10000)
+    logStore.setSortQuery([['createdAt', 'ASC']])
     await handleFetch()
     let timeStepsD
     switch (hour) {
@@ -76,9 +79,13 @@ const VirtualServiceMonitorCard = ({ virtualServiceId }) => {
       await handleLogsForTime(12)
     }
     initFetch()
+
+    return () => {
+      logStore.resetAllFields();
+    }
   }, [])
 
-  const logs = logStore.getObjects()
+  const logs = logStore.getObjects() 
   if (!logs || logs.length === 0) {
     return <Box style={{ textAlign: 'center' }}>No Content</Box>
   }
@@ -89,21 +96,21 @@ const VirtualServiceMonitorCard = ({ virtualServiceId }) => {
       moment(new Date(log.createdAt)).format(timeFormat),
       timeFormat
     )
-  }))
+  })) 
   let firstTimeStep = logsTimeFormatted[0].createdAt
   const lastTimeStep = logsTimeFormatted[logsTimeFormatted.length - 1].createdAt
-  let nextTimeStep = logsTimeFormatted[0].createdAt
+  let nextTimeStep = logsTimeFormatted[0].createdAt   
   const logsTimeUpDownCount = []
   while (true) {
-    nextTimeStep = moment(nextTimeStep, timeFormat).subtract(
+    nextTimeStep = moment(nextTimeStep, timeFormat).add(
       timeSteps,
       'minutes'
     )
     const logsInTimeLimit = logsTimeFormatted.filter((logTimeFormatted) => {
       if (
         logTimeFormatted.createdAt.isBetween(
-          nextTimeStep,
           firstTimeStep,
+          nextTimeStep,
           undefined,
           '[]'
         )
@@ -112,11 +119,12 @@ const VirtualServiceMonitorCard = ({ virtualServiceId }) => {
       } else {
         return false
       }
-    })
-    firstTimeStep = moment(firstTimeStep, timeFormat).subtract(
+    }) 
+
+    firstTimeStep = moment(firstTimeStep, timeFormat).add(
       timeSteps,
       'minutes'
-    )
+    ) 
     if (logsInTimeLimit.length > 0) {
       const time = logsInTimeLimit[0].createdAt
       let upCount = 0
@@ -135,10 +143,10 @@ const VirtualServiceMonitorCard = ({ virtualServiceId }) => {
       })
     }
 
-    if (nextTimeStep.isBefore(lastTimeStep)) {
+    if (nextTimeStep.isSameOrAfter(lastTimeStep)) {
       break
     }
-  }
+  }  
   const logsUpTimePercentage = logsTimeUpDownCount.map(
     (logTimeUpDownCount) => ({
       ...logTimeUpDownCount,
@@ -152,7 +160,7 @@ const VirtualServiceMonitorCard = ({ virtualServiceId }) => {
   )
   const upTimeMonitorDataValues = logsUpTimePercentage.map(
     (logUpTimePercentage) => logUpTimePercentage.percentage
-  )
+  ) 
   const upTimeMonitorData = {
     labels: upTimeMonitorDataLables,
     datasets: [
