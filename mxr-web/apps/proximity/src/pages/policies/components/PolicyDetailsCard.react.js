@@ -98,6 +98,7 @@ const PolicyDetailsCard = ({
   let policyName
   if (viewMode === 'CREATE') {
     policyName = formFields ? formFields.name : ''
+    authz_rules = formFields ? formFields.rules : ''
   }
 
   if (viewMode === 'UPDATE') {
@@ -272,7 +273,7 @@ const PolicyDetailsCard = ({
     waf_shell_shock_enabled: waf_shell_shock_enabled,
     dynamic_dynamic_defence_enabled: dynamic_dynamic_defence_enabled
   }
-
+  
   const validationSchema = {
     name: Yup.string().required('Required!').min(5),
     displayName: Yup.string().required('Required!').min(5),

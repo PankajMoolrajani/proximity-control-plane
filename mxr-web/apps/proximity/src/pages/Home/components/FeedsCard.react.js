@@ -72,11 +72,12 @@ const FeedsCard = () => {
             margin: '5px 0',
             padding: 5,
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
+            fontSize: 16
           }}
         >
           <FiberManualRecordIcon
-            style={{ color: '#56CCF2', fontSize: 18, marginRight: 10 }}
+            style={{ color: '#56CCF2', fontSize: 16, marginRight: 10 }}
           />
           {moment(feed.createdAt).format('MMM DD, YYYY hh:mm A')} {feed.data}
         </List>

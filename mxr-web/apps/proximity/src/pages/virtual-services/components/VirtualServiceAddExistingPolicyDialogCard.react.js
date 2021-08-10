@@ -113,7 +113,7 @@ const VirtualServiceAddExistingPolicyDialogCard = ({
                     model: 'PolicyRevision'
                   }
                 ])
-                policyStore.setObjects(policies.rows)
+                policyStore.setObjects(policies?.rows)
                 policyStore.setShowProcessCard(false)
               }}
               renderInput={(params) => (
