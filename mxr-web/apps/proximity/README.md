@@ -1,70 +1,41 @@
-# Getting Started with Create React App
+# Proximity Control Plane Web App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a web application that enables users to configure API security policies related to:
+- **Authentication (authn)**
+- **Authorization (OPA-based, authz)**
+- **Filtering (ModSecurity-based)**
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+1. **Policy Definition**:  
+   - Start by creating a "Virtual Service".
+   - Define and configure various API security policies (authn, authz, filtering) for that virtual service.
+   - Test the impact of these policies directly from the control plane web interface.
 
-### `yarn start`
+2. **Policy Enforcement**:  
+   - Any policy defined here is automatically shipped to a data plane component built in another repository.
+   - The data plane is implemented using Envoy Proxy, running either as a sidecar or gateway alongside application services.
+   - It enforces authentication, authorization, and filtering based on the configuration from this control plane.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Features
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- Friendly UI to write and manage complex security policies.
+- Integrates with OPA (Open Policy Agent) for fine-grained authorization.
+- Supports ModSecurity for powerful request filtering.
+- Allows pre-deployment policy impact testing to validate security decisions.
 
-### `yarn test`
+## Typical Workflow
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. Log into the web app.
+2. Create a new Virtual Service to represent your API/application.
+3. Configure required authentication, authorization, and filtering policies for it.
+4. Test the configuration and observe the expected enforcement behavior.
+5. Upon finalization, policies are automatically pushed to the data plane proxy (Envoy) for enforcement.
 
-### `yarn build`
+## Note
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- The data plane, which enforces these policies, is maintained in a separate repository and uses Envoy Proxy as its foundation.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+**For questions or issues, please contact [PankajMoolrajani](https://github.com/PankajMoolrajani) or open an issue in this repository.**
